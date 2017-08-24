@@ -1,0 +1,10 @@
+{{include 'chimitheque_import.html'}}
+
+{{refresh_url = URL(a=application, c='entity', f='search', vars=request.vars)}}
+
+<script>
+$( document ).ready(function() {
+	$.mask.close();
+	document.location.href="{{=refresh_url}}";
+});
+</script>

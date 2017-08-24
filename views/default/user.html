@@ -1,0 +1,39 @@
+{{extend 'layout.html'}}
+
+<div id="web2py_user_form">
+
+{{if request.args(0)=='login':}}
+
+        {{=form.custom.begin}}
+	
+	{{for field_name in ['email', 'password']:}}
+	<div id="{{=field_name}}" class="field">
+	
+	<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+	<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+	
+	</div>
+	{{pass}}
+	
+	<div id="submit" class="field">
+	{{=form.custom.submit}}
+	</div>
+	{{=form.custom.end}}
+
+{{####=IMG(_alt='fr_flag', _src='%s/%s' %(images_base_url, cc.IMAGE_ICEWEASEL))}}
+<ul>
+<li>{{=cc.get_string("INDEX_SESSION_TIME_MESSAGE") %settings['session_time']}}</li>
+<li>{{=cc.get_string("SITE_OPTIMIZED_TO_RUN")}}</li>
+<li>{{=cc.get_string("PROJECT_WEB_SITE")}}: <a href="https://listes.cru.fr/wiki/chimitheque/index">https://listes.cru.fr/wiki/chimitheque/index</a></li>
+{{elif request.args[0] == 'profile':}}
+	{{=form}}	
+{{else:}}
+	{{=form}}	
+{{pass}}
+</div>
+
+<script language="javascript">
+<!--
+ jQuery("#web2py_user_form input:visible:enabled:first").focus();
+//-->
+</script> 

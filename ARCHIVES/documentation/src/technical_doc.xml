@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://docbook.org/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://docbook.org/xml/5.0/rng/docbook.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<sect1 xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <title>
+        <phrase xml:lang="en">Installation documentation</phrase>
+        <phrase xml:lang="fr">Documentation d'installation</phrase>
+    </title>
+    <para xml:lang="en">This documentation deals with the installation under Linux (<link
+        xlink:href="http://www.debian.org" xlink:title="Debian">Debian</link> latest stable)
+        with <link xlink:href="http://httpd.apache.org/" xlink:title="Apache2"
+            >Apache2</link>.</para>
+    
+    <para xml:lang="fr">Cette documentation traite de l'installation sous Linux (<link
+        xlink:href="http://www.debian.org" xlink:title="Debian">Debian</link> latest stable)
+        avec <link xlink:href="http://httpd.apache.org/" xlink:title="Apache2"
+            >Apache2</link>.</para>
+    <!--
+        <para xml:lang="en">You can choose Apache2 if you feel more comfortable with this application. Nginx is said to be faster but is a little bit more tricky to install.</para>
+        <para xml:lang="fr">Vous pouvez choisir Apache2 si vous vous sentez plus à l'aise avec cette application. Nginx semble être plus rapide mais est un peu plus complexe à installer.</para>
+    -->
+    <note>
+        <para xml:lang="en">Feel free to send us feedbacks of installations under other
+            platforms such as CentOS.</para>
+        <para xml:lang="fr">N'hésitez pas à nous faire par de vos installations sous
+            d'autres plateformes comme par exemple CentOS.</para>
+    </note>
+    
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Chimithèque versions</phrase>
+            <phrase xml:lang="fr">Versions de Chimithèque</phrase>
+        </title>
+        <para xml:lang="en">
+            In the <link xlink:href="http://chimitheque.ens-lyon.fr/download/">download</link> page you will find different files:
+            <itemizedlist>
+                <listitem><para><filename>chimitheque_{version}_{date}.tar.gz</filename> files. These files are the different versions of Chimithèque.</para></listitem>
+                <listitem><para>a <filename>chimitheque_stable.tar.gz</filename> file, that is just a symbolic link to the last stable version.</para></listitem>
+                <listitem><para>a <filename>chimitheque_testing.tar.gz</filename> file. This file is the most recent version
+                    of Chimithèque, currently tested at the ENS.</para></listitem>
+            </itemizedlist>
+        </para>
+        
+        <para xml:lang="fr">
+            Sur la page de  <link xlink:href="http://chimitheque.ens-lyon.fr/download/">téléchargement</link> vous trouverez différents fichiers:
+            <itemizedlist>
+                <listitem><para>des fichiers <filename>chimitheque_{version}_{date}.tar.gz</filename>. Ce sont les différentes versions de Chimithèque.</para></listitem>
+                <listitem><para>un fichier <filename>chimitheque_stable.tar.gz</filename>, qui est juste un lien symbolique vers la dernière version stable.</para></listitem>
+                <listitem><para>un fichier <filename>chimitheque_testing.tar.gz</filename>. Ce fichier est la version la plus
+                    récente de Chimithèque, actuellement testée à l'ENS.</para></listitem>
+            </itemizedlist>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Prerequisites</phrase>
+            <phrase xml:lang="fr">Pré-requis</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>Linux server with 1GB of hard disk space and 1VCPU (for
+                        virtualized systems)</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>apache2-mpm-event</emphasis> and <emphasis>libapache2-mod-wsgi</emphasis></para>
+                    <para><emphasis>PostGreSQL/MySQL</emphasis> database server, PostGreSQL version
+                        8.4 or more, MySQL version 5 or higher</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>SMTP</emphasis> server</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>Python 2.7</emphasis> or more,
+                        <emphasis>python-beaker</emphasis>, <emphasis>python-ldap</emphasis>,
+                        <emphasis>python-levenshtein</emphasis>, <emphasis>python-ldap (optionnal)</emphasis>,
+                        <emphasis>python-psycopg2</emphasis> (for a PostgreSQL database, or the
+                        <link
+                            xlink:href="http://www.web2py.com/books/default/chapter/29/06#Dependencies"
+                            >required</link> database library for other types of databases), </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>serveur Linux avec 1GO de disque et 1VCPU (pour les systèmes
+                        virtualisés)</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>apache2-mpm-event</emphasis> et
+                        <emphasis>libapache2-mod-wsgi</emphasis></para>
+                    <para>serveur de base de données <emphasis>PostGreSQL/MySQL</emphasis>,
+                        PostGreSQL version 8.4 ou supérieure, MySQL version 5 ou supérieure</para>
+                </listitem>
+                <listitem>
+                    <para>serveur <emphasis>SMTP</emphasis></para>
+                </listitem>
+                <listitem>
+                    <para><emphasis>Python 2.7</emphasis> ou plus,
+                        <emphasis>python-beaker</emphasis>, 
+                        <emphasis>python-ldap</emphasis>,
+                        <emphasis>python-levenshtein</emphasis>,
+                        <emphasis>python-ldap (optionnel)</emphasis>,
+                        <emphasis>python-psycopg2</emphasis> (pour une base PostgreSQL, ou la librairie <link xlink:href="http://www.web2py.com/books/default/chapter/29/06#Dependencies">requise</link> pour d'autres bases de données),
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <note>
+            <para xml:lang="en">
+                "Chimithèque" should run with other databases such as Oracle, MSSQL, FireBird, DB2, Informix, Ingres. The application has been successfully tested with PostgreSQL, MySQL and SQLite.
+            </para>
+            <para xml:lang="fr">
+                "Chimithèque" devrait fonctionner avec d'autres bases de données comme Oracle, MSSQL, FireBird, DB2, Informix, Ingres. L'application a été testée avec succès avec PostgreSQL, MySQL et SQLite.
+            </para>
+        </note>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Directories organization</phrase>
+            <phrase xml:lang="fr">Organisation des répertoires</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <para>The installation is divided into:</para>
+                <listitem>
+                    <para>a source directory: <filename>/usr/local/src/chimitheque_src</filename>
+                        for example</para>
+                </listitem>
+                <listitem>
+                    <para>a deployment directory: <filename>/var/www/chimitheque</filename> for
+                        example</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <para>L'installation se décompose en:</para>
+                <listitem>
+                    <para>un répertoire source: <filename>/usr/local/src/chimitheque_src</filename>
+                        par exemple</para>
+                </listitem>
+                <listitem>
+                    <para>un répertoire de déploiement: <filename>/var/www/chimitheque</filename>
+                        par exemple</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Installation steps</phrase>
+            <phrase xml:lang="fr">Étapes d'installation</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>dependencies installation</para>
+                </listitem>
+                <listitem>
+                    <para>"Chimithèque" installation</para>
+                </listitem>
+                <listitem>
+                    <para>PostGreSQL server installation (optionnal if you already have a
+                        databases server)</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="http://httpd.apache.org/"
+                        xlink:title="Apache2">Apache2</link> installation</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>installation des dépendances</para>
+                </listitem>
+                <listitem>
+                    <para>installation de "Chimithèque"</para>
+                </listitem>
+                <listitem>
+                    <para>installation du serveur PostGreSQL (optionnel si vous avez déjà un
+                        serveur de bases de données)</para>
+                </listitem>
+                <listitem>
+                    <para>installation du serveur <link xlink:href="http://httpd.apache.org/"
+                        xlink:title="Apache2">Apache2</link></para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 1: dependencies installation</phrase>
+            <phrase xml:lang="fr">Étape 1: installation des dépendances</phrase>
+        </title>
+        <para xml:lang="en">You are supposed to be logged in <code>root</code>.
+            <code>python 2.7</code> is installed by default.</para>
+        <para xml:lang="fr">Vous êtes connectés en tant que <code>root</code>. <code>python
+            2.7</code> est installé par défaut.</para>
+        <para>
+            <screen>
+                <prompt>bash$ </prompt><userinput>aptitude install python-psycopg2 python-ldap python-beaker python-levenshtein unzip rsync</userinput>
+            </screen>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 2: application installation</phrase>
+            <phrase xml:lang="fr">Étape 2: installation de l'application</phrase>
+        </title>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step A</phrase>
+                <phrase xml:lang="fr">Étape A</phrase>
+            </title>
+            <para xml:lang="en"> Get the "Chimithèque" package in the download
+                section.</para>
+            <para xml:lang="fr"> Récupération du paquet "Chimithèque" dans la section
+                téléchargement.</para>
+            <para>
+                <screen>
+                    <prompt>bash$ </prompt><userinput>cd /usr/local/src</userinput>
+                    <prompt>bash$ </prompt><userinput>wget http://chimitheque.ens-lyon.fr/download/chimitheque_stable.tar.gz</userinput>
+                    <prompt>bash$ </prompt><userinput>tar zxvf chimitheque_stable.tar.gz</userinput>
+                    <prompt>bash$ </prompt><userinput>mv web2py chimitheque_src</userinput>
+                </screen>
+            </para>
+        </sect3>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step B</phrase>
+                <phrase xml:lang="fr">Étape B</phrase>
+            </title>
+            <para xml:lang="en">Choose an instance name - example: <code>prod</code>. Copy
+                of the <filename>chimitheque_sample.properties</filename> file into
+                <filename>chimitheque_[instance].properties</filename>.</para>
+            <para xml:lang="fr">Choix d'un nom d'instance - exemple: <code>prod</code>.
+                Copie du fichier <filename>chimitheque_sample.properties</filename> en
+                <filename>chimitheque_[instance].properties</filename>.</para>
+            
+            <para>
+                <screen>
+                    <prompt>bash$ </prompt><userinput>cd /usr/local/src/chimitheque_src/applications/chimitheque</userinput>
+                    <prompt>bash$ </prompt><userinput>cp chimitheque_sample.properties chimitheque_prod.properties</userinput>
+                </screen>
+            </para>
+        </sect3>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step C</phrase>
+                <phrase xml:lang="fr">Étape C</phrase>
+            </title>
+            <para xml:lang="en">Edit the <filename>chimitheque_[instance].properties</filename>
+                file. It is documented.</para>
+            <para xml:lang="fr">Édition du fichier
+                <filename>chimitheque_[instance].properties</filename>. Il est documenté.</para>
+            <!--
+                <caution>
+                <para xml:lang="en">If you use Apache2 set the <code>CHIMITHEQUE_USER</code> and <code>CHIMITHEQUE_GROUP</code> to <code>www-data</code></para>
+                <para xml:lang="fr">Si vous utilisez Apache2 positionnez la variable <code>CHIMITHEQUE_USER</code> et <code>CHIMITHEQUE_GROUP</code> à <code>www-data</code></para>
+                </caution>
+                
+                <caution>
+                <para xml:lang="en">For a test instance set the <code>SKEL_DEMO_MODE</code> to <code>true</code></para>
+                <para xml:lang="fr">Pour une instance de test positionnez la variable <code>SKEL_DEMO_MODE</code> à <code>true</code></para>
+                </caution>
+            -->
+            <para xml:lang="en">Creation of the deployment directory specified in the
+                <code>CHIMITHEQUE_PATH</code> variable.</para>
+            <para xml:lang="fr">Création du répertoire de déploiement spécifié dans la
+                variable <code>CHIMITHEQUE_PATH</code>.</para>
+            <para>
+                <screen>
+                    <prompt>bash$ </prompt><userinput>mkdir -p /var/www/chimitheque</userinput>
+                </screen>
+            </para>
+        </sect3>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step D</phrase>
+                <phrase xml:lang="fr">Étape D</phrase>
+            </title>
+            <para xml:lang="en">Deployment with the <code>deploy [instance]</code> command.</para>
+            <para xml:lang="fr">Déploiement avec la commande <code>deploy [instance]</code>.</para>
+            <para>
+                <screen>
+                    <prompt>bash$ </prompt><userinput>cd /usr/local/src/chimitheque_src/applications/chimitheque</userinput>
+                    <prompt>bash$ </prompt><userinput>./chimitheque deploy prod</userinput>
+                </screen>
+            </para>
+        </sect3>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 3: PostGreSQL server installation</phrase>
+            <phrase xml:lang="fr">Étape 3: Installation du serveur PostGreSQL</phrase>
+        </title>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step A</phrase>
+                <phrase xml:lang="fr">Étape A</phrase>
+            </title>
+            <para xml:lang="en">Packages installation. Is is the 8.4 version.</para>
+            <para xml:lang="fr">Installation des paquets. C'est la version 8.4.</para>
+            <screen>
+                <prompt>bash$ </prompt><userinput>aptitude install postgresql postgresql-client</userinput>
+            </screen>
+        </sect3>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step B</phrase>
+                <phrase xml:lang="fr">Étape B</phrase>
+            </title>
+            <para xml:lang="en">Serveur configuration. We do NOT use a dedicated cluster to
+                make the installation easier.</para>
+            <para xml:lang="fr">Configuration du serveur. Nous n'utilisons PAS de cluster
+                dédié pour simplifier l'installation.</para>
+            <para xml:lang="en">Choose a database user name. Must be the same as the
+                <code>SKEL_DBUSERNAME</code> variable. We will use the name
+                <code>chimitheque_user</code>.</para>
+            <para xml:lang="fr">Choisissez un nom d'utilisateur de base de données. Doit
+                être identique à la variable <code>SKEL_DBUSERNAME</code>. Nous utiliserons
+                le nom <code>chimitheque_user</code></para>
+            <para xml:lang="en">Append at the end of the
+                <code>/etc/postgresql/8.4/main/pg_hba.conf</code> file:</para>
+            <para xml:lang="fr">Ajouter à la fin du fichier
+                <code>/etc/postgresql/8.4/main/pg_hba.conf</code>:</para>
+            <programlisting>
+                host    all             chimitheque_user     127.0.0.1/32            md5</programlisting>
+            <tip xml:lang="en">
+                <para>We allow the user <code>chimitheque_user</code> to connect to the
+                    database from <code>localhost</code> with a password
+                    (<code>md5</code>).</para>
+            </tip>
+            <tip xml:lang="fr">
+                <para>Nous autorisons l'utilisateur <code>chimitheque_user</code> a se
+                    connecter à la base de données depuis <code>localhost</code> avec un mot
+                    de passe (<code>md5</code>).</para>
+            </tip>
+            <para xml:lang="en">Restarting the server:</para>
+            <para xml:lang="fr">Redémarrage du serveur:</para>
+            <screen>
+                <prompt>bash$ </prompt><userinput>/etc/init.d/postgresql restart</userinput>
+            </screen>
+        </sect3>
+        <sect3>
+            <title>
+                <phrase xml:lang="en">Step C</phrase>
+                <phrase xml:lang="fr">Étape C</phrase>
+            </title>
+            <para xml:lang="en"><code>chimitheque</code> database initialization.</para>
+            <para xml:lang="fr">Initialisation de la base de
+                données<code>chimitheque</code>.</para>
+            <screen>
+                <prompt>bash$ </prompt><userinput>su - postgres</userinput>
+                <prompt>postgres$ </prompt><userinput>psql -p 5432</userinput>
+                <prompt>postgres$ </prompt><userinput>CREATE USER chimitheque_user WITH PASSWORD 'chimitheque_password' SUPERUSER;</userinput>
+                <prompt>postgres$ </prompt><userinput>CREATE DATABASE chimitheque OWNER chimitheque_user;</userinput>
+                <prompt>postgres$ </prompt><userinput>GRANT ALL PRIVILEGES ON DATABASE chimitheque TO chimitheque_user;</userinput>
+            </screen>
+            <itemizedlist xml:lang="en">
+                <listitem>
+                    <para>line 3:
+                        <code>chimitheque_user</code>=<code>SKEL_DBUSERNAME</code></para>
+                </listitem>
+                <listitem>
+                    <para>line 3:
+                        <code>chimitheque_password</code>=<code>SKEL_DBPASSWORD</code></para>
+                </listitem>
+                <listitem>
+                    <para>line 4: <code>chimitheque</code>=<code>SKEL_DBNAME</code></para>
+                </listitem>
+                <!--
+                    <listitem>
+                    <para>lines 6 and 7: the sql files are in the <code>models</code>
+                    directory in the source application directory -
+                    <code>/usr/local/src/chimitheque_src/applications/chimitheque/models</code>
+                    in our example.</para>
+                    </listitem>
+                -->                     
+            </itemizedlist>
+            <itemizedlist xml:lang="fr">
+                <listitem>
+                    <para>line 3:
+                        <code>chimitheque_user</code>=<code>SKEL_DBUSERNAME</code></para>
+                </listitem>
+                <listitem>
+                    <para>line 3:
+                        <code>chimitheque_password</code>=<code>SKEL_DBPASSWORD</code></para>
+                </listitem>
+                <listitem>
+                    <para>line 4: <code>chimitheque</code>=<code>SKEL_DBNAME</code></para>
+                </listitem>
+                <!--
+                    <listitem>
+                    <para>lines 6 and 7: les fichiers sql sont dans le répertoire
+                    <code>models</code> dans le répertoire source de l'application -
+                    <code>/usr/local/src/chimitheque_src/applications/chimitheque/models</code>
+                    dans notre exemple.</para>
+                    </listitem>
+                -->
+            </itemizedlist>
+        </sect3>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 4-b: Apache2 installation</phrase>
+            <phrase xml:lang="fr">Étape 4-b: Installation de Apache2</phrase>
+        </title>
+        <para xml:lang="en">Installing the package:</para>
+        <para xml:lang="fr">Installation du package:</para>
+        <screen>
+            <prompt>bash$ </prompt><userinput>aptitude install apache2-mpm-event libapache2-mod-wsgi</userinput>
+        </screen>
+        <warning>
+            <para xml:lang="en">Do NOT use ''apache2-mpm-worker'', you could encounter
+                performances issues.</para>
+            <para xml:lang="fr">N'utilisez PAS ''apache2-mpm-worker'', vous pourriez
+                rencontrer des problèmes de performances.</para>
+        </warning>
+        <para xml:lang="en">Activating the modules:</para>
+        <para xml:lang="fr">Activation des modules:</para>
+        <screen>
+            <prompt>bash$ </prompt><userinput>a2enmod ssl</userinput> # only for HTTPS use
+            <prompt>bash$ </prompt><userinput>a2enmod wsgi</userinput>
+            <prompt>bash$ </prompt><userinput>a2enmod deflate</userinput>
+            <prompt>bash$ </prompt><userinput>a2enmod expires</userinput>
+        </screen>
+        <para xml:lang="en">Creating a new site (please look at the comments in the file):</para>
+        <para xml:lang="fr">Création du nouveau site (merci de regarder les commentaires dans le fichier):</para>
+        <screen>
+            <prompt>bash$ </prompt><userinput>vim /etc/apache2/site-available/chimitheque</userinput>
+        </screen>
+        <programlisting>
+            <![CDATA[                   
+            <VirtualHost *:443>
+            
+            # change your servername here
+            ServerName chimitheque.ens-lyon.fr
+            
+            # remove the following line if you do not use SSL and change the 443 port in the virtualhost to 80
+            SSLEngine on
+            SSLCertificateFile /etc/ssl/certs/chimitheque.ens-lyon.fr.pem
+            SSLCertificateKeyFile /etc/ssl/private/chimitheque.ens-lyon.fr.key
+            
+            WSGIDaemonProcess web2py user=www-data group=www-data \
+            display-name=%{GROUP} inactivity-timeout=120 maximum-requests=500 processes=5 threads=1
+            
+            WSGIProcessGroup web2py
+            
+            SetOutputFilter DEFLATE
+            AddOutputFilterByType DEFLATE text/html text/plain text/xhtml text/css text/javascript application/x-javascript
+            
+            ExpiresActive On
+            
+            # 1 month
+            ExpiresByType image/ico A2592000
+            ExpiresByType image/png A2592000
+            
+            # 5 days
+            ExpiresByType text/javascript A432000
+            ExpiresByType text/css A4320000
+            ExpiresByType application/x-javascript A432000
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            WSGIScriptAlias / /var/www/chimitheque/wsgihandler.py
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            <Directory /var/www/chimitheque>
+            AllowOverride None
+            Order Allow,Deny
+            Deny from all
+            <Files wsgihandler.py>
+            Allow from all
+            </Files>
+            </Directory>
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            AliasMatch ^/([^/]+)/static/(.*) \
+            /var/www/chimitheque/applications/$1/static/$2
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            <Directory /var/www/chimitheque/applications/*/static/>
+            ExpiresDefault "access plus 7 days"
+            Order Allow,Deny
+            Allow from all
+            </Directory>
+            
+            <LocationMatch ^/([^/]+)/appadmin>
+            Deny from all
+            </LocationMatch>
+            
+            CustomLog /var/log/apache2/access.log common
+            ErrorLog /var/log/apache2/error.log
+            
+            </VirtualHost>
+            ]]>
+        </programlisting>
+        <para xml:lang="en">Activating the site:</para>
+        <para xml:lang="fr">Activation du site:</para>
+        <screen>
+            <prompt>bash$ </prompt><userinput>a2ensite chimitheque</userinput>
+        </screen>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 5: Starting the services</phrase>
+            <phrase xml:lang="fr">Étape 5: Démarrage des services</phrase>
+        </title>
+        <para>
+            <phrase xml:lang="en">Apache2:</phrase>
+            <phrase xml:lang="fr">Apache2:</phrase>
+            <screen>
+                <prompt>bash$ </prompt><userinput>/etc/init.d/apache2 restart</userinput>
+            </screen>
+        </para>
+        <para>
+            <phrase xml:lang="en">You can also test without Apache, the application will then be reacheable at <code>http(s)://urldechimitheque:8000/chimitheque</code>:</phrase>
+            <phrase xml:lang="fr">Vous pouvez aussi tester sans Apache, l'application sera joignable à l'adresse <code>http(s)://urldechimitheque:8000/chimitheque</code>:</phrase>
+            <screen>
+                <prompt>bash$ </prompt><userinput>/var/www/chimitheque/web2py.py -a a_password -i 0.0.0.0</userinput>
+            </screen>
+            <phrase xml:lang="en"><code>/var/www/chimitheque</code> is your <code>CHIMITHEQUE_PATH</code>.</phrase>
+            <phrase xml:lang="fr"><code>/var/www/chimitheque</code> est votre <code>CHIMITHEQUE_PATH</code>.</phrase>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 6: First connection</phrase>
+            <phrase xml:lang="fr">Étape 6: Première connexion</phrase>
+        </title>
+        <para xml:lang="en">Go to the address:
+            <code>http(s)://urldechimitheque/chimitheque</code></para>
+        <para xml:lang="fr">Allez à l'adresse:
+            <code>http(s)://urldechimitheque/chimitheque</code></para>
+        <para xml:lang="en">Use the following login/password:</para>
+        <para xml:lang="fr">Utilisez les identifiant/mot de passe suivants:</para>
+        <programlisting>
+            admin@admin.fr
+            admin</programlisting>
+        <para xml:lang="en">Then click on the <code>password</code> link (top of the screen)
+            to change the admin password.</para>
+        <para xml:lang="fr">Cliquez ensuite sur le lien <code>mot de passe</code> (en haut
+            de l'écran) pour changer le mot de passe administrateur.</para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Step 7: Importing the product database and creating the
+                first user</phrase>
+            <phrase xml:lang="fr">Étape 7: Importation de la base de données et création du
+                premier utilisateur</phrase>
+        </title>
+        <para xml:lang="en">Go to the <code>tools > system tools > manage database</code>
+            menu and <code>import product database</code>. Download the product database file in the
+            download area and upload it. When the upload process is finished the number of product
+            cards is updated (on the top right corner).</para>
+        <para xml:lang="fr">Allez dans le menu <code>outils > outils système > gérer la base
+            de données</code> et <code>importer la base de données de produits</code>.
+            Téléchargez le fichier de base de données de produits et envoyez le. Une fois le
+            chargement terminé le nombre de fiches produits et mis à jour (dans le coin supérieur
+            droit).</para>
+        <para xml:lang="en">You now have to create a first user with the administrative
+            privileges. This user will then create other users and entities. It is often a chemistry
+            engineer or a person in charge of chemical products management in your organization. Go
+            to the <code>tools > manage users/store locations/entities</code> menu and click on
+            <code>create user</code>. Check the <code>is admin</code> check box, and fill in the
+            required fields. An email is sent to the new user once the form is submitted so that he
+            can initialize is password.</para>
+        <para xml:lang="fr">Vous devez maintenant créer un premier utilisateur avec des
+            privilèges administrateur. Cet utilisateur créera ensuite d'autres utilisateurs et
+            entités. Il s'agit souvent d'un ingénieur chimiste ou d'une personne en charge de la
+            gestion des produits chimiques dans votre établissement. Allez dans le menu <code>outils
+                > gérer les utilisateurs/entrepôts/entités</code> et cliquez sur <code>créer
+                    utilisateur</code>. Cochez la case <code>est admin</code>, et renseignez les champs
+            requis. Un email est envoyé au nouvel utilisateur après la soumission du formulaire pour
+            qu'il puisse initialiser son mot de passe.</para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">0.2 to 0.3 migration</phrase>
+            <phrase xml:lang="fr">migration de la version 0.2 à la version 0.3</phrase>
+        </title>
+        <para xml:lang="en">A database metadata conversion is required to migrate from the 0.2 to the 0.3 version.</para>
+        <para xml:lang="fr">Une conversion de métadonnées de la base de données est nécessaire pour migrer de la version 0.2 à 0.3.</para>
+        <para xml:lang="en">
+            Install the new version as specified in the step2 but before the <code>./chimitheque deploy prod</code> command run the <code>./chimitheque -c migrate-to-03 -i prod -o no-check-dependencies</code> command.
+        </para>
+        <para xml:lang="fr">
+            Installez la nouvelle version comme spécifié à l'étape 2 mais avant de lancer la commande<code>./chimitheque deploy prod</code> exécutez la commande <code>./chimitheque -c migrate-to-03 -i prod -o no-check-dependencies</code>.
+        </para>   
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">Updating Chimithèque</phrase>
+            <phrase xml:lang="fr">Mettre à jour Chimithèque</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist>
+                <listitem><para>before the 0.3 version, repeat the procedure described at the step 2 with the new package.</para></listitem>
+                <listitem><para>since the 0.3 version use the command <code>./chimitheque -c update -i prod -o update-stable</code> and then <code>./chimitheque -c deploy -i prod</code>.</para></listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist>
+                <listitem><para>avant la version 0.3, répétez la procédure décrite à l'étape 2 avec le nouveau package.</para></listitem>
+                <listitem><para>depuis la version 0.3 utilisez la commande <code>./chimitheque -c update -i prod -o update-stable</code> et ensuite <code>./chimitheque -c deploy -i prod</code>.</para></listitem>
+            </itemizedlist>
+        </para>
+    </sect2>
+    <sect2>
+        <title>
+            <phrase xml:lang="en">In case of problem</phrase>
+            <phrase xml:lang="fr">En cas de problème</phrase>
+        </title>
+        <para xml:lang="en">Check that the <code>/var/www/chimitheque</code> directory belongs to <code>www-data:www-data</code> (Apache2 installation) or <code>uwsgi:uwsgi</code> (Nginx + Uwsgi installation).</para>
+        <para xml:lang="fr">Vérifiez que le répertoire <code>/var/www/chimitheque</code> appartient bien à <code>www-data:www-data</code> (installation Apache2) ou <code>uwsgi:uwsgi</code> (installation Nginx + Uwsgi).</para>
+        <para xml:lang="en">Check that <emphasis>Apache2 mod-python</emphasis> is <emphasis>not</emphasis> installed (only for Apache2 installation).</para>
+        <para xml:lang="fr">Vérifiez que <emphasis>Apache2 mod-python</emphasis> n'est <emphasis>pas</emphasis> installé (seulement pour l'installation Apache2).</para>               
+        <para xml:lang="en">Check that your database server is reachable with the command <code>telnet db_base_ip db_base_port</code>.</para>
+        <para xml:lang="fr">Vérifiez que votre serveur de base de données est joignable avec la commande <code>telnet db_base_ip db_base_port</code>.</para>
+        <para xml:lang="en">Check that your database user in your <code>SKEL_DBCONNECTION</code> string can connect to the database with its password.</para>
+        <para xml:lang="fr">Vérifiez que votre utilisateur de base de données dans notre chaîne de connexion <code>SKEL_DBCONNECTION</code> peut se connecter avec son mot de passe.</para>
+    </sect2>
+    
+</sect1>

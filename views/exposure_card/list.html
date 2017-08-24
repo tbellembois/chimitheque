@@ -1,0 +1,150 @@
+{{extend 'layout.html'}}
+
+
+<div id="exposure_card_list">
+
+    {{=DIV(IMG(_src="%s/tip.png" %images_base_url),
+       _class="help",
+       _id="exposure_card")}}
+
+    <div class="advice" id="exposure_card" style="display: none;">
+    </div>
+
+    {{if exposure_cards is not None:}}
+
+        {{for exposure_card in exposure_cards:}}
+            
+            <div class="exposure_card">
+
+                   <div class="exposure_card_delete">
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL_BLUE), 
+                                 _alt=cc.get_string("DELETE_EXPOSURE_CARD")), 
+                             _href='#',
+                             _title=cc.get_string("DELETE_EXPOSURE_CARD"), 
+                             _onclick="""
+                                      jQuery(function() {
+                                        displayDeleteButton("%s", 'exposure_card');
+                                      });
+                                      """ % exposure_card.id)}}
+                             
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                             _alt=cc.get_string("I_AM_SURE"),
+			                     	 _id='exposure_card_action_delete_%s' % exposure_card.id,
+			                     	 _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete', 
+                                           args=exposure_card.id, 
+                                           vars=request.vars)
+                                 )}}                     
+                    </div>
+
+                <div id="exposure_card_title_{{=exposure_card.id}}_txt" class="exposure_card_title">
+                    {{=exposure_card.title}}
+
+                <div class="exposure_card_edit">
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                             _alt=cc.get_string("EDIT")), 
+                         _title=cc.get_string("EDIT"), 
+                         _href='#', 
+                         _onclick="enableTitleInput('%s')" % exposure_card.id)}}</div>
+                </div>
+
+                <div id="exposure_card_title_{{=exposure_card.id}}_form" style='display: None;' class="exposure_card_form">
+                {{=db.exposure_card.title.widget(db.exposure_card.title, exposure_card.title)}}
+                {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                     _title=cc.get_string("SAVE"),
+                     _href='#', 
+                     _id="exposure_card_title_%s" % exposure_card.id,
+                     _onclick="updateTitleInput('%s')" % exposure_card.id)}}
+                </div>
+ 
+            {{if not exposure_card.archive:}}
+                {{_img=cc.IMAGE_EXPOSURE_CARD_ACTIVE}}
+            {{else:}}
+                {{_img=cc.IMAGE_EXPOSURE_CARD}}
+            {{pass}}
+
+            <div class="exposure_card_image">
+            {{=A(IMG(_src='%s/%s' %(images_base_url, _img), 
+                     _alt=cc.get_string("VIEW_EXPOSURE_CARD")), 
+                     _title=cc.get_string("VIEW_EXPOSURE_CARD"), 
+                     _href=URL(request.application,
+                               request.controller,
+                               'read',
+                               vars=request.vars,
+                               args=exposure_card.id))}}
+               
+                {{if exposure_card.archive:}}
+                    <div class="exposure_card_activate">
+                        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EXPOSURE_CARD_ACTIVATE),
+                                 _alt=cc.get_string("EXPOSURE_CARD_ACTIVATE")), 
+                              _title=cc.get_string("EXPOSURE_CARD_ACTIVATE"), 
+                              _href=URL(request.application,
+                                        request.controller,
+                                        'set_active',
+                                        args=exposure_card.id))}}</div>
+                {{pass}}
+            </div>
+
+            <div id="nb_product">
+                {{=len(exposure_card.exposure_items)}} {{=cc.get_string('PRODUCT')}}
+            </div>
+            <div id="date">
+                c: {{=exposure_card.creation_datetime}}<br>
+                m: {{=exposure_card.modification_datetime}}
+            </div>
+            </div>
+        {{pass}}
+
+    {{pass}}
+
+</div>
+<div id='create_exposure_card'>
+	{{=A(cc.get_string("CREATE_EXPOSURE_CARD"), 
+                   _id='create_exposure_card',
+			       _href=URL(a=application, 
+							 c=controller, 
+							 f='create'))}}
+</div>
+<script>
+function enableTitleInput(exposure_card_id) {
+        $( "div#exposure_card_title_" + exposure_card_id + "_form" ).show();
+        $( "div#exposure_card_title_" + exposure_card_id + "_txt" ).hide();
+};
+function updateTitleInput(exposure_card_id) {
+        var field_value =  $( "div#exposure_card_title_" + exposure_card_id + "_form > input" ).val()
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajx_update_exposure_card_title/" + exposure_card_id,
+    		   data: {exposure_card_id:exposure_card_id, field_value:field_value},
+    		   dataType: "json",
+    		   async: false,
+               success: function(msg) {
+                    console.log(msg);
+                    
+                    if (msg.error) {
+                        alert(msg.error);
+                    }
+                    else {
+                        $( "div#exposure_card_title_" + exposure_card_id + "_form" ).hide();
+                        $( "div#exposure_card_title_" + exposure_card_id + "_txt" ).html(msg.txt);
+                        $( "div#exposure_card_title_" + exposure_card_id + "_txt" ).show();
+                    };
+                    event.stopPropagation();
+               }
+    		 });
+};
+
+$(document).ready(function() {
+
+    $('div[class=help][id=exposure_card]').mouseover(function() {
+        $('div.advice#exposure_card').show(); 
+    });
+    $('div[class=help][id=exposure_card]').mouseout(function() {
+        $('div.advice#exposure_card').hide(); 
+    });
+
+});
+</script>

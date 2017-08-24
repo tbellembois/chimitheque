@@ -1,0 +1,24 @@
+{{extend 'layout.html'}}
+
+{{if not auth.user:}}
+
+{{cc.get_string("WELCOME_TO")}} <b>chimithèque</b>.
+
+<br/><br/>
+
+{{=T('If you have an account please')}} <a href="/{{=application}}/default/user/login">{{=T('log in')}}</a>.<br/>
+<br/>
+<hr/>
+
+<b>{{=T('project Web site')}}</b>: <a href="https://listes.cru.fr/wiki/chimitheque/index">https://listes.cru.fr/wiki/chimitheque/index</a>
+
+<hr/>
+
+{{=IMG(_alt='fr_flag', _src=URL(request.application,'static','images/iceweasel.png'))}}
+<i>{{=T('Site optimized to run under Mozilla Firefox')}}</i>
+
+{{else:}}
+
+{{=redirect(URL(request.application, 'product','search', vars={'id': '-1'}))}}
+
+{{pass}}

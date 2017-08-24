@@ -1,0 +1,235 @@
+{{extend 'layout.html'}}
+
+{{view = request.vars['view'] if 'view' in request.vars else 'search'}}
+
+
+{{=DIV(IMG(_src="%s/tip.png" %images_base_url),
+   _class="help",
+   _id="user_entity_store_location")}}
+
+<div class="advice" id="user_entity_store_location" style="display: none;">
+	<li>{{=cc.get_string("ENTITY_DELETE_ADVICE")}}
+	</li>
+	<li>{{=cc.get_string("STORE_LOCATION_DELETE_ADVICE")}}
+	</li>
+	<li>{{=cc.get_string("PERSON_DELETE_ADVICE")}}
+	</li>
+	<li>{{=cc.get_string("STORE_LOCATION_LIST_ADVICE")}}
+	</li>
+	<li>{{=cc.get_string("PERSON_CREATE_ADVICE")}}
+	</li>
+</div>
+
+
+<br/>
+
+<div id="create_person" class="expose"></div>
+<div id="create_entity" class="expose"></div>
+<div id="create_store_location" class="expose"></div>
+
+<div id="entity_search_result">
+
+<div id="content">
+
+    {{if nb_entries != 0:}}
+    
+		{{=paginator}}
+        
+        <div id="paginate_info"> 
+            {{=paginate_selector}}<br/>
+            {{=paginate_info}}
+        </div>
+
+		<div id="request">{{=XML(label)}}</div>
+    
+    {{pass}}
+
+ 	{{if entities is None and persons is None:}}
+	 	<div id='no_result'>
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ELODIE), _title='elodie')}}
+			<span>
+				{{=cc.get_string("NO_PRODUCT_MATCH")}}
+			</span>
+		</div>
+	{{pass}}
+
+	{{if entities is not None:}}
+		<div class='entity_list'>
+		<ul>
+		{{for entity in entities:}}
+			<li>
+	    	{{=DIV(A('%s' % entity.role if entity.role != 'all_entity' else cc.get_string("USER_ALL_ENTITY"),
+			    _href=URL(a=application, 
+			              c='entity', 
+			              f='list_action.load', 
+			              args=[entity.id]),
+			    _class='entity_name',
+			    _id='entity_name_%s' % entity.id, 
+		      cid='list_action_%s' %(entity.id)),
+		      _class="entity_identity")}}
+			<div id="list_action_{{=entity.id}}" class="entity_detail"></div>
+			</li>
+		{{pass}}
+		</ul>
+		</div>
+		
+	{{pass}}
+	
+	{{if persons is not None:}}
+		
+		<div class='person_list'>
+		<ul>
+		{{for person in persons:}}
+
+			<li>
+            <div class="person_identity">
+			{{if person.id == auth.user.id:}}
+				{{='%s %s (%s)' %(person.last_name, person.first_name, person.email)}}
+			{{else:}}
+			    {{=A('%s %s (%s)' %(person.last_name, person.first_name, person.email),
+							    _href=URL(a=application, 
+							      		  c='user', 
+							      		  f='list_action.load', 
+							      		  args=[person.id], 
+							      		  vars=request.vars),
+							    _class='person_name',
+							    _id='person_name_%s' % person.id,
+						      cid='list_action_%s' %person.id)}}
+			{{pass}}
+			
+			{{if person.is_admin():}}
+			    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ADMIN), 
+				           _title=cc.get_string("ADMINISTRATOR"),
+				           _alt=cc.get_string("ADMINISTRATOR")), _class="person_admin_icon")}}
+			{{pass}}
+			{{if person.virtual:}}
+			    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_VIRTUAL), 
+				    _title=cc.get_string("VIRTUAL"),
+				    _alt=cc.get_string("VIRTUAL")), _class="person_virtual_icon")}}
+			{{pass}}
+			
+			<div class="person_status">
+			    {{if person.registration_key == 'pending':}}
+			    	{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_PENDING), 
+					           _title=cc.get_string("PERSON_PENDING"),
+					           _alt=cc.get_string("PERSON_PENDING"))}}
+				{{elif person.registration_key == 'unactive':}}
+					<i>&nbsp;{{=cc.get_string("PERSON_UNACTIVE")}}</i>
+				{{elif person.registration_key == 'disabled':}}
+					{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DISABLED), 
+					           _title=cc.get_string("PERSON_DISABLED"),
+					           _alt=cc.get_string("PERSON_DISABLED"))}}
+				{{elif person.entities == []:}}
+					<i>&nbsp;{{=cc.get_string("PERSON_NO_ENTITY")}}</i>
+			    {{pass}}
+			</div>
+			
+			</div>
+			<div class="list_action" id="list_action_{{=person.id}}"></div>
+			<div id="user_card_{{=person.id}}" class="user_card"></div>
+		    
+
+			</li>
+				
+	    {{pass}}
+	    </ul>
+	    </div>
+	    
+	{{pass}}
+
+    {{if nb_entries != 0:}}
+
+		{{=paginator}}
+		    
+    {{pass}}
+
+    </div>
+
+</div>
+
+{{if auth.has_permission('admin') or auth.has_permission('create_user'):}}
+	{{=A(cc.get_string("CREATE_PERSON"), 
+                   _id='create_person',
+			       _href=URL(a=application, 
+							 c='user', 
+							 f='create'),
+		cid='create_person')}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_ent'):}}
+	{{=A(cc.get_string("CREATE_ENTITY"), 
+                   _id='create_entity',
+			       _href=URL(a=application, 
+							 c='entity', 
+							 f='create'),
+		cid='create_entity')}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_sl'):}}
+	{{=A(cc.get_string("CREATE_STORE_LOCATION"), 
+                   _id='create_store_location',
+			       _href=URL(a=application, 
+							 c='store_location', 
+							 f='create'),
+		cid='create_store_location')}}
+{{pass}}
+
+<div id="entity_search">
+
+    <div id="content">
+    
+    {{=form.custom.begin}}
+   
+   		{{if (entities and len(entities)>0) or (persons and len(persons)>0):}}
+          	<div id="display_by">
+       			{{=cc.get_string('DISPLAY_BY')}}:&nbsp;
+                <!--
+                <select name="display_by" onchange="$('#entity_search form').submit();">
+				    <option value="entity">{{=cc.get_string('ENTITY')}}</option>
+				    <option value="person" {{='selected' if request.vars['display_by'] == 'person' else ''}} >{{=cc.get_string('PERSON')}}</option>
+				</select>  
+-->
+                <input type="radio" name="display_by" value="entity" {{='checked' if request.vars['display_by'] == 'entity' else ''}} onchange="$('#entity_search form').submit();">{{=cc.get_string('ENTITY')}}
+                <input type="radio" name="display_by" value="person" {{='checked' if request.vars['display_by'] == 'person' else ''}} onchange="$('#entity_search form').submit();">{{=cc.get_string('PERSON')}}
+
+			</div>
+		{{pass}}
+   
+    <input type="hidden" value="form_submitted" name="form_submitted"/>
+
+    <div id="submit" class="field">
+    {{=form.custom.submit}}
+    </div>
+
+{{for field_name in [
+                    'role', 
+                    'member', 
+                    ]:}}
+<div id="{{=field_name}}" class="field">
+
+<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+
+{{pass}}
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+</div>
+
+{{=form.custom.end}}
+</div>
+</div>
+
+<script>
+$(document).ready(function() {
+
+    $('div[class=help][id=user_entity_store_location]').mouseover(function() {
+        $('div.advice#user_entity_store_location').show(); 
+    });
+    $('div[class=help][id=user_entity_store_location]').mouseout(function() {
+        $('div.advice#user_entity_store_location').hide(); 
+    });
+
+});
+</script>

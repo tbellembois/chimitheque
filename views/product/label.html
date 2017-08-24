@@ -1,0 +1,209 @@
+<li>
+
+{{if is_did_you_mean and session.search_name==product.name.label:}}
+	{{didyoumean='didyoumean'}}
+{{else:}}
+	{{didyoumean='nodidyoumean'}}
+{{pass}}
+
+<div class="product">
+
+	<div class='name-syn' id="{{=didyoumean}}">
+
+		<div id='name'>{{=SPAN(A('%s '
+			%(product.name.label.replace('@', '-').replace('|', ' | ')),
+			_class='product_name', _href=URL(a=application, c=controller,
+			f='details', args=[product.id], vars=request.vars),
+			cid='product_detail_%s' %product.id), _id='product%s' %product.id)}}
+		</div>
+
+		<script>
+		$( document ).ready(function() {
+			$('{{="span#product%s" %product.id}}').tooltip({
+			    content:  function(){return "{{=XML('%s<br/>%s' %(product.name.label, "".join(['<li>%s</li>' %s.label for s in product.synonym] if product.synonym is not None and product.synonym != [None] else [])))}}";},
+			    items: '{{="span#product%s" %product.id}}'
+			});
+			// items needed for element that do not have a title attribute
+			$('{{="span#product%s" %product.id}}').hover(function(){
+			    $(this).tooltip("open");
+			});
+		});
+		</script>
+
+	</div><!-- id='name-syn' -->
+
+	<div class="formula">
+		{{=product.empirical_formula.label if (product.empirical_formula is not None and product.empirical_formula != 0) else ''}}
+	</div>
+
+	<div class="specificity">
+		{{=product.specificity}}
+	</div>
+
+	<div id='img-is-cmr'>
+		{{if product.is_cmr:}}
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CMR), _title=cc.get_string("PRODUCT_IS_CMR"))}}
+			{{=product.cmr_cat.replace('|', ' ') if product.cmr_cat is not None else ''}}
+		{{pass}}
+	</div>
+    <div id='img-is-radio'>
+        {{if product.is_radio:}}
+            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_RADIO), _title=cc.get_string("PRODUCT_IS_RADIO"))}}
+        {{pass}}
+    </div>
+
+	<div id='bookmark'>
+		{{if product.has_bookmark(user_id=auth.user.id):}}
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_BOOKMARK), _title=cc.get_string("UNBOOKMARK"), _id="bookmark_%s" %product.id)}}
+		{{else:}}
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNBOOKMARK), _title=cc.get_string("BOOKMARK"), _id="unbookmark_%s" %product.id)}}
+		{{pass}}
+	</div>
+
+	<div id='exposure_card'>
+		{{if auth_person.has_product_in_active_exposure_card(product):}}
+	    {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_QUICK_ADD_EXPOSURE_CARD), _title=cc.get_string("QUICK_DELETE_EXPOSURE_CARD"), _id="quick_aec_%s" %product.id)}}
+		{{else:}}
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_QUICK_DELETE_EXPOSURE_CARD), _title=cc.get_string("QUICK_ADD_EXPOSURE_CARD"), _id="quick_dec_%s" %product.id)}}
+		{{pass}}
+	</div>
+
+
+	{{if auth.has_permission('admin') or auth.has_permission('select_sc'):}}
+		<div id='img-is-in'>
+			{{if product.is_in_entity_of(user_id=auth.user.id):}}
+				{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ENTITY), _title=cc.get_string("PRODUCT_IN_MY_ENTITY"))}}
+			{{elif product.is_in_entity_except_of(user_id=auth.user.id):}}
+				{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ORGANIZATION), _title=cc.get_string("PRODUCT_IN_OTHER_ENTITY"))}}
+			{{pass}}
+		</div>
+	{{pass}}
+
+	{{if product.restricted_access:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_LOCK),
+	   		   _alt=cc.get_string('DB_PRODUCT_RESTRICTED_ACCESS_LABEL'),
+	   		   _title=cc.get_string('DB_PRODUCT_RESTRICTED_ACCESS_LABEL'))}}
+	{{pass}}
+
+	{{if product.has_broken_reference:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{pass}}
+</div><!-- class='product' -->
+
+<div class="product_detail" id="product_detail_{{=product.id}}">
+</div>
+
+
+</li>
+
+<script>
+jQuery(document).ready(function(){
+
+  function _bookmark(event) {
+
+        var product_id = event.data
+    	var unbookmark_image = $("img[id=unbookmark_" + product_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/bookmark/" + product_id,
+    		   data: {product_id:product_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+            	  unbookmark_image.hide();
+            	  unbookmark_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_BOOKMARK}}");
+            	  unbookmark_image.attr("id", "bookmark_" + product_id);
+            	  unbookmark_image.fadeIn('slow');
+
+                  jQuery("img[id=bookmark_" + product_id + "]").unbind();
+                  jQuery("img[id=bookmark_" + product_id + "]").bind('click',product_id,_unbookmark);
+               }
+    		 });
+  };
+
+  function _unbookmark(event) {
+
+      var product_id = event.data
+  	  var bookmark_image = $("img[id=bookmark_" + product_id + "]")
+
+      var ret = $.ajax({
+  		   type: "POST",
+  		   url: "/{{=application}}/{{=controller}}/unbookmark/" + product_id,
+  		   data: {product_id:product_id},
+  		   dataType: "json",
+  		   async: false,
+             success: function() {
+
+          	  bookmark_image.hide();
+          	  bookmark_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_UNBOOKMARK}}");
+          	  bookmark_image.attr("id", "unbookmark_" + product_id);
+          	  bookmark_image.fadeIn('slow');
+
+                jQuery("img[id=unbookmark_" + product_id + "]").unbind();
+                jQuery("img[id=unbookmark_" + product_id + "]").bind('click',product_id,_bookmark);
+             }
+  		 });
+};
+
+  jQuery("img[id=unbookmark_{{=product.id}}]").bind('click',{{=product.id}},_bookmark);
+
+  jQuery("img[id=bookmark_{{=product.id}}]").bind('click',{{=product.id}},_unbookmark);
+
+  function _quick_aec(event) {
+
+        var product_id = event.data
+    	var quick_dec_image = $("img[id=quick_dec_" + product_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/quick_add_exposure_card/" + product_id,
+    		   data: {product_id:product_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+            	  quick_dec_image.hide();
+            	  quick_dec_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_QUICK_ADD_EXPOSURE_CARD}}");
+            	  quick_dec_image.attr("id", "quick_aec_" + product_id);
+            	  quick_dec_image.fadeIn('slow');
+
+                  jQuery("img[id=quick_aec_" + product_id + "]").unbind();
+                  jQuery("img[id=quick_aec_" + product_id + "]").bind('click',product_id,_quick_dec);
+               }
+    		 });
+  };
+
+  function _quick_dec(event) {
+
+        var product_id = event.data
+    	var quick_aec_image = $("img[id=quick_aec_" + product_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/quick_delete_exposure_card/" + product_id,
+    		   data: {product_id:product_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+            	  quick_aec_image.hide();
+            	  quick_aec_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_QUICK_DELETE_EXPOSURE_CARD}}");
+            	  quick_aec_image.attr("id", "quick_dec_" + product_id);
+            	  quick_aec_image.fadeIn('slow');
+
+                  jQuery("img[id=quick_dec_" + product_id + "]").unbind();
+                  jQuery("img[id=quick_dec_" + product_id + "]").bind('click',product_id,_quick_aec);
+               }
+    		 });
+  };
+
+
+  jQuery("img[id=quick_dec_{{=product.id}}]").bind('click',{{=product.id}},_quick_aec);
+  jQuery("img[id=quick_aec_{{=product.id}}]").bind('click',{{=product.id}},_quick_dec);
+
+});
+</script>

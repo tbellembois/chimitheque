@@ -1,0 +1,18 @@
+{{if 'role' in request.vars:}}
+	<script>
+	$( document ).ready(function() {
+		console.log('update {{=request.args[0]}}');
+		$.mask.close();
+		$('a[class="entity_name"][id="entity_name_{{=request.args[0]}}"]').text("{{=request.vars.role}}");
+		$link = $('a[class="entity_name"][id="entity_name_{{=request.args[0]}}"]');
+		$link[0].click();
+	});
+	</script>
+{{else:}}
+	<script>
+	$( document ).ready(function() {
+		console.log('delete {{=request.args[0]}}');
+		$('a[id="entity_name_{{=request.args[0]}}"]').closest('li').remove();
+	});
+	</script>
+{{pass}}

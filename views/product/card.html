@@ -1,0 +1,283 @@
+{{include 'chimitheque_import.html'}}
+
+{{if is_history:}}
+	<div class="product_card_history">
+            <div id="title">{{=cc.get_string("PRODUCT_HISTORY")}}</div>
+{{else:}}
+	<div class="product_card">
+	<h2>{{=cc.get_string("PRODUCT_CARD")}} - {{=product.name.label}} {{=product.specificity}}</h2>
+{{pass}}
+
+<div id="action">
+<div id="close_window">
+{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW),
+     _alt=cc.get_string("CLOSE_WINDOW")), 
+     _title=cc.get_string("CLOSE_WINDOW"), 
+     _onclick='$("#product_card_%s > *").remove();' % product.id)}}
+</div>
+
+
+{{if not is_history and (auth.has_permission('update_pc') or auth.has_permission('admin')):}}
+	<div>
+        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE),
+             _alt=cc.get_string("UPDATE_PRODUCT_CARD")), 
+             _href='/%s/product/update/%s' %(application, product.id), 
+             _title=cc.get_string("UPDATE_PRODUCT_CARD"))}}
+        </div>
+{{pass}}
+
+{{if auth.has_permission('create_pc') or auth.has_permission('admin'):}}
+	<div>
+        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLONE_PRODUCT),
+                 _alt=cc.get_string("CLONE_PRODUCT_CARD")), 
+             _href='/%s/product/create/%s' %(application, product.id), 
+             _title=cc.get_string("CLONE_PRODUCT_CARD"))}}
+        </div>
+{{pass}}
+
+
+{{if product.restricted_access:}}
+	{{_permitted = auth.has_permission('delete_rpc') or auth.has_permission('admin')}}
+{{else:}}
+	{{_permitted = auth.has_permission('delete_pc') or auth.has_permission('admin')}}
+{{pass}}
+
+{{if (not is_history) and \
+_permitted and \
+(product.is_orphan()):}}
+
+                    <span id="action">
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE), 
+                                 _alt=cc.get_string("DELETE_PRODUCT_CARD")), 
+                             _title=cc.get_string("DELETE_PRODUCT_CARD"), 
+                             _onclick="""
+                                      jQuery(function() {
+                                        displayDeleteButton("%s", 'product');
+                                      });
+                                      """ % product.id)}}
+                                                   
+                          {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_BIG),
+		                             _alt=cc.get_string("I_AM_SURE"),
+			                     	 _id='product_action_delete_%s' % product.id,
+			                     	 _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete' if not product.restricted_access else 'delete_restricted', 
+                                           args=product.id, 
+                                           vars=request.vars)
+                                 )}} 
+                    </span>
+
+{{pass}}
+
+{{if not is_history and product.has_history():}}
+	<div>
+		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_PRODUCT_HISTORY),
+			 _alt=cc.get_string("PRODUCT_HISTORY_LIST")),
+		     _href=URL(a=application, c=controller, f='list_history', args=product.id),
+		     _title=cc.get_string("PRODUCT_HISTORY_LIST"),
+		     cid='history_list_%s' %product.id)}}
+	</div>
+	<div id="history_list_{{=product.id}}" class="history"/>
+{{pass}}
+
+</div>
+{{_broken_reference_list=product.broken_reference_list}}
+
+{{if product.restricted_access:}}
+	{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_LOCK),
+		   _alt=cc.get_string('DB_PRODUCT_RESTRICTED_ACCESS_LABEL'),
+		   _title=cc.get_string('DB_PRODUCT_RESTRICTED_ACCESS_LABEL'))}}
+{{pass}}<br/>
+<div id="name" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_NAME_LABEL')}}</div>
+	<div class="widget">{{=product.name.label.replace('@', '-')}}</div>
+</div>
+<div id="synonym" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_SYNONYM_LABEL')}}</div>
+	<div class="widget">{{=', '.join([_syn.label for _syn in product.synonym if _syn is not None])}}</div>
+</div>
+<div id="person" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_PERSON_LABEL')}}</div>
+	<div class="widget">{{='%s %s' % (product.person.first_name, product.person.last_name) if product.person is not None else ''}}</div>
+</div>
+<div id="creation_datetime" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_CREATION_DATETIME_LABEL')}}</div>
+	<div class="widget">{{=product.creation_datetime if product.creation_datetime is not None else ''}}</div>
+</div>
+<div id="cas_number" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_CAS_NUMBER_LABEL')}}</div>
+	<div class="widget">{{=product.cas_number if product.cas_number is not None else ''}}</div>
+</div>
+<div id="ce_number" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_CE_NUMBER_LABEL')}}</div>
+	<div class="widget">{{=product.ce_number if product.ce_number is not None else ''}}</div>
+</div>
+<div id="specificity" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_SPECIFICITY_LABEL')}}</div>
+	<div class="widget">{{=product.specificity if product.specificity is not None else ''}}</div>
+</div>
+<div id="physical_state" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_PHYSICAL_STATE_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'physical_state' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		{{=product.physical_state.label if product.physical_state is not None else ''}}
+	{{pass}}
+	</div>
+</div>
+<div id="td_formula" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_TD_FORMULA_LABEL')}}</div>
+	<div class="widget">
+	{{_td_formula = product.td_formula}}
+	{{if _td_formula is not None:}}
+		{{=A('%s' % cc.pretty_link(_td_formula), _href='%s' % _td_formula)}}
+	{{pass}}
+	</div>
+</div>
+<div id="empirical_formula" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_EMPIRICAL_FORMULA_LABEL')}}</div>
+	<div class="widget">{{=product.empirical_formula.label if product.empirical_formula is not None else ''}}</div>
+</div>
+<div id="linear_formula" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_LINEAR_FORMULA_LABEL')}}</div>
+	<div class="widget">{{=product.linear_formula.label if product.linear_formula is not None else ''}}</div>
+</div>
+<div id="class_of_compounds" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_CLASS_OF_COMPOUNDS_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'class_of_compounds' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		{{=', '.join([_coc.label for _coc in product.class_of_compounds if _coc is not None])}}
+	{{pass}}
+	</div>
+</div>
+<div id="hazard_code" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_HAZARD_CODE_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'hazard_code' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		{{for _hazard_code_label in [_hazard_code.label for _hazard_code in product.hazard_code if product.hazard_code is not None]:}}
+			{{=IMG(_src="%s/picto_%s.png" % (cc.images_base_url, _hazard_code_label))}}
+		{{pass}}
+	{{pass}}
+	</div>
+</div>
+<div id="symbol" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_SYMBOL_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'symbol' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		{{for _symbol_label in [_symbol.label for _symbol in product.symbol if product.symbol is not None]:}}
+			{{=IMG(_src="%s/picto_%s.png" % (cc.images_base_url, _symbol_label))}}
+		{{pass}}
+	{{pass}}
+	</div>
+</div>
+<div id="signal_word" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_SIGNAL_WORD_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'signal_word' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		{{=product.signal_word.label if product.signal_word is not None else ''}}
+	{{pass}}
+	</div>
+</div>
+<div id="hazard_statement" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_HAZARD_STATEMENT_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'hazard_statement' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		<ul>
+		{{for _hazard_statement_label in [_hazard_statement.label for _hazard_statement in product.hazard_statement if product.hazard_statement is not None]:}}
+			<li>{{=str(_hazard_statement_label)}}</li>
+		{{pass}}
+		</ul>
+	{{pass}}
+	</div>
+</div>
+<div id="precautionary_statement" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_PRECAUTIONARY_STATEMENT_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'precautionary_statement' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		<ul>
+		{{for _precautionary_statement_label in [_precautionary_statement.label for _precautionary_statement in product.precautionary_statement if product.precautionary_statement is not None]:}}
+			<li>{{=str(_precautionary_statement_label)}}</li>
+		{{pass}}
+		</ul>
+	{{pass}}
+	</div>
+</div>
+<div id="risk_phrase" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_RISK_PHRASE_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'risk_phrase' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		<ul>
+		{{for _risk_phrase_label in [_risk_phrase.label for _risk_phrase in product.risk_phrase if product.risk_phrase is not None]:}}
+			<li>{{=str(_risk_phrase_label)}}</li>
+		{{pass}}
+		</ul>
+	{{pass}}
+	</div>
+</div>
+<div id="safety_phrase" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_SAFETY_PHRASE_LABEL')}}</div>
+	<div class="widget">
+	{{if _broken_reference_list is not None and 'safety_phrase' in _broken_reference_list:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
+	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
+	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
+	{{else:}}
+		<ul>
+		{{for _safety_phrase_label in [_safety_phrase.label for _safety_phrase in product.safety_phrase if product.safety_phrase is not None]:}}
+			<li>{{=str(_safety_phrase_label)}}</li>
+		{{pass}}
+		</ul>
+	{{pass}}
+	</div>
+</div>
+<div id="msds" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_MSDS_LABEL')}}</div>
+	<div class="widget">
+	{{_msds = product.msds}}
+	{{if _msds is not None:}}
+		{{=A('%s' % cc.pretty_link(_msds), _href='%s' % _msds)}}
+	{{pass}}
+	</div>
+</div>
+<div id="disposal_comment" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_DISPOSAL_COMMENT_LABEL')}}</div>
+	<div class="widget">{{=product.disposal_comment if product.disposal_comment is not None else ''}}</div>
+</div>
+<div id="remark" class="field">
+	<div class="label">{{=cc.get_string('DB_PRODUCT_REMARK_LABEL')}}</div>
+	<div class="widget">{{=product.remark if product.remark is not None else ''}}</div>
+</div>
+
+</div>

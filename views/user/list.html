@@ -1,0 +1,69 @@
+{{extend 'layout.html'}}
+
+{{if auth.has_permission('admin') or auth.has_permission('create_user'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_PERSON"), _onclick="window.location.href='/%s/user/create'" %(application))}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_ent'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_ENTITY"), _onclick="window.location.href='/%s/entity/create'" %(application))}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_sl'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_STORE_LOCATION"), _onclick="window.location.href='/%s/store_location/create'" %(application))}}
+{{pass}}
+
+{{=INPUT(_type='button', _value=cc.get_string("SWITCH_VIEW_BY_ENTITY"), _onclick="window.location.href='/%s/entity/list'" %(application))}}
+
+<div id="user_list">
+
+    {{=paginate_selector}}&nbsp;&nbsp;&nbsp;&nbsp;{{=paginate_info}}<br/>
+	{{=paginator}}
+
+{{if persons:}}
+
+    {{for person in persons:}}
+
+		{{if person.id == auth.user.id:}}
+			{{=DIV('%s %s (%s)' %(person.last_name, person.first_name, person.email), _class="person_identity")}}
+		{{else:}}
+		    {{=DIV(A('%s %s (%s)' %(person.last_name, person.first_name, person.email),
+						    _href=URL(a=application, 
+						      c='user', 
+						      f='list_action.load', 
+						      args=[person.id], 
+						      vars=request.vars), 
+					      cid='list_action_%s' %person.id), _class="person_identity")}}
+		{{pass}}
+		
+		{{if person.is_admin():}}
+		    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ADMIN), 
+			    _title=cc.get_string("ADMINISTRATOR"),
+			    _alt=cc.get_string("ADMINISTRATOR")), _class="person_admin_icon")}}
+		{{pass}}
+		
+		{{if person.virtual:}}
+		    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_VIRTUAL), 
+			    _title=cc.get_string("VIRTUAL"),
+			    _alt=cc.get_string("VIRTUAL")), _class="person_virtual_icon")}}
+		{{pass}}
+		
+		<div class="list_action" id="list_action_{{=person.id}}"></div>
+		<div id="user_card_{{=person.id}}" class="user_card"></div>
+	    
+		<div class="person_status">
+	    {{if person.registration_key == 'pending':}}
+		<i>&nbsp;{{=cc.get_string("PERSON_PENDING")}}</i>
+	    	{{elif person.registration_key == 'unactive':}}
+		<i>&nbsp;{{=cc.get_string("PERSON_UNACTIVE")}}</i>
+			{{elif person.registration_key == 'disabled':}}
+		<i>&nbsp;{{=cc.get_string("PERSON_DISABLED")}}</i>
+	    {{pass}}
+		</div>
+
+    {{pass}}
+
+
+{{else:}}
+	{{=cc.get_string("NO_PERSON")}}
+{{pass}}
+
+</div>
+</div>

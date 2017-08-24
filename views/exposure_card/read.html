@@ -1,0 +1,355 @@
+{{extend 'layout.html'}}
+
+<h1>{{=exposure_card.title}}</h1>
+
+<form id="export_csv" action="{{=URL(a=application, 
+                                 c=controller, 
+                                 f='export_to_csv')}}">
+
+           <div id="export_search">
+            {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EXPORT_CSV), 
+                     _alt=cc.get_string("EXPORT_IN_CSV")), 
+                 _href='#',
+                 _title=cc.get_string("EXPORT_IN_CSV"), 
+                 _onclick="$('form#export_csv').submit();")}}
+        </div>
+        
+
+{{for field in ['accidental_exposure_type', 'accidental_exposure_datetime', 'accidental_exposure_duration_and_extent']:}}
+
+<div id="{{=field}}_{{=exposure_card.id}}" class="card_info_block">
+
+    <div class="exposure_item_title" id="card_info">{{=cc.get_string('DB_EXPOSURE_CARD_%s_LABEL' % field.upper())}}</div>
+    <div class="exposure_item_item" id="card_info">
+        <div id="{{=field}}_{{=exposure_card.id}}_txt" class="exposure_item_txt">
+            {{=getattr(exposure_card, field)}}
+        </div>
+
+
+        <div id="{{=field}}_{{=exposure_card.id}}_form" style='display: None;' class="exposure_item_form">
+            {{=db.exposure_card['%s' % field].widget(db.exposure_card['%s' % field], getattr(exposure_card, field), _name="%s_%s" % (field, exposure_card.id))}}
+        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+             _title=cc.get_string("SAVE"),
+             _href='#', 
+             _id="%s_%s" % (field, exposure_card.id),
+             _onclick="updateInput('%s', '%s')" % (field, exposure_card.id))}}
+        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)),
+             _title=cc.get_string("UNDO"),
+             _href='#', 
+             _id="%s_%s" % (field, exposure_card.id),
+             _onclick="undoInput('%s', '%s')" % (field, exposure_card.id))}}
+
+        </div>
+
+        <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                             _alt=cc.get_string("EDIT")), 
+                                           _title=cc.get_string("EDIT"), 
+                                           _href='#', 
+                                           _onclick="enableInput('%s', '%s')" % (field, exposure_card.id))}}</div>
+    </div>
+
+</div>
+{{pass}}
+
+<div id="exposure_item_list">
+{{if exposure_card.exposure_items is not None:}}
+
+    <table>
+        <tr>
+            <th></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_PRODUCT_NAME_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_PRODUCT_CAS_NUMBER_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_KIND_OF_WORK_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_CPE_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_PPE_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_NB_EXPOSURE_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_EXPOSURE_TIME_LABEL')}}</div></th>
+            <th><div class="exposure_item_title">{{=cc.get_string('DB_EXPOSURE_ITEM_SIMULTANEAOUS_RISK_LABEL')}}</div></th>
+        </tr>
+    {{for exposure_item in exposure_card.exposure_items:}}
+    
+        <input type="hidden" name="exposure_item" value="{{=exposure_item.id}}"/>
+
+        <tr> 
+            <td>
+           
+                <div class="exposure_item_delete">
+                    {{=A('-', 
+                         _title=cc.get_string("DELETE_EXPOSURE_ITEM"), 
+                         _href=URL(a=application, 
+                                   c=controller, 
+                                   f='delete_item', 
+                                   args=exposure_item.id,
+                                   vars={'exposure_card_id': exposure_card.id}))}}
+                   </div> 
+            </td>
+            <td>{{=exposure_item.product.name.label}}</td>
+            <td>{{=exposure_item.product.cas_number}}</td>
+
+            <td id="kind_of_work_{{=exposure_item.id}}">
+
+                <div class="exposure_item_item">
+                    <div id="kind_of_work_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=exposure_item.kind_of_work}}
+                    </div>
+
+
+                    <div id="kind_of_work_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.kind_of_work.widget(db.exposure_item.kind_of_work, exposure_item.kind_of_work, _name="kind_of_work_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                         _title=cc.get_string("SAVE"),
+                         _href='#', 
+                         _id="kind_of_work_%s" % exposure_item.id,
+                         _onclick="updateInput('kind_of_work', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)),
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="kind_of_work_%s" % exposure_item.id,
+                         _onclick="undoInput('kind_of_work', '%s')" % exposure_item.id)}}
+
+                    </div>
+
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#', 
+                                                       _onclick="enableInput('kind_of_work', '%s')" % exposure_item.id)}}</div>
+                </div>
+
+            </td>
+
+            <td id="cpe_{{=exposure_item.id}}">
+
+                <div class="exposure_item_item">
+                    <div id="cpe_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=db.exposure_item.cpe.represent(exposure_item.cpe)}}
+                    </div>
+
+                    <div id="cpe_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.cpe.widget(db.exposure_item.cpe, exposure_item.cpe, _name="cpe_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                         _title=cc.get_string("SAVE"),
+                         _href='#', 
+                         _id="cpe_%s" % exposure_item.id,
+                         _onclick="updateInput('cpe', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)), 
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="cpe_%s" % exposure_item.id,
+                         _onclick="undoInput('cpe', '%s')" % exposure_item.id)}}
+                    </div>
+
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#', 
+                                                       _onclick="enableInput('cpe', '%s')" % exposure_item.id)}}</div>
+                </div>
+
+            </td>
+            
+            <td id="ppe_{{=exposure_item.id}}">
+
+                <div class="exposure_item_item">
+                    
+                    <div id="ppe_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=db.exposure_item.ppe.represent(exposure_item.ppe)}}
+                    </div>
+
+                    <div id="ppe_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.ppe.widget(db.exposure_item.ppe, exposure_item.ppe, _name="ppe_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                         _title=cc.get_string("SAVE"),
+                         _href='#',                        
+                         _id="ppe_%s" % exposure_item.id,
+                         _onclick="updateInput('ppe', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)), 
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="ppe_%s" % exposure_item.id,
+                         _onclick="undoInput('ppe', '%s')" % exposure_item.id)}}
+                    </div>
+
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#',  
+                                                       _onclick="enableInput('ppe', '%s')" % exposure_item.id)}}</div>
+                </div>
+            </td>
+ 
+            <td id="nb_exposure_{{=exposure_item.id}}">
+
+                <div class="exposure_item_item">
+
+                    <div id="nb_exposure_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=exposure_item.nb_exposure}}
+                    </div>
+
+                    <div id="nb_exposure_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.nb_exposure.widget(db.exposure_item.nb_exposure, exposure_item.nb_exposure, _name="nb_exposure_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                         _title=cc.get_string("SAVE"),
+                         _href='#',
+                         _id="nb_exposure_%s" % exposure_item.id,
+                         _onclick="updateInput('nb_exposure', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)), 
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="nb_exposure_%s" % exposure_item.id,
+                         _onclick="undoInput('nb_exposure', '%s')" % exposure_item.id)}}
+                    </div>
+                    
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#',
+                                                       _onclick="enableInput('nb_exposure', '%s')" % exposure_item.id)}}</div>
+                
+                </div>
+                
+            </td>
+
+            <td id="exposure_time_{{=exposure_item.id}}">
+
+                <div class="exposure_item_item">
+
+                    <div id="exposure_time_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=exposure_item.exposure_time}}
+                    </div>
+
+                    <div id="exposure_time_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.exposure_time.widget(db.exposure_item.exposure_time, exposure_item.exposure_time, _name="exposure_time_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)), 
+                         _title=cc.get_string("SAVE"),
+                         _href='#',
+                         _id="exposure_time_%s" % exposure_item.id,
+                         _onclick="updateInput('exposure_time', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)), 
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="exposure_time_%s" % exposure_item.id,
+                         _onclick="undoInput('exposure_time', '%s')" % exposure_item.id)}}
+                    </div>
+
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#',
+                                                       _onclick="enableInput('exposure_time', '%s')" % exposure_item.id)}}</div>
+            
+                </div>
+
+            </td>
+
+            <td id="simultaneous_risk_{{=exposure_item.id}}">
+                
+                <div class="exposure_item_item">
+
+                    <div id="simultaneous_risk_{{=exposure_item.id}}_txt" class="exposure_item_txt">
+                        {{=exposure_item.simultaneous_risk}}
+                    </div>
+
+                    <div id="simultaneous_risk_{{=exposure_item.id}}_form" style='display: None;' class="exposure_item_form">
+                    {{=db.exposure_item.simultaneous_risk.widget(db.exposure_item.simultaneous_risk, exposure_item.simultaneous_risk, _name="simultaneaous_risk_%s" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_SAVE)),
+                         _title=cc.get_string("SAVE"),
+                         _href='#',
+                         _id="simultaneous_risk_%s" % exposure_item.id,
+                         _onclick="updateInput('simultaneous_risk', '%s')" % exposure_item.id)}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDO)), 
+                         _title=cc.get_string("UNDO"),
+                         _href='#', 
+                         _id="simultaneous_risk_%s" % exposure_item.id,
+                         _onclick="undoInput('simultaneous_risk', '%s')" % exposure_item.id)}}
+                    </div>
+
+                
+                    <div class="exposure_item_edit">{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EDIT),
+                                                         _alt=cc.get_string("EDIT")), 
+                                                       _title=cc.get_string("EDIT"), 
+                                                       _href='#',
+                                                       _onclick="enableInput('simultaneous_risk', '%s')" % exposure_item.id)}}</div>
+
+                </div>
+            </td>
+
+
+
+        </tr> 
+    {{pass}}
+    </table>
+</div>
+
+</form>
+
+<hr/>
+
+{{=form.custom.begin}}
+<table>
+    <tr>
+        <td>
+            <div class="exposure_item_item">
+                {{=cc.get_string('EXPOSURE_CARD_ADD_ITEM')}}
+                ({{=cc.get_string('DB_PRODUCT_CAS_NUMBER_LABEL')}})
+            </div>
+        </td>
+        <td>
+            <div id="exposure_item_add">
+                {{=form.custom.widget.cas_number}}
+            </div>
+        </td>
+
+        <td colspan="6"><div>{{=error}}</div></td>
+    </tr>
+</table>
+{{=form.custom.end}}
+
+<script>
+function enableInput(input_name, exposure_item_id) {
+        $( "div#" + input_name + "_" + exposure_item_id + "_form" ).show();
+        $( "div#" + input_name + "_" + exposure_item_id + "_txt" ).hide();
+};
+
+function updateInput(input_name, exposure_item_id) {
+        console.log(input_name);
+        console.log(exposure_item_id);
+
+        if ( $( "div#" + input_name + "_" + exposure_item_id + "_form > input" ).length ) {
+            var field_value =  $( "div#" + input_name + "_" + exposure_item_id + "_form > input" ).val()
+        }else if ( $( "div#" + input_name + "_" + exposure_item_id + "_form > select" ).length ){
+            var field_value =  $( "div#" + input_name + "_" + exposure_item_id + "_form > select" ).val()
+            field_value=JSON.stringify(field_value);
+        }else {
+            var field_value =  $( "div#" + input_name + "_" + exposure_item_id + "_form > textarea" ).val()
+        }
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajx_update_" + input_name + "/" + exposure_item_id,
+    		   data: {exposure_item_id:exposure_item_id, field_value:field_value},
+    		   dataType: "json",
+    		   async: false,
+               success: function(msg) {
+                    console.log(msg);
+                    
+                    if (msg.error) {
+                        alert(msg.error);
+                    }
+                    else {
+                        $( "div#" + input_name + "_" + exposure_item_id + "_form" ).hide();
+                        $( "div#" + input_name + "_" + exposure_item_id + "_txt" ).html(msg.txt);
+                        $( "div#" + input_name + "_" + exposure_item_id + "_txt" ).show();
+
+                    };
+                    event.stopPropagation();
+               }
+    		 });
+};
+function undoInput(input_name, exposure_item_id) {
+    $( "div#" + input_name + "_" + exposure_item_id + "_form" ).hide();
+    $( "div#" + input_name + "_" + exposure_item_id + "_txt" ).show();
+};
+
+</script>
+{{pass}}

@@ -1,0 +1,190 @@
+{{include 'chimitheque_import.html'}}
+
+	{{if storage.archive:}}
+		{{_div_class='storage_item_archive'}}
+		{{_div_id='_archive'}}
+		{{request.vars['archive']=True}}
+	{{else:}}
+		{{_div_class='storage_item'}}
+		{{_div_id=''}}
+	{{pass}}
+
+    <div class="{{=_div_class}}" id="storage_{{=storage.id}}">
+	    {{"""
+	    link to the storage card
+	    """}}
+	    <div class="date">{{=storage.entry_datetime}}</div>
+	    <div class="title">
+		    
+		    <div id="link">
+		    {{=A('%s %s - %s' %(storage.volume_weight,
+		    					storage.unit.label if storage.unit is not None else '',
+		    					storage.store_location.full_path),
+		        _href=URL(a=application, 
+		                  c='storage', 
+		                  f='detail', 
+		                  args=storage.id,
+		                  vars={'archive': storage.archive}), 
+                cid='storage_card%s_%s' % (_div_id, storage.id))}}
+		    </div>
+
+		    <div style="position: absolute; border-radius: 20px 20px 20px 20px; border-color: grey; top:4px; right: 12px; width: 20px; height: 20px; background-color: {{=storage.store_location.color}};">&nbsp;</div>
+		    
+		    {{=DIV(storage.store_location.entity.role, _id='entity_name')}}
+		    {{=DIV(storage.barecode, _id='storage_barecode')}}
+		    {{=DIV(storage.batch_number, _id='storage_batch_number')}}
+		    		    
+		    {{"""
+		    add the "modified" label for modified storages
+		    """}}
+		    {{if storage.has_history():}}
+		            <div class="modified_storage">{{=cc.get_string("MODIFIED")}}</div>
+		    {{pass}}
+		
+		    {{if storage.has_borrowing():}}
+		            <div class="used_storage" title="{{=storage.retrieve_borrow_datetime()}} - {{=storage.retrieve_borrow_comment()}}">
+		                {{=cc.get_string("USED_BY")}} {{=storage.retrieve_borrower().first_name}}.{{=storage.retrieve_borrower().last_name}}
+		            </div>
+		    {{pass}}
+    	</div>
+    
+    <div class="action">
+    {{"""
+    delete button for not archived storages according to the user permissions
+    """}}
+    {{if not storage.archive:}}
+
+        {{if auth.has_permission('delete_sc') or auth.has_permission('admin'):}}
+        	    {{if 'display_by' in request.vars and request.vars['display_by'] == 'storage':}}
+            		<input type="checkbox" onclick="displayDeleteDiv(0);" name="delete_sc" value="{{=storage.id}}"/>
+            	{{else:}}
+                	<input type="checkbox" onclick="displayDeleteDiv({{=storage.product.id}});" name="delete_sc" value="{{=storage.id}}"/>
+                {{pass}}
+        	
+            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_ARROW_SMALL),
+                     _alt=cc.get_string("DELETE_STORAGE_CARD"), _title=cc.get_string("DELETE_STORAGE_CARD"))}}
+		{{pass}}
+		
+		&nbsp;&nbsp;
+        {{if auth.has_permission('read_sc') or auth.has_permission('admin'):}}
+            {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_BORROW),
+                     _alt=cc.get_string("BORROW_STORAGE")),
+                 _title=cc.get_string("BORROW_STORAGE"),
+                 _href=URL(a=application, 
+                           c='use', 
+                           f='create_update', 
+                           args=[storage.id]),
+                 cid='storage_borrow_%s' % storage.id)}}
+        {{pass}} 
+	
+		{{if auth.has_permission('update_sc') or auth.has_permission('admin'):}}
+		
+            {{if not storage.to_destroy:}}
+            
+	            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DESTROY_SMALL),
+	                      _id='storage_destroy_%s' % storage.id,
+                         _alt=cc.get_string("DESTROY_STORAGE_CARD"),
+	                     _title=cc.get_string("DESTROY_STORAGE_CARD"))}}
+	               
+            {{else:}}
+            
+	            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UNDESTROY_SMALL),
+	                     _id='storage_undestroy_%s' % storage.id,
+                         _alt=cc.get_string("UNDESTROY_STORAGE_CARD"),
+	                     _title=cc.get_string("UNDESTROY_STORAGE_CARD"))}}
+            {{pass}}
+
+            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+	                     _alt=cc.get_string("I_AM_SURE"),
+	                     _id='storage_action_destroy_%s' % storage.id,
+	                     _style='display: none;')}}
+
+            {{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+	                     _alt=cc.get_string("I_AM_SURE"),
+	                     _id='storage_action_undestroy_%s' % storage.id,
+	                     _style='display: none;')}}
+                                                     
+        {{pass}}
+
+            <div id="storage_delete"></div>
+            
+        
+	{{else:}}
+            {{if auth.has_permission('delete_archive') or auth.has_permission('admin'):}}
+            
+            	{{if 'display_by' in request.vars and request.vars['display_by'] == 'storage':}}
+            		<input type="checkbox" onclick="displayDeleteDiv(0);" name="delete_sc" value="{{=storage.id}}"/>
+            	{{else:}}
+                	<input type="checkbox" onclick="displayDeleteDiv({{=storage.product.id}});" name="delete_sc" value="{{=storage.id}}"/>
+                {{pass}}
+            {{pass}}
+            
+    {{pass}}
+     </div>
+      <div id="storage_borrow_{{=storage.id}}" class="expose"></div>
+      <div id="storage_card{{=_div_id}}_{{=storage.id}}"></div>
+   
+     </div>
+
+<script>
+jQuery(document).ready(function(){
+
+  function _destroy(event) {
+
+        var storage_id = event.data
+    	var destroy_image = $("img[id=storage_destroy_" + storage_id + "]")
+    	var destroy_action_image = $("img[id=storage_action_destroy_" + storage_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/destroy/" + storage_id,
+    		   data: {storage_id:storage_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+                  destroy_action_image.hide();
+                  destroy_image.hide();
+                  destroy_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_UNDESTROY_SMALL}}");
+                  destroy_image.attr("id", "storage_undestroy_" + storage_id);
+                  destroy_image.fadeIn('slow');
+
+                  jQuery("img[id=storage_undestroy_" + storage_id + "]").unbind();
+                  jQuery("img[id=storage_undestroy_" + storage_id + "]").bind('click',storage_id,_undestroy);
+               }
+    		 });
+  };
+
+  function _undestroy(event) {
+
+        var storage_id = event.data
+    	var undestroy_image = $("img[id=storage_undestroy_" + storage_id + "]")
+    	var undestroy_action_image = $("img[id=storage_action_undestroy_" + storage_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/undestroy/" + storage_id,
+    		   data: {storage_id:storage_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+                  undestroy_action_image.hide();
+                  undestroy_image.hide();
+                  undestroy_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_DESTROY_SMALL}}");
+                  undestroy_image.attr("id", "storage_destroy_" + storage_id);
+                  undestroy_image.fadeIn('slow');
+
+                  jQuery("img[id=storage_destroy_" + storage_id + "]").unbind();
+                  jQuery("img[id=storage_destroy_" + storage_id + "]").bind('click',storage_id,_destroy);
+               }
+    		 });
+  	};
+
+  jQuery("img[id=storage_destroy_{{=storage.id}}]").bind('click',{{=storage.id}},_destroy);
+
+  jQuery("img[id=storage_undestroy_{{=storage.id}}]").bind('click',{{=storage.id}},_undestroy);
+
+
+});
+</script>

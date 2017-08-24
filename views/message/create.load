@@ -1,0 +1,27 @@
+{{include 'chimitheque_import.html'}}
+
+{{=form.custom.begin}}
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$(this).parent().parent().empty(); $.mask.close();")}}
+</div>
+{{for field_name in ['topic', 'text', 'pin', 'creation_datetime', 'expiration_datetime']:}}
+<div id="{{=field_name}}" class="field">
+
+<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+</div>
+{{pass}}
+<div id="submit" class="field">
+{{=form.custom.submit}}
+</div>
+{{=form.custom.end}}
+<script>
+$("#message_create").expose({static: true, color: null});
+</script>
+
+

@@ -1,0 +1,26 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$('#command_detail_%s').empty();" % command.id)}}
+</div>
+
+<div id="history">
+    <table>
+    <tr>
+        <th>{{=cc.get_string("COMMAND_LIST_MODIFIER")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_MODIFICATION")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_BEFORE_STATUS")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_AFTER_STATUS")}}</th>
+    {{for command_log in command_logs:}}
+        <tr>
+            <td>{{=command_log.modifier.last_name}}</td>
+            <td>{{=command_log.log_datetime.strftime(str(T('%Y-%m-%d')))}}</td>
+            <td class="command_status {{=command_log.before_status.label.lower()}}">{{=T(command_log.before_status.label)}}</td>
+            <td class="command_status {{=command_log.after_status.label.lower()}}">{{=T(command_log.after_status.label)}}</td>
+        </tr>
+    {{pass}}
+    </table>
+</div>

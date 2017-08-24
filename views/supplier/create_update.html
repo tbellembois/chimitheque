@@ -1,0 +1,18 @@
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+
+<div id="supplier_create">
+{{=form.custom.begin}}
+
+{{for field_name in ['label']:}}
+<div id="{{=field_name}}" class="field">
+
+<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+</div>
+{{pass}}
+
+{{=form.custom.submit}}
+{{=form.custom.end}}
+</div>

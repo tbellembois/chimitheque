@@ -1,0 +1,139 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="action">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DETAIL_SMALL), 
+	     _alt=cc.get_string("DETAILS")),
+	     _title=cc.get_string("DETAILS"),
+	     _onclick="""
+	     			$("div#user_card_%s").show()
+	     			""" % person.id ,
+	     _href=URL(a=application, 
+		       c=controller, 
+		       f='detail.load', 
+	    args=person.id, 
+	    vars=request.vars), 
+	    cid='user_card_%s' %person.id)}}
+
+{{if updatable_person:}}
+	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_SMALL), 
+			       _alt=cc.get_string("UPDATE_PERSON")), 
+			       _title=cc.get_string("UPDATE_PERSON"), 
+			       _href=URL(a=application, 
+							 c=controller, 
+							 f='update.html', 
+							 args=person.id, 
+							 vars=request.vars),
+		cid='person_%s' %person.id)}}
+{{pass}}
+
+<div id="person_{{=person.id}}" class="expose"></div>
+
+{{if deletable_person:}}
+	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL), 
+		_alt=cc.get_string("DELETE_PERSON")), 
+		_title=cc.get_string("DELETE_PERSON"), 
+		_onclick="""
+		     jQuery(function() {
+		       displayDeleteButton("%s", "person");
+		     });
+		     """ %person.id)}}
+		     
+                          {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                           _alt=cc.get_string("I_AM_SURE"),
+			                       _id='person_action_delete_%s' % person.id,
+			                       _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete', 
+                                           args=person.id, 
+                                           vars=request.vars),
+                                 cid='person_%s' %person.id)}}
+{{pass}}
+
+{{if can_be_disabled_person:}}
+    {{if person.is_disabled():}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ENABLE_SMALL), 
+				       _alt=cc.get_string("ENABLE_PERSON"),
+				       _title=cc.get_string("ENABLE_PERSON"), 
+				       _id='person_enable_%s' % person.id)}}
+	{{else:}}
+		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DISABLE_SMALL), 
+			       _alt=cc.get_string("DISABLE_PERSON"), 
+			       _title=cc.get_string("DISABLE_PERSON"), 
+			       _id='person_disable_%s' % person.id)}}
+	{{pass}}	     
+{{pass}}
+
+{{if auth.has_permission('admin'):}}
+    {{form_id = 'impersonate_' + str(person.id)}}
+    <form id="{{=form_id}}" method="POST" action="/{{=application}}/default/user/impersonate">
+		<input type="hidden" name="user_id" value="{{=person.id}}"/>
+		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_IMPERSONATE), 
+			 _alt=cc.get_string("IMPERSONATE_PERSON")), 
+		     _title=cc.get_string("IMPERSONATE_PERSON"), 
+             _id="impersonate",
+		     _onclick='document.forms["%s"].submit();' %form_id)}}
+    </form>
+{{pass}}
+</div>
+
+<script>
+jQuery(document).ready(function(){
+
+  function _enable(event) {
+
+        var person_id = event.data
+    	var disable_image = $("img[id=person_enable_" + person_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/user/toogle_disable/" + person_id,
+    		   data: {person_id:person_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+                  disable_image.hide();
+                  disable_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_DISABLE_SMALL}}");
+                  disable_image.attr("id", "person_disable_" + person_id);
+                  disable_image.fadeIn('slow');
+
+                  jQuery("img[id=person_disable_" + person_id + "]").unbind();
+                  jQuery("img[id=person_disable_" + person_id + "]").bind('click',person_id,_disable);
+               }
+    		 });
+  };
+
+  function _disable(event) {
+
+        var person_id = event.data
+    	var enable_image = $("img[id=person_disable_" + person_id + "]")
+
+        var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/user/toogle_disable/" + person_id,
+    		   data: {person_id:person_id},
+    		   dataType: "json",
+    		   async: false,
+               success: function() {
+
+                  enable_image.hide();
+                  enable_image.attr("src", "{{=images_base_url}}/{{=cc.IMAGE_ENABLE_SMALL}}");
+                  enable_image.attr("id", "person_enable_" + person_id);
+                  enable_image.fadeIn('slow');
+
+                  jQuery("img[id=person_enable_" + person_id + "]").unbind();
+                  jQuery("img[id=person_enable_" + person_id + "]").bind('click',person_id,_enable);
+               }
+    		 });
+  };
+
+  jQuery("img[id=person_disable_{{=person.id}}]").bind('click',{{=person.id}},_disable);
+
+  jQuery("img[id=person_enable_{{=person.id}}]").bind('click',{{=person.id}},_enable);
+
+
+});
+</script>
+
+

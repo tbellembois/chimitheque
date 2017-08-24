@@ -1,0 +1,241 @@
+{{include 'chimitheque_import.html'}}
+
+{{load_storage_list = 'load_storage_list' in request.vars}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW),
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$('#product_detail_%s').empty();" % product.id)}}
+</div>
+
+<div id="stock">
+{{if product.is_in_entity_of(auth.user.id):}}
+
+		{{for _stock in stocks:}}
+			<div class="entity_name">{{=_stock.entity.name}}</div>
+
+			<div class="stock_value" id="current_stock">
+                <!--
+				<span class="label">{{=cc.get_string("CURRENT_STOCK")}}</span>
+                -->
+                <span class="current_stock_value">
+					<table>
+
+						{{from c_unit_mapper import UNIT_MAPPER}}
+						{{for _store_location in sorted(_stock.entity.retrieve_store_locations(), key=lambda _sl: _sl.full_path):}}
+						<tr>
+	                            {{if _store_location.has_storage(product_id=product.id):}}
+
+	                                <td>
+	                                {{_splitted_full_path = _store_location.full_path.split('/')}}
+	                                {{_path_len = _store_location.full_path.count('/')}}
+
+                                    {{for i in range(0, _path_len):}}
+	                                <div style="margin-right: 1px; border: 1px solid grey; float:left; height:12px; width:2px;">&nbsp;</div>
+                                    {{pass}}
+	                                {{=_splitted_full_path[-1]}}
+	                                </td>
+	                                <td><div style="width: 100px;">
+	                                        {{_s = cc.compute_stock_current(product, _store_location)}}
+	                                        {{for _reference_id in _s.keys():}}
+	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
+	                                        {{pass}}
+	                                    </div>
+	                                    <div>
+	                                        <b>&#8721;:</b>&nbsp;
+	                                        {{_s = cc.compute_stock_total(product, _store_location)}}
+	                                        {{for _reference_id in _s.keys():}}
+	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
+	                                        {{pass}}
+	                                    </div>
+	                                </td>
+
+	                            {{pass}}
+	                    </tr>
+	                    {{pass}}
+				<tr>
+			    </tr>
+			    </table>
+			    </span>
+			</div>
+
+			<div class="stock_value">
+			    <span class="label">
+					{{if auth.has_permission('create_sc') or auth.has_permission('admin'):}}
+					    {{=SPAN(A(cc.get_string("MINIMUM_STOCK"),
+                              _onClick="scroolTo('stock_edit_%s');" % product.id,
+						      _title=cc.get_string("EDIT_STOCK"),
+						      _href=URL(a=application,
+								c='stock',
+								f='update',
+								args=_stock.id,
+								vars=request.vars),
+						      cid='stock_edit_%s' % product.id))}}
+					{{pass}}
+				</span>
+			    <span id="entity_{{=_stock.entity.id}}_stock_min">{{=_stock.minimum}}</span>
+				<span id="entity_{{=_stock.entity.id}}_stock_min_unit">{{=_stock.minimum_unit.label if _stock.minimum_unit is not None else ''}}</span>
+			</div>
+
+			<div class="stock_value">
+				<span class="label">
+					{{if auth.has_permission('create_sc') or auth.has_permission('admin'):}}
+					    {{=SPAN(A(cc.get_string("MAXIMUM_STOCK"),
+                              _onClick="scroolTo('stock_edit_%s');" % product.id,
+						      _title=cc.get_string("EDIT_STOCK"),
+						      _href=URL(a=application,
+								c='stock',
+								f='update',
+								args=_stock.id,
+								vars=request.vars),
+						      cid='stock_edit_%s' % product.id))}}
+					{{pass}}
+				</span>
+				<span id="entity_{{=_stock.entity.id}}_stock_max">{{=_stock.maximum}}</span>
+				<span id="entity_{{=_stock.entity.id}}_stock_max_unit">{{=_stock.maximum_unit.label if _stock.maximum_unit is not None else ''}}</span>
+
+			</div>
+
+		{{pass}} <!-- for -->
+	{{pass}}
+
+</div><!-- id="stock" -->
+
+<div id="product_detail">
+
+    <div id="action">
+
+	{{if auth.has_permission('read_pc') or auth.has_permission('admin'):}}
+	    <div id="product_detail_image">
+		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DETAIL),
+			 _alt=cc.get_string("PRODUCT_CARD")),
+			 _title=cc.get_string("PRODUCT_CARD"),
+             _class='product_detail',
+             _onClick="scroolTo('product_card_%s');" % product.id,
+			 _href=URL(a=application,
+				    c=controller,
+				    f='card',
+				    args=product.id,
+				    vars=request.vars),
+			cid='product_card_%s' % product.id)}}
+	    </div>
+	{{pass}}
+
+	{{if auth.has_permission('create_sc') or auth.has_permission('admin'):}}
+	    <div id="create_storage_image">
+		{{=SPAN(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORE),
+			      _alt=cc.get_string("STORE_PRODUCT_IN_MY_ENTITY")),
+			  _title=cc.get_string("STORE_PRODUCT_IN_MY_ENTITY"),
+              _onClick="scroolTo('storage_card_create_%s');" % product.id,
+			  _href=URL(a=application,
+				    c='storage',
+				    f='create',
+				    args=product.id,
+				    vars=request.vars),
+			  cid='storage_card_create_%s' % product.id))}}
+	    </div>
+	{{pass}}
+
+	{{if (auth.has_permission('create_com') or auth.has_permission('admin')):}}
+	    <div id="add_command_image">
+  	    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_COMMAND),
+             _alt=cc.get_string("CREATE_COMMAND")),
+            _title=cc.get_string("CREATE_COMMAND"),
+            _id='create_com',
+            _href=URL(a=application, 
+            c='command', 
+            f='create',
+            args=product.id))}}
+	    </div>
+	{{pass}}
+
+ 	{{if (auth.has_permission('read_sc') or auth.has_permission('admin')) and product.is_in_entity_of(auth.user.id):}}
+	    <div id="storage_detail_image">
+		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORAGE),
+				 _onclick="showStorageArchiveButton(%s)" % product.id,
+		     _alt=cc.get_string("STORAGE_DETAIL")),
+		     _title=cc.get_string("STORAGE_DETAIL"),
+             _class='storage_detail',
+             _onClick="scroolTo('storage_list_product_%s');" % product.id,
+		     _href=URL(a=application,
+			   c='storage',
+			   f='list',
+			   args=product.id,
+			   vars=request.vars),
+		 cid='storage_list_product_%s' %  product.id)}}
+	    </div>
+
+        {{if product.has_storage_archived(product.id, auth.user.id) and (auth.has_permission('admin') or auth.has_permission('read_archive')):}}
+            {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORAGE_ARCHIVE),
+                     _id='storage_archive_%s' % product.id,
+                     _alt=cc.get_string("STORAGE_ARCHIVE_LIST"),
+                     _style='display: none;'),
+                 _title=cc.get_string("STORAGE_ARCHIVE_LIST"),
+                 _onClick="scroolTo('storage_archive_card_%s');" % product.id,
+                 _class='storage_detail',
+                 _href=URL(a=application,
+                           c='storage',
+                           f='list_archive',
+                           args=product.id, vars=request.vars),
+                           cid='storage_archive_card_%s' % product.id)}}
+
+        {{pass}}<!-- if -->
+	{{pass}}
+
+   {{if auth.has_permission('read_sc') or auth.has_permission('admin'):}}
+
+   {{if product.is_in_entity_except_of(auth.user.id) and not (auth.has_permission('admin') or auth.has_membership('all_entity')):}}
+	    <div id="storage_other_detail_image">
+		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORAGE_OTHER),
+			 _alt=cc.get_string("IN_OTHER_ENTITY")),
+		     _title=cc.get_string("IN_OTHER_ENTITY"),
+		     _href=URL(a=application,
+			           c='storage',
+			           f='list_other_entity',
+			           args=product.id, vars=request.vars),
+		     cid='other_entity_storage_list_product_%s' % product.id)}}
+	    </div>
+	{{pass}}
+
+
+	<div id="other_entity_storage_list_product_{{=product.id}}" class="storage_list"></div>
+
+    {{pass}}<!-- auth.has_permission('select_sc')..}} -->
+
+    </div> <!-- id="action" -->
+
+	<div id="product_card_{{=product.id}}" ></div>
+    <div class="expose" id="storage_card_create_{{=product.id}}" ></div>
+    <div class="expose" id="stock_edit_{{=product.id}}" ></div>
+
+    {{if auth.has_permission('read_sc') or auth.has_permission('admin'):}}
+
+	{{if product.is_in_entity_of(auth.user.id):}}
+
+		<div id="storage_list_product_{{=product.id}}" class="storage_list">
+		</div>
+
+		<!-- we do NOT use the web2py LOAD function because we want to wait for the document to be fully loaded -->
+		{{if load_storage_list:}}
+		    <script>
+		    $( document ).ready(function() {
+			    $.ajax({type: "GET",
+	                    url: "/chimitheque/storage/list/{{=product.id}}",
+	                    async: false
+			    }).done(function(data) {
+	            	$("#storage_list_product_{{=product.id}}").html(data);
+	            });
+		    });
+		    </script>
+		{{pass}}
+
+	{{pass}}<!-- is_in_user_entity -->
+    {{pass}}<!-- auth.has_permission('read_sc')..}} -->
+
+</div>
+<script>
+function showStorageArchiveButton(product_id) {
+	$('img#storage_archive_' + product_id).show('slow');
+}
+</script>

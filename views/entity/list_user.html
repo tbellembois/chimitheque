@@ -1,0 +1,72 @@
+{{include 'chimitheque_import.html'}}
+
+{{entity_id=request.args[0]}}
+
+<div id="user_entity_list">
+
+<table>	
+{{if persons:}}
+
+    {{for person in persons:}}
+    <tr>
+	<td>
+		{{if person.id == auth.user.id:}}
+			{{=SPAN('%s %s' %(person.last_name, person.first_name))}}
+		{{else:}}
+		    {{=SPAN(A('%s %s' %(person.last_name, person.first_name),
+						    _href=URL(a=application, 
+						      		  c='user', 
+						      		  f='list_action.load', 
+						      		  args=[person.id], 
+						      		  vars=request.vars),
+						    _class='person_name',
+			    			_id='person_name_%s' % person.id,  
+					      cid='list_action_%s_%s' %(entity_id, person.id)))}}
+		{{pass}}
+		
+		{{if person.is_admin():}}		      
+		    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ADMIN), 
+				   _title=cc.get_string("ADMINISTRATOR"),
+				   _alt=cc.get_string("ADMINISTRATOR")), _class="person_admin_icon")}}
+		{{pass}}
+		
+		{{if person.virtual:}}
+		    {{=DIV(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_VIRTUAL), 
+			    _title=cc.get_string("VIRTUAL"),
+			    _alt=cc.get_string("VIRTUAL")), _class="person_virtual_icon")}}
+		{{pass}}
+	
+	</td>
+	<td>
+	    <div id="list_action_{{=entity_id}}_{{=person.id}}"></div>
+	</td>
+	<td>
+			<div class="person_status">
+		    {{if person.registration_key == 'pending':}}
+		    	{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_PENDING), 
+				           _title=cc.get_string("PERSON_PENDING"),
+				           _alt=cc.get_string("PERSON_PENDING"))}}
+			{{elif person.registration_key == 'unactive':}}
+				<i>&nbsp;{{=cc.get_string("PERSON_UNACTIVE")}}</i>
+			{{elif person.registration_key == 'disabled':}}
+				{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DISABLED), 
+				           _title=cc.get_string("PERSON_DISABLED"),
+				           _alt=cc.get_string("PERSON_DISABLED"))}}
+		    {{pass}}
+			</div>
+	</td>
+    </tr>
+	<tr>
+	<td colspan="3">
+	<div id="user_card_{{=person.id}}" class="user_card"></div>
+	</td>
+	</tr>
+    {{pass}}
+
+</table>
+
+{{else:}}
+	{{=cc.get_string("NO_PERSON")}}
+{{pass}}
+
+</div>

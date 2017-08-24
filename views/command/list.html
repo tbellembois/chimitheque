@@ -1,0 +1,99 @@
+{{extend 'layout.html'}}
+
+<div id="commands_list">
+
+    {{=paginator}}
+ 
+    <div id="paginate_info"> 
+        {{=paginate_selector}}
+        {{=paginate_info}}
+    </div>
+
+    {{if commands is not None:}}
+        <table>
+        <tr>
+        <th>{{=cc.get_string("COMMAND_LIST_PRODUCT")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_ACTIONS")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_SUBMITTER")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_STATUS")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_VOLUME")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_FUNDS")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_ENTITY")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_SUBTEAM")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_STORE_LOCATION")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_SUPPLIER")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_RETAILER")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_UNIT_PRICE")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_REFERENCE")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_PRODUCT_REFERENCE")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_COMMENT")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_CREATION")}}</th>
+        <th>{{=cc.get_string("COMMAND_LIST_MODIFICATION")}}</th>
+        </tr>
+        {{for command in commands:}}
+            <tr>
+            <td>{{=A('%s / %.16s' % (command['product'].cas_number, command['product'].name.label),
+                     _title='%s / %s' % (command['product'].cas_number, command['product'].name.label),
+                     _href=URL(request.application,'product', 'search', vars={'product_id': command['product'].id}))}}</td>
+            <td>
+                {{if not command['status'].state:}}
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_SMALL),
+                             _alt=cc.get_string("COMMAND_EDIT")),
+                        _title=cc.get_string("COMMAND_EDIT"),
+                        _href=URL(request.application, controller, 'update', args=command['id']))}}
+                {{pass}}
+            {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_COMMAND_CLONE), _alt=cc.get_string("COMMAND_CLONE")),
+                _title=cc.get_string("COMMAND_CLONE"),
+                _href=URL(request.application, controller, 'create', vars={'command_clone_id': command['id']}))}}
+
+            {{if auth.has_permission('delete_com') or auth.has_permission('admin'):}}
+                {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL_BLUE),
+                    _alt=cc.get_string("DELETE_COMMAND")),
+                    _title=cc.get_string("DELETE_COMMAND"),
+                    _onclick="""jQuery(function() {
+                                displayDeleteButton("%s", 'command');
+                                });
+                             """ % command.id
+                )}}
+                {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+                    _alt=cc.get_string("I_AM_SURE"),
+                    _id='command_action_delete_%s' % command.id,
+                    _style='display: none;'),
+                    _href=URL(a=application, c=controller, f='delete', args=command.id, vars=request.vars)
+                )}}
+            {{pass}}
+
+            </td>
+            <td>{{=command['submitter'].last_name}}</td>
+            <td class="command_status {{=command['status'].label.lower()}}">
+            {{=A(T(command['status'].label),
+                _class='command_name', _href=URL(a=application, c=controller,
+                f='details', args=[command.id], vars=request.vars),
+                cid='command_detail_%s' % command.id)}}
+            <div class="command_detail" id="command_detail_{{=command.id}}"></div>
+            </td>
+            <td>{{=command['nb_items']}} X {{=command['volume_weight']}}{{=command['unit'].label}}</td>
+            <td>{{=command['funds']}}</td>
+            <td>{{=command['entity'].role}}</td>
+            <td>{{=command['subteam']}}</td>
+            <td>{{=command['store_location'].label if command['store_location'] is not None else ''}}</td>
+            <td>{{=command['supplier'].label if command['supplier'] is not None else ''}}</td>
+            <td>{{=command['retailer']}}</td>
+            <td>{{=command['unit_price'] or ''}}</td>
+            <td>{{=command['reference']}}</td>
+            <td>{{=command['product_reference']}}</td>
+            <td>{{=command['comment']}}</td>
+            <td>{{=command['creation_datetime'].strftime(str(T('%Y-%m-%d')))}}</td>
+            <td>{{=command['modification_datetime'].strftime(str(T('%Y-%m-%d')))}}</td>
+            </tr>
+            {{pass}}
+        </table>
+        {{pass}}
+
+        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EXPORT_CSV),
+                 _alt=cc.get_string("EXPORT_IN_CSV")),
+             _href=URL(a=application, c=controller, f='export_to_csv', vars=request.vars),
+             _title=cc.get_string("EXPORT_IN_CSV"))}}
+</div>
+
+

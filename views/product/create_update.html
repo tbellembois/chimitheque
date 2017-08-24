@@ -1,0 +1,326 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="product_create">
+
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+
+{{=form.custom.begin}}
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+<INPUT TYPE="button" onClick="window.location='/{{=application}}/{{=controller}}/search?product_id=-1'" value="{{=cc.get_string("CANCEL")}}"/>
+</div>
+
+{{counter=0}}
+{{for field_name in [
+					'cas_number',
+					'name',
+					'synonym',
+					'empirical_formula',
+					'linear_formula',
+					'msds',
+					 'restricted_access',
+                     'ce_number',
+                     'specificity',
+                     'physical_state',
+                     'class_of_compounds',
+                     'tdformula',
+                     'is_radio',
+                     'signal_word',
+                     'hazard_code',
+                     'symbol',
+                     'hazard_statement',
+                     'precautionary_statement',
+                     'risk_phrase',
+                     'safety_phrase',
+                     'disposal_comment',
+                     'remark']:}}
+
+<div id="{{=field_name}}" class="field">
+
+{{if field_name != 'hazard_code' and field_name != 'symbol':}}
+<div class="label">{{=form.custom.label['%s' %field_name]}}
+	{{if field_name in [ 'cas_number',
+						 'name',
+						 'synonym',
+						 'empirical_formula',
+						 'msds',
+						 'restricted_access',
+	                     'specificity',
+	                     'tdformula',
+                         'is_radio',
+	                     'linear_formula',
+	                     'hazard_statement',
+                     	 'precautionary_statement',
+                     	 'risk_phrase',
+                     	 'safety_phrase',
+	                     ]:}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span>
+	{{pass}}
+</div>
+{{pass}}
+
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+{{if field_name == 'risk_phrase':}}
+    <a onclick="$('div[class=quick]').hide();$('div[id=quick_risk_phrase][class=quick]').show();">{{=cc.get_string("MAGICAL_SELECTOR")}}</a>
+    <div class="quick" id="quick_risk_phrase" style="display: none;" >
+        <textarea id="quick_select" cols="10" rows="10" name="quick_risk_phrase">
+            {{=cc.get_string("COPY_AND_PASTE_FOR_MAGIC")}}
+        </textarea>
+        <button type="button" id="quick_risk_phrase_button">{{=cc.get_string("DO_THE_MAGIC")}}</button>
+    </div>
+{{pass}}
+
+{{if field_name == 'safety_phrase':}}
+    <a onclick="$('div[class=quick]').hide();$('div[id=quick_safety_phrase][class=quick]').show();">{{=cc.get_string("MAGICAL_SELECTOR")}}</a>
+    <div class="quick" id="quick_safety_phrase" style="display: none;">
+        <textarea id="quick_select" cols="10" rows="10" name="quick_safety_phrase">
+            {{=cc.get_string("COPY_AND_PASTE_FOR_MAGIC")}}
+        </textarea>
+        <button type="button" id="quick_safety_phrase_button">{{=cc.get_string("DO_THE_MAGIC")}}</button>
+    </div>
+{{pass}}
+
+{{if field_name == 'hazard_statement':}}
+    <a onclick="$('div[class=quick]').hide();$('div[id=quick_hazard_statement][class=quick]').show();">{{=cc.get_string("MAGICAL_SELECTOR")}}</a>
+    <div class="quick" id="quick_hazard_statement" style="display: none;">
+        <textarea id="quick_select" cols="10" rows="10" name="quick_hazard_statement">
+            {{=cc.get_string("COPY_AND_PASTE_FOR_MAGIC")}}
+        </textarea>
+        <button type="button" id="quick_hazard_statement_button">{{=cc.get_string("DO_THE_MAGIC")}}</button>
+    </div>
+{{pass}}
+
+{{if field_name == 'precautionary_statement':}}
+    <a onclick="$('div[class=quick]').hide();$('div[id=quick_precautionary_statement][class=quick]').show();">{{=cc.get_string("MAGICAL_SELECTOR")}}</a>
+    <div class="quick" id="quick_precautionary_statement" style="display: none;" >
+        <textarea id="quick_select" cols="10" rows="10" name="quick_precautionary_statement">
+            {{=cc.get_string("COPY_AND_PASTE_FOR_MAGIC")}}
+        </textarea>
+        <button type="button" id="quick_precautionary_statement_button">{{=cc.get_string("DO_THE_MAGIC")}}</button>
+    </div>
+{{pass}}
+
+{{if field_name == 'hazard_code':}}
+	{{=IMG(_src="%s/picto_E.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_F.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_Fplus.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_O.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_T.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_Tplus.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_Xi.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_Xn.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_C.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_N.png" %images_base_url)}}
+{{pass}}
+
+{{if field_name == 'symbol':}}
+	{{=IMG(_src="%s/picto_SGH01.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH02.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH03.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH04.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH05.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH06.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH07.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH08.png" %images_base_url)}}
+	{{=IMG(_src="%s/picto_SGH09.png" %images_base_url)}}
+{{pass}}
+
+<script>
+    function uncheckPhysicalState() {
+        $('input[type="radio"][name="physical_state"]').removeAttr("checked");
+    };
+</script>
+
+<script>
+    function uncheckSignalWord() {
+        $('input[type="radio"][name="signal_word"]').removeAttr("checked");
+    };
+</script>
+
+{{if field_name == 'physical_state':}}
+	<a href="javascript:void(0)" onclick="uncheckPhysicalState();">{{=cc.get_string("UNSELECT_ALL")}}</a>
+{{pass}}
+{{if field_name == 'signal_word':}}
+	<a href="javascript:void(0)" onclick="uncheckSignalWord();">{{=cc.get_string("UNSELECT_ALL")}}</a>
+{{pass}}
+
+<div id="{{=field_name}}" class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+
+
+{{if field_name == 'cas_number':}}
+	<div id="cas_number_check"></div>
+{{pass}}
+
+{{if field_name == 'empirical_formula':}}
+    <div class="label" style="width: 100%">
+        <a onclick="$('#empirical_formula_format').toggle();">{{=cc.get_string("EMPIRICAL_FORMULA_TESTER")}}</a>
+    </div>
+
+    <div id="empirical_formula_format" style="display: none">
+        <div class="label" style="width: 100%; clear: both;">
+            {{=cc.get_string("DISPLAY_NORMALIZED_EMPIRICAL_FORMULA")}}
+        </div>
+        <input type="text" name="empirical_formula_test"/>
+        <input type="button" id="check_empirical_formula" value="{{=cc.get_string("SUBMIT")}}" onclick="checkEmpiricalFormula();"></button>
+        <div id="empirical_formula_check"></div>
+    </div>
+
+    <div id="empirical_formula_calculator" style="float: left; width: 100%">
+        <div class="label">
+            <a href="#" id="empirical_formula_button">{{=cc.get_string("CALCULATE_EMPIRICAL_FORMULA")}}
+</a>
+        </div>
+        <div id="empirical_formula_calculator_result" style="float: left;">
+        </div>
+    </div>
+
+{{pass}}
+
+</div>
+{{pass}}
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+<INPUT TYPE="button" onClick="window.location='/{{=application}}/{{=controller}}/search?product_id=-1'" value="{{=cc.get_string("CANCEL")}}"/>
+</div>
+
+{{=form.custom.end}}
+</div>
+
+<script>
+function checkEmpiricalFormula(){
+    	ajax('/{{=application}}/{{=controller}}/ajax_check_empirical_formula', ['empirical_formula_test'], 'empirical_formula_check');
+}
+
+jQuery(document).ready(function(){
+
+
+  jQuery("a[id=empirical_formula_button]").bind('click',function() {
+    var f = $("div[class=linear_formula_label]").text();
+    var ret = $.ajax({
+           type: "POST",
+           url: "/{{=application}}/{{=controller}}/ajax_ef_calculator",
+           data: {f:f},
+           dataType: "html",
+           async: false
+         }).responseText;
+
+    $("div#empirical_formula_calculator_result").html(ret);
+  });
+  jQuery("button[id=quick_safety_phrase_button]").bind('click',function() {
+    	$("select[name=safety_phrase] option").attr("selected", false);
+    	var text = $("textarea[name=quick_safety_phrase]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajax_sp",
+    		   data: {text:text},
+    		   dataType: "html",
+    		   async: false
+    		 }).responseText;
+    	var ids = ret.split(";");
+        
+        // field uid
+        var fuid = jQuery("input[name=uid_safety_phrase]").val();
+        // field function add
+        var ffadd = "addReplaceCheckBox" + fuid;
+
+        jQuery.each(ids, function(i, val) {
+            sp_id = val.split("|")[0]
+            sp_label = val.split("|")[1]
+            window[ffadd]("add", sp_id, sp_label, fuid);
+        });
+        $('div[id=quick_safety_phrase][class=quick]').hide();
+  	});
+    jQuery("button[id=quick_risk_phrase_button]").bind('keyup click',function() {
+    	$("select[name=risk_phrase] option").attr("selected", false);
+    	var text = $("textarea[name=quick_risk_phrase]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajax_rp",
+    		   data: {text:text},
+    		   dataType: "html",
+    		   async: false
+    		 }).responseText;
+    	var ids = ret.split(";");
+
+        // field uid
+        var fuid = jQuery("input[name=uid_risk_phrase]").val();
+        // field function add
+        var ffadd = "addReplaceCheckBox" + fuid;
+
+        jQuery.each(ids, function(i, val) {
+            rp_id = val.split("|")[0]
+            rp_label = val.split("|")[1]
+            window[ffadd]("add", rp_id, rp_label, fuid);
+        });
+        $('div[id=quick_risk_phrase][class=quick]').hide();
+  	});
+    jQuery("button[id=quick_hazard_statement_button]").bind('keyup click',function() {
+    	$("select[name=hazard_statement] option").attr("selected", false);
+    	var text = $("textarea[name=quick_hazard_statement]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajax_hs",
+    		   data: {text:text},
+    		   dataType: "html",
+    		   async: false
+    		 }).responseText;
+    	var ids = ret.split(";");
+
+        // field uid
+        var fuid = jQuery("input[name=uid_hazard_statement]").val();
+        // field function add
+        var ffadd = "addReplaceCheckBox" + fuid;
+
+        jQuery.each(ids, function(i, val) {
+            hs_id = val.split("|")[0]
+            hs_label = val.split("|")[1]
+            window[ffadd]("add", hs_id, hs_label, fuid);
+        });
+        $('div[id=quick_hazard_statement][class=quick]').hide();
+  	});
+    jQuery("button[id=quick_precautionary_statement_button]").bind('keyup click',function() {
+    	$("select[name=precautionary_statement] option").attr("selected", false);
+    	var text = $("textarea[name=quick_precautionary_statement]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajax_ps",
+    		   data: {text:text},
+    		   dataType: "html",
+    		   async: false
+    		 }).responseText;
+    	var ids = ret.split(";");
+
+        // field uid
+        var fuid = jQuery("input[name=uid_precautionary_statement]").val();
+        // field function add
+        var ffadd = "addReplaceCheckBox" + fuid;
+
+        jQuery.each(ids, function(i, val) {
+            ps_id = val.split("|")[0]
+            ps_label = val.split("|")[1]
+            window[ffadd]("add", ps_id, ps_label, fuid);
+        });
+        $('div[id=quick_precautionary_statement][class=quick]').hide();
+  	});
+
+    jQuery("input[name=msds_local]").bind('click',function() {
+    	$("input[name=msds]").attr("value", "local_file");
+    });
+
+    jQuery("input[name=ce_number],input[name=tdformula],input[name=msds]").bind('keyup click',function() {
+    	var thevalue = $.trim($(this).val());
+    	$(this).attr("value", thevalue);
+    });
+
+    if (($("div[id=empirical_formula]").find('input[name=empirical_formula][id=empirical_formula]').length == 0) && (!(window.location.pathname.match('create\.html$')))) {
+		$("input[id=confirm_empty_empirical_formula]").trigger('click');
+    };
+    if (($("div[id=cas_number]").find('input[name=cas_number][id=cas_number]').length == 0) && (!(window.location.pathname.match('create\.html$')))) {
+		$("input[id=confirm_empty_cas_number]").trigger('click');
+    };
+
+});
+</script>

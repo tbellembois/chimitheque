@@ -1,0 +1,20 @@
+{{include 'chimitheque_import.html'}}
+
+{{current_product = request.args[0] if len(request.args) > 0 else 0}}
+
+        {{if len(storages) > 0:}}
+         		       {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CHECK_ALL),
+		                        _alt=cc.get_string("CHECK_ALL"),
+		               _title=cc.get_string("CHECK_ALL"),
+                       _onclick="""
+                       $('div[id=storage_list_%(product_id)s]  div[class=storage_item_archive]  input[type=checkbox]').attr('checked', 'checked');
+                       $('div#storage_list_%(product_id)s div#delete_sc_%(product_id)s').show();
+                            """ % {'product_id': current_product})),
+                            _class='check_all')}}
+ 
+        {{pass}}
+
+		{{for storage in storages:}}
+				{{include 'storage/label.html'}}
+		{{pass}}<!-- for -->
+

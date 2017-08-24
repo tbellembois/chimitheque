@@ -1,0 +1,92 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$(this).parent().parent().empty(); $.mask.close();")}}
+</div>
+
+<div class='advice'>
+    <ul>
+        <li>{{=cc.get_string("STORE_INFO")}}</li>
+    </ul>
+</div>
+
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}<br/>
+
+<div id="storage_create">
+{{=form.custom.begin}}
+
+{{for field_name in ['product', 
+                     'store_location', 
+                     'volume_weight', 
+                     'unit', 
+                     'nb_items', 
+                     'entry_datetime', 
+                     'exit_datetime', 
+                     'expiration_datetime', 
+                     'opening_datetime', 
+                     'to_destroy', 
+                     'comment', 
+                     'reference',
+                     'batch_number',
+                     'supplier',
+                     'barecode']:}}
+	 
+    {{if request.function == 'update' and field_name == 'nb_items':}}
+        <div id="none" class="field"></div>
+    {{else:}}
+        {{if field_name=='supplier' and (auth.has_permission('create_sup') or auth.has_permission('admin')):}}
+            <div class="field">
+                <div class="label">&nbsp;</div>
+                <div id="quick_add_vendor">
+                    <input id="quick_add_vendor" name="quick_add_vendor" value=""></input>
+                    <button type="button" id="quick_add_vendor_button" name="quick_add_vendor_button">
+                        {{=cc.get_string("ADD_SUPPLIER_TO_LIST")}}
+                    </button>
+                </div>
+                <div class="comment">&nbsp;</div>
+            </div>
+        {{pass}}
+
+        <div id="{{=field_name}}" class="field">
+	   
+            <div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+            <div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+            <div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+        </div>
+    {{pass}}
+{{pass}}<!-- for -->
+	
+<div id="submit" class="field">
+    {{=form.custom.submit}}
+</div>
+	
+{{=form.custom.end}}
+</div><!-- id="storage_create" -->
+
+<script>
+jQuery(document).ready(function(){
+ 
+  jQuery("button[name=quick_add_vendor_button]").bind('click',function() {
+    	var text = $("input[name=quick_add_vendor]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/{{=controller}}/ajax_add_vendor",
+    		   data: {text:text},
+    		   dataType: "text",
+    		   async: false
+    		 }).responseText;
+    	var errorCode_id = ret.split(";");
+    	var errorCode = errorCode_id[0]
+    	var id = errorCode_id[1]
+    	if (errorCode == '1') {
+    		alert(id);
+    	}else {
+    		$("select#storage_supplier").prepend("<option value=\"" + id + "\">" + text + "</option>");
+    	}
+  	});
+ });
+</script>

@@ -1,0 +1,460 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title></title><link rel="stylesheet" type="text/css" href="chimitheque.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><meta name="keywords" content="produit chimique, chimie, base de donn&eacute;es, open source, gratuit, libre, s&eacute;curit&eacute;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article"><div class="titlepage"><div><div><h1 class="title"><a name="d5e1"></a>
+            <span class="inlinemediaobject"><img src="./images/logo.png"></span>
+        </h1></div><div><div class="author"><h3 class="author"><span class="orgname">ENS-Lyon</span><code lang="fr" class="email">&lt;<a lang="fr" class="email" href="mailto:elodie [point] goy [arobase] ens-lyon.fr">elodie [point] goy [arobase] ens-lyon.fr</a>&gt;</code></h3><code lang="fr" class="email">&lt;<a lang="fr" class="email" href="mailto:elodie [point] goy [arobase] ens-lyon.fr">elodie [point] goy [arobase] ens-lyon.fr</a>&gt;</code></div></div></div><hr></div><div class="toc"><p><b>Table des mati&egrave;res</b></p><dl class="toc"><dt><span class="sect1"><a href="#d5e18">Introduction</a></span></dt><dt><span class="sect1"><a href="#d5e28">
+            
+            <span lang="fr" class="phrase">Pourquoi Chimith&egrave;que</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e37">
+            
+            <span lang="fr" class="phrase">Concepts</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e54">
+            
+            <span lang="fr" class="phrase">Ce que Chimith&egrave;que est</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e65">
+            
+            <span lang="fr" class="phrase">Ce que Chimith&egrave;que n'est pas</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e74">
+            
+            <span lang="fr" class="phrase">Aspects techniques</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e82">
+            
+            <span lang="fr" class="phrase">Limites connues</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e89">
+            <span class="phrase">Documentation</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e610">
+            
+            <span lang="fr" class="phrase">Pour conclure</span>
+        </a></span></dt><dt><span class="sect1"><a href="#d5e614">
+            
+            <span lang="fr" class="phrase">Quelques notes... Je ne sais pas o&ugrave; les mettre. :)</span>
+        </a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e18"></a>Introduction</h2></div></div></div><p lang="fr">Bienvenu sur le site du projet "Chimith&egrave;que", une application de gestion de
+            produits chimiques d&eacute;velopp&eacute;e par l'<a class="link" href="http://www.ens-lyon.fr" title="ENS-Lyon" target="_top">ENS-Lyon</a>.</p><p lang="fr">Cette documentation est &eacute;crite en <a class="link" href="http://www.docbook.org/" title="ENS-Lyon" target="_top">Docbook</a> en
+            Fran&ccedil;ais et Anglais. Nous avons utilis&eacute; des applications et syst&egrave;mes Open Source comme
+                <a class="link" href="http://www.debian.org/" title="ENS-Lyon" target="_top">Debian</a>,
+                <a class="link" href="http://linuxmint.com/" title="ENS-Lyon" target="_top">Linux Mint</a>,
+                <a class="link" href="http://inkscape.org/" title="ENS-Lyon" target="_top">Inkscape</a> et
+                <a class="link" href="http://www.videolan.org/vlc//" title="ENS-Lyon" target="_top">VLC</a>
+            pour le fun ! :)</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e28"></a>
+            
+            <span lang="fr" class="phrase">Pourquoi Chimith&egrave;que</span>
+        </h2></div></div></div><p lang="fr">Nous avions besoin d'une m&eacute;thode globale pour g&eacute;rer les produits
+            chimiques des diff&eacute;rents d&eacute;partements et laboratoires de l'ENS pour:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>am&eacute;liorer la s&eacute;curit&eacute; avec un inventaire pr&eacute;cis et global des produits
+                        chimiques stock&eacute;s dans toutes l'&eacute;cole</p></li><li class="listitem"><p>r&eacute;duire le gaspillage en encourageant les gestionnaires de produits &agrave;
+                        rechercher dans Chimith&egrave;que si un produit peut &ecirc;tre emprunter &agrave; un autre
+                        d&eacute;partement avant d'en commander un nouveau</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e37"></a>
+            
+            <span lang="fr" class="phrase">Concepts</span>
+        </h2></div></div></div><p lang="fr">"Chimith&egrave;que" utilise les notions suivantes: </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>organisation (typiquement l'&eacute;cole, l'universit&eacute;)</p></li><li class="listitem"><p>entit&eacute; (un d&eacute;partement, un laboratoire...): l'organisation a une ou
+                        plusieurs entit&eacute;s</p></li><li class="listitem"><p>entrep&ocirc;t (un r&eacute;frig&eacute;rateur, une &eacute;tag&egrave;re...): une entit&eacute; a un ou plusieurs
+                        entrep&ocirc;ts</p></li><li class="listitem"><p>utilisateur (un enseignant, un &eacute;tudiant...): un utilisateur appartient a
+                        une ou plusieurs entit&eacute;s et poss&egrave;de des droits dans l'application</p></li><li class="listitem"><p>fiche produit: carte d'identit&eacute; du produit (contient le num&eacute;ro CAS, les
+                        noms, formules chimiques, phrases de risque...), la fiche produit est saisie
+                        une et une seule fois dans l'application par un utilisateur poss&eacute;dant les
+                        droits requis. Les fiches produits sont visibles par tous les utilisateurs.
+                        Elles peuvent &ecirc;tre modifi&eacute;es mais les modifications sont conserv&eacute;es.</p></li><li class="listitem"><p>fiche stockage: association entre une fiche produit et un entrep&ocirc;t. Pour
+                        stocker un produit dans une de ses entit&eacute;s, un utilisateur doit saisir une
+                        fiche stockage contenant des informations comme le volume ou le poids &agrave;
+                        stocker, l'entrep&ocirc;t, le nombre d'&eacute;l&eacute;ments et bien sur le nom du produit.
+                        Comme les fiches produit, les fiches stockage peuvent &ecirc;tre modifi&eacute;es et les
+                        modifications sont conserv&eacute;es.</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e54"></a>
+            
+            <span lang="fr" class="phrase">Ce que Chimith&egrave;que est</span>
+        </h2></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>une application pour acc&eacute;der aux informations de s&eacute;curit&eacute; de vos produits
+                        chimiques</p></li><li class="listitem"><p>une application pour g&eacute;rer les stocks the vos produits chimiques</p></li><li class="listitem"><p>une application pour rechercher des produits chimiques avec diff&eacute;rents
+                        crit&egrave;res</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e65"></a>
+            
+            <span lang="fr" class="phrase">Ce que Chimith&egrave;que n'est pas</span>
+        </h2></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>une base de donn&eacute;es de tous les produits chimiques existants dans le
+                        monde: l'application est fournie avec X fiches produit (pour X voir sur la page principale) et ces
+                        fiches peuvent &ecirc;tre &eacute;chang&eacute;es gr&acirc;ce &agrave; une fonctionnalit&eacute;
+                        d'import/export</p></li><li class="listitem"><p>une application imm&eacute;diatement connectable a des appareils comme de
+                        scanners &agrave; code barre ou d'autres applications</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e74"></a>
+            
+            <span lang="fr" class="phrase">Aspects techniques</span>
+        </h2></div></div></div><p lang="fr"> "Chimith&egrave;que" est d&eacute;velopp&eacute;e en <span class="emphasis"><em>Python</em></span> avec le
+            framework <a class="link" href="http://www.web2py.com" title="web2py" target="_top">web2py</a>.
+            Il s'installe sous Linux mais devrait &ecirc;tre installable sous Windows (non couvert par cette documentation). Une base de donn&eacute;es
+            <span class="emphasis"><em>PostGreSQL/MySQL/SQLite</em></span> (d'autres bases de donn&eacute;es sont possibles mais n'ont pas &eacute;t&eacute; test&eacute;es) et un serveur <span class="emphasis"><em>SMTP</em></span> sont requis.
+            L'application est disponible en anglais et en fran&ccedil;ais mais peut &ecirc;tre traduite dans
+            n'importe qu'elle autre langue.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e82"></a>
+            
+            <span lang="fr" class="phrase">Limites connues</span>
+        </h2></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>il est actuellement impossible de cr&eacute;er des entit&eacute;s hi&eacute;rarchiques. Cette
+                        fonctionnalit&eacute; n&eacute;cessiterait de repenser la politique de permissions.</p></li></ul></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e89"></a>
+            <span class="phrase">Documentation</span>
+        </h2></div></div></div><p></p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e93"></a>
+        
+        <span lang="fr" class="phrase">Documentation d'installation</span>
+    </h2></div></div></div><p lang="fr">Cette documentation traite de l'installation sous Linux (<a class="link" href="http://www.debian.org" title="Debian" target="_top">Debian</a> latest stable)
+        avec <a class="link" href="http://httpd.apache.org/" title="Apache2" target="_top">Apache2</a>.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="./images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p lang="fr">N'h&eacute;sitez pas &agrave; nous faire par de vos installations sous
+            d'autres plateformes comme par exemple CentOS.</p></td></tr></table></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e101"></a>
+            
+            <span lang="fr" class="phrase">Versions de Chimith&egrave;que</span>
+        </h3></div></div></div><p lang="fr">
+            Sur la page de  <a class="link" href="http://chimitheque.ens-lyon.fr/download/" target="_top">t&eacute;l&eacute;chargement</a> vous trouverez diff&eacute;rents fichiers:
+            </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>des fichiers <code class="filename">chimitheque_{version}_{date}.tar.gz</code>. Ce sont les diff&eacute;rentes versions de Chimith&egrave;que.</p></li><li class="listitem"><p>un fichier <code class="filename">chimitheque_stable.tar.gz</code>, qui est juste un lien symbolique vers la derni&egrave;re version stable.</p></li><li class="listitem"><p>un fichier <code class="filename">chimitheque_testing.tar.gz</code>. Ce fichier est la version la plus
+                    r&eacute;cente de Chimith&egrave;que, actuellement test&eacute;e &agrave; l'ENS.</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e116"></a>
+            
+            <span lang="fr" class="phrase">Pr&eacute;-requis</span>
+        </h3></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>serveur Linux avec 1GO de disque et 1VCPU (pour les syst&egrave;mes
+                        virtualis&eacute;s)</p></li><li class="listitem"><p><span class="emphasis"><em>apache2-mpm-event</em></span> et
+                        <span class="emphasis"><em>libapache2-mod-wsgi</em></span></p><p>serveur de base de donn&eacute;es <span class="emphasis"><em>PostGreSQL/MySQL</em></span>,
+                        PostGreSQL version 8.4 ou sup&eacute;rieure, MySQL version 5 ou sup&eacute;rieure</p></li><li class="listitem"><p>serveur <span class="emphasis"><em>SMTP</em></span></p></li><li class="listitem"><p><span class="emphasis"><em>Python 2.7</em></span> ou plus,
+                        <span class="emphasis"><em>python-beaker</em></span>, 
+                        <span class="emphasis"><em>python-ldap</em></span>,
+                        <span class="emphasis"><em>python-levenshtein</em></span>,
+                        <span class="emphasis"><em>python-ldap (optionnel)</em></span>,
+                        <span class="emphasis"><em>python-psycopg2</em></span> (pour une base PostgreSQL, ou la librairie <a class="link" href="http://www.web2py.com/books/default/chapter/29/06#Dependencies" target="_top">requise</a> pour d'autres bases de donn&eacute;es),
+                    </p></li></ul></div><p lang="fr">
+        </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="./images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p lang="fr">
+                "Chimith&egrave;que" devrait fonctionner avec d'autres bases de donn&eacute;es comme Oracle, MSSQL, FireBird, DB2, Informix, Ingres. L'application a &eacute;t&eacute; test&eacute;e avec succ&egrave;s avec PostgreSQL, MySQL et SQLite.
+            </p></td></tr></table></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e143"></a>
+            
+            <span lang="fr" class="phrase">Organisation des r&eacute;pertoires</span>
+        </h3></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><p>L'installation se d&eacute;compose en:</p><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>un r&eacute;pertoire source: <code class="filename">/usr/local/src/chimitheque_src</code>
+                        par exemple</p></li><li class="listitem"><p>un r&eacute;pertoire de d&eacute;ploiement: <code class="filename">/var/www/chimitheque</code>
+                        par exemple</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e155"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tapes d'installation</span>
+        </h3></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist compact" style="list-style-type: disc; "><li class="listitem"><p>installation des d&eacute;pendances</p></li><li class="listitem"><p>installation de "Chimith&egrave;que"</p></li><li class="listitem"><p>installation du serveur PostGreSQL (optionnel si vous avez d&eacute;j&agrave; un
+                        serveur de bases de donn&eacute;es)</p></li><li class="listitem"><p>installation du serveur <a class="link" href="http://httpd.apache.org/" title="Apache2" target="_top">Apache2</a></p></li></ul></div><p lang="fr">
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e169"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 1: installation des d&eacute;pendances</span>
+        </h3></div></div></div><p lang="fr">Vous &ecirc;tes connect&eacute;s en tant que <code class="code">root</code>. <code class="code">python
+            2.7</code> est install&eacute; par d&eacute;faut.</p><p>
+            </p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>aptitude install python-psycopg2 python-ldap python-beaker python-levenshtein unzip rsync</code></strong>
+            </pre><p>
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e179"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 2: installation de l'application</span>
+        </h3></div></div></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e182"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape A</span>
+            </h4></div></div></div><p lang="fr"> R&eacute;cup&eacute;ration du paquet "Chimith&egrave;que" dans la section
+                t&eacute;l&eacute;chargement.</p><p>
+                </p><pre class="screen">
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>cd /usr/local/src</code></strong>
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>wget http://chimitheque.ens-lyon.fr/download/chimitheque_stable.tar.gz</code></strong>
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>tar zxvf chimitheque_stable.tar.gz</code></strong>
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>mv web2py chimitheque_src</code></strong>
+                </pre><p>
+            </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e196"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape B</span>
+            </h4></div></div></div><p lang="fr">Choix d'un nom d'instance - exemple: <code class="code">prod</code>.
+                Copie du fichier <code class="filename">chimitheque_sample.properties</code> en
+                <code class="filename">chimitheque_[instance].properties</code>.</p><p>
+                </p><pre class="screen">
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>cd /usr/local/src/chimitheque_src/applications/chimitheque</code></strong>
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>cp chimitheque_sample.properties chimitheque_prod.properties</code></strong>
+                </pre><p>
+            </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e209"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape C</span>
+            </h4></div></div></div><p lang="fr">&Eacute;dition du fichier
+                <code class="filename">chimitheque_[instance].properties</code>. Il est document&eacute;.</p><p lang="fr">Cr&eacute;ation du r&eacute;pertoire de d&eacute;ploiement sp&eacute;cifi&eacute; dans la
+                variable <code class="code">CHIMITHEQUE_PATH</code>.</p><p>
+                </p><pre class="screen">
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>mkdir -p /var/www/chimitheque</code></strong>
+                </pre><p>
+            </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e220"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape D</span>
+            </h4></div></div></div><p lang="fr">D&eacute;ploiement avec la commande <code class="code">deploy [instance]</code>.</p><p>
+                </p><pre class="screen">
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>cd /usr/local/src/chimitheque_src/applications/chimitheque</code></strong>
+                    <code class="prompt">bash$ </code><strong class="userinput"><code>./chimitheque deploy prod</code></strong>
+                </pre><p>
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e231"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 3: Installation du serveur PostGreSQL</span>
+        </h3></div></div></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e234"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape A</span>
+            </h4></div></div></div><p lang="fr">Installation des paquets. C'est la version 8.4.</p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>aptitude install postgresql postgresql-client</code></strong>
+            </pre></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e241"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape B</span>
+            </h4></div></div></div><p lang="fr">Configuration du serveur. Nous n'utilisons PAS de cluster
+                d&eacute;di&eacute; pour simplifier l'installation.</p><p lang="fr">Choisissez un nom d'utilisateur de base de donn&eacute;es. Doit
+                &ecirc;tre identique &agrave; la variable <code class="code">SKEL_DBUSERNAME</code>. Nous utiliserons
+                le nom <code class="code">chimitheque_user</code></p><p lang="fr">Ajouter &agrave; la fin du fichier
+                <code class="code">/etc/postgresql/8.4/main/pg_hba.conf</code>:</p><pre class="programlisting">
+                host    all             chimitheque_user     127.0.0.1/32            md5</pre><div lang="fr" class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Astuce]" src="./images/tip.png"></td><th align="left">Astuce</th></tr><tr><td align="left" valign="top"><p>Nous autorisons l'utilisateur <code class="code">chimitheque_user</code> a se
+                    connecter &agrave; la base de donn&eacute;es depuis <code class="code">localhost</code> avec un mot
+                    de passe (<code class="code">md5</code>).</p></td></tr></table></div><p lang="fr">Red&eacute;marrage du serveur:</p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>/etc/init.d/postgresql restart</code></strong>
+            </pre></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="d5e260"></a>
+                
+                <span lang="fr" class="phrase">&Eacute;tape C</span>
+            </h4></div></div></div><p lang="fr">Initialisation de la base de
+                donn&eacute;es<code class="code">chimitheque</code>.</p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>su - postgres</code></strong>
+                <code class="prompt">postgres$ </code><strong class="userinput"><code>psql -p 5432</code></strong>
+                <code class="prompt">postgres$ </code><strong class="userinput"><code>CREATE USER chimitheque_user WITH PASSWORD 'chimitheque_password' SUPERUSER;</code></strong>
+                <code class="prompt">postgres$ </code><strong class="userinput"><code>CREATE DATABASE chimitheque OWNER chimitheque_user;</code></strong>
+                <code class="prompt">postgres$ </code><strong class="userinput"><code>GRANT ALL PRIVILEGES ON DATABASE chimitheque TO chimitheque_user;</code></strong>
+            </pre><div lang="fr" class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>line 3:
+                        <code class="code">chimitheque_user</code>=<code class="code">SKEL_DBUSERNAME</code></p></li><li class="listitem"><p>line 3:
+                        <code class="code">chimitheque_password</code>=<code class="code">SKEL_DBPASSWORD</code></p></li><li class="listitem"><p>line 4: <code class="code">chimitheque</code>=<code class="code">SKEL_DBNAME</code></p></li></ul></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e289"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 4-b: Installation de Apache2</span>
+        </h3></div></div></div><p lang="fr">Installation du package:</p><pre class="screen">
+            <code class="prompt">bash$ </code><strong class="userinput"><code>aptitude install apache2-mpm-event libapache2-mod-wsgi</code></strong>
+        </pre><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Avertissement]" src="./images/warning.png"></td><th align="left">Avertissement</th></tr><tr><td align="left" valign="top"><p lang="fr">N'utilisez PAS ''apache2-mpm-worker'', vous pourriez
+                rencontrer des probl&egrave;mes de performances.</p></td></tr></table></div><p lang="fr">Activation des modules:</p><pre class="screen">
+            <code class="prompt">bash$ </code><strong class="userinput"><code>a2enmod ssl</code></strong> # only for HTTPS use
+            <code class="prompt">bash$ </code><strong class="userinput"><code>a2enmod wsgi</code></strong>
+            <code class="prompt">bash$ </code><strong class="userinput"><code>a2enmod deflate</code></strong>
+            <code class="prompt">bash$ </code><strong class="userinput"><code>a2enmod expires</code></strong>
+        </pre><p lang="fr">Cr&eacute;ation du nouveau site (merci de regarder les commentaires dans le fichier):</p><pre class="screen">
+            <code class="prompt">bash$ </code><strong class="userinput"><code>vim /etc/apache2/site-available/chimitheque</code></strong>
+        </pre><pre class="programlisting">
+                               
+            &lt;VirtualHost *:443&gt;
+            
+            # change your servername here
+            ServerName chimitheque.ens-lyon.fr
+            
+            # remove the following line if you do not use SSL and change the 443 port in the virtualhost to 80
+            SSLEngine on
+            SSLCertificateFile /etc/ssl/certs/chimitheque.ens-lyon.fr.pem
+            SSLCertificateKeyFile /etc/ssl/private/chimitheque.ens-lyon.fr.key
+            
+            WSGIDaemonProcess web2py user=www-data group=www-data \
+            display-name=%{GROUP} inactivity-timeout=120 maximum-requests=500 processes=5 threads=1
+            
+            WSGIProcessGroup web2py
+            
+            SetOutputFilter DEFLATE
+            AddOutputFilterByType DEFLATE text/html text/plain text/xhtml text/css text/javascript application/x-javascript
+            
+            ExpiresActive On
+            
+            # 1 month
+            ExpiresByType image/ico A2592000
+            ExpiresByType image/png A2592000
+            
+            # 5 days
+            ExpiresByType text/javascript A432000
+            ExpiresByType text/css A4320000
+            ExpiresByType application/x-javascript A432000
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            WSGIScriptAlias / /var/www/chimitheque/wsgihandler.py
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            &lt;Directory /var/www/chimitheque&gt;
+            AllowOverride None
+            Order Allow,Deny
+            Deny from all
+            &lt;Files wsgihandler.py&gt;
+            Allow from all
+            &lt;/Files&gt;
+            &lt;/Directory&gt;
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            AliasMatch ^/([^/]+)/static/(.*) \
+            /var/www/chimitheque/applications/$1/static/$2
+            
+            # change /var/www/chimitheque by your CHIMITHEQUE_PATH variable
+            &lt;Directory /var/www/chimitheque/applications/*/static/&gt;
+            ExpiresDefault "access plus 7 days"
+            Order Allow,Deny
+            Allow from all
+            &lt;/Directory&gt;
+            
+            &lt;LocationMatch ^/([^/]+)/appadmin&gt;
+            Deny from all
+            &lt;/LocationMatch&gt;
+            
+            CustomLog /var/log/apache2/access.log common
+            ErrorLog /var/log/apache2/error.log
+            
+            &lt;/VirtualHost&gt;
+            
+        </pre><p lang="fr">Activation du site:</p><pre class="screen">
+            <code class="prompt">bash$ </code><strong class="userinput"><code>a2ensite chimitheque</code></strong>
+        </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e317"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 5: D&eacute;marrage des services</span>
+        </h3></div></div></div><p>
+            
+            <span lang="fr" class="phrase">Apache2:</span>
+            </p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>/etc/init.d/apache2 restart</code></strong>
+            </pre><p>
+        </p><p>
+            
+            <span lang="fr" class="phrase">Vous pouvez aussi tester sans Apache, l'application sera joignable &agrave; l'adresse <code class="code">http(s)://urldechimitheque:8000/chimitheque</code>:</span>
+            </p><pre class="screen">
+                <code class="prompt">bash$ </code><strong class="userinput"><code>/var/www/chimitheque/web2py.py -a a_password -i 0.0.0.0</code></strong>
+            </pre><p>
+            
+            <span lang="fr" class="phrase"><code class="code">/var/www/chimitheque</code> est votre <code class="code">CHIMITHEQUE_PATH</code>.</span>
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e334"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 6: Premi&egrave;re connexion</span>
+        </h3></div></div></div><p lang="fr">Allez &agrave; l'adresse:
+            <code class="code">http(s)://urldechimitheque/chimitheque</code></p><p lang="fr">Utilisez les identifiant/mot de passe suivants:</p><pre class="programlisting">
+            admin@admin.fr
+            admin</pre><p lang="fr">Cliquez ensuite sur le lien <code class="code">mot de passe</code> (en haut
+            de l'&eacute;cran) pour changer le mot de passe administrateur.</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e343"></a>
+            
+            <span lang="fr" class="phrase">&Eacute;tape 7: Importation de la base de donn&eacute;es et cr&eacute;ation du
+                premier utilisateur</span>
+        </h3></div></div></div><p lang="fr">Allez dans le menu <code class="code">outils &gt; outils syst&egrave;me &gt; g&eacute;rer la base
+            de donn&eacute;es</code> et <code class="code">importer la base de donn&eacute;es de produits</code>.
+            T&eacute;l&eacute;chargez le fichier de base de donn&eacute;es de produits et envoyez le. Une fois le
+            chargement termin&eacute; le nombre de fiches produits et mis &agrave; jour (dans le coin sup&eacute;rieur
+            droit).</p><p lang="fr">Vous devez maintenant cr&eacute;er un premier utilisateur avec des
+            privil&egrave;ges administrateur. Cet utilisateur cr&eacute;era ensuite d'autres utilisateurs et
+            entit&eacute;s. Il s'agit souvent d'un ing&eacute;nieur chimiste ou d'une personne en charge de la
+            gestion des produits chimiques dans votre &eacute;tablissement. Allez dans le menu <code class="code">outils
+                &gt; g&eacute;rer les utilisateurs/entrep&ocirc;ts/entit&eacute;s</code> et cliquez sur <code class="code">cr&eacute;er
+                    utilisateur</code>. Cochez la case <code class="code">est admin</code>, et renseignez les champs
+            requis. Un email est envoy&eacute; au nouvel utilisateur apr&egrave;s la soumission du formulaire pour
+            qu'il puisse initialiser son mot de passe.</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e353"></a>
+            
+            <span lang="fr" class="phrase">migration de la version 0.2 &agrave; la version 0.3</span>
+        </h3></div></div></div><p lang="fr">Une conversion de m&eacute;tadonn&eacute;es de la base de donn&eacute;es est n&eacute;cessaire pour migrer de la version 0.2 &agrave; 0.3.</p><p lang="fr">
+            Installez la nouvelle version comme sp&eacute;cifi&eacute; &agrave; l'&eacute;tape 2 mais avant de lancer la commande<code class="code">./chimitheque deploy prod</code> ex&eacute;cutez la commande <code class="code">./chimitheque -c migrate-to-03 -i prod -o no-check-dependencies</code>.
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e360"></a>
+            
+            <span lang="fr" class="phrase">Mettre &agrave; jour Chimith&egrave;que</span>
+        </h3></div></div></div><p lang="fr">
+            </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>avant la version 0.3, r&eacute;p&eacute;tez la proc&eacute;dure d&eacute;crite &agrave; l'&eacute;tape 2 avec le nouveau package.</p></li><li class="listitem"><p>depuis la version 0.3 utilisez la commande <code class="code">./chimitheque -c update -i prod -o update-stable</code> et ensuite <code class="code">./chimitheque -c deploy -i prod</code>.</p></li></ul></div><p lang="fr">
+        </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="d5e371"></a>
+            
+            <span lang="fr" class="phrase">En cas de probl&egrave;me</span>
+        </h3></div></div></div><p lang="fr">V&eacute;rifiez que le r&eacute;pertoire <code class="code">/var/www/chimitheque</code> appartient bien &agrave; <code class="code">www-data:www-data</code> (installation Apache2) ou <code class="code">uwsgi:uwsgi</code> (installation Nginx + Uwsgi).</p><p lang="fr">V&eacute;rifiez que <span class="emphasis"><em>Apache2 mod-python</em></span> n'est <span class="emphasis"><em>pas</em></span> install&eacute; (seulement pour l'installation Apache2).</p><p lang="fr">V&eacute;rifiez que votre serveur de base de donn&eacute;es est joignable avec la commande <code class="code">telnet db_base_ip db_base_port</code>.</p><p lang="fr">V&eacute;rifiez que votre utilisateur de base de donn&eacute;es dans notre cha&icirc;ne de connexion <code class="code">SKEL_DBCONNECTION</code> peut se connecter avec son mot de passe.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e385"></a>
+                
+                <span lang="fr" class="phrase">Guide d'utilisation</span>
+            </h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e388"></a>
+                    
+                    <span lang="fr" class="phrase">Pr&eacute;sentation g&eacute;n&eacute;rale</span>
+                </h3></div></div></div><p>
+                    </p><div class="mediaobject"><img src="./images/overall.png"></div><p>
+                    </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">Gestion de profil utilisateur: changement de mot de passe et d&eacute;connexion</p></li><li class="listitem"><p lang="fr">Utilisateurs connect&eacute;s, console syst&egrave;me, nombre de fiches produit de l'application</p></li><li class="listitem"><p lang="fr">Recherche avanc&eacute;e</p></li><li class="listitem"><p lang="fr">Langue de l'application</p></li><li class="listitem"><p lang="fr">Menu principal (&eacute;l&eacute;ments affich&eacute;s en fonction des privil&egrave;ges)</p></li></ol></div><p>
+                </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e406"></a>
+            
+            <span lang="fr" class="phrase">R&eacute;sultats de recherche</span>
+        </h3></div></div></div><p>
+            </p><div class="mediaobject"><img src="./images/search-result.png"></div><p>
+            </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">Nombre de r&eacute;sultats par page</p></li><li class="listitem"><p lang="fr">Page courante, nombre de r&eacute;sultats</p></li><li class="listitem"><p lang="fr">Recherche actuelle</p></li><li class="listitem"><p lang="fr">Paginateur</p></li><li class="listitem"><p lang="fr">R&eacute;sultats sous la forme:
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>num&eacute;ro de ligne</p></li><li class="listitem"><p>
+                                    <span class="inlinemediaobject"><img src="./images/entity.png"></span>
+                                    or
+                                    <span class="inlinemediaobject"><img src="./images/organization.png"></span>
+                                    ic&ocirc;ne: produit stock&eacute; dans une de mes entit&eacute;s, produit non stock&eacute; dans une de mes entit&eacute;s mais pr&eacute;sent dans l'organisation                                </p></li><li class="listitem"><p>nom du produit</p></li><li class="listitem"><p>indication CMR, cat&eacute;gorie de CMR</p></li><li class="listitem"><p>formule brute</p></li></ul></div><p lang="fr">
+                    </p></li><li class="listitem"><p lang="fr">export HTML/CSV</p></li></ol></div><p>
+        </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e443"></a>
+                
+                <span lang="fr" class="phrase">D&eacute;tails d'un produit</span>
+            </h3></div></div></div><p>
+                </p><div class="mediaobject"><img src="./images/product-detail.png"></div><p>
+                </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">Fiche produit</p></li><li class="listitem"><p lang="fr">Stocker le produit dans mon entit&eacute;</p></li><li class="listitem"><p lang="fr">Afficher les stocks de ce produit dans mon entit&eacute;</p></li><li class="listitem"><p lang="fr">Afficher les points de contact des autres entit&eacute; stockant ce produit</p></li><li class="listitem"><p lang="fr">Stocks</p></li><li class="listitem"><p lang="fr">Editer les stocks min et max (pour information, ne g&eacute;n&egrave;re aucune alerte)</p></li><li class="listitem"><p lang="fr">Stock courant: dans l'entit&eacute; - &#931;: avec les sous entit&eacute;s</p></li></ol></div><p>
+            </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e465"></a>
+            
+            <span lang="fr" class="phrase">Stockages</span>
+        </h3></div></div></div><p>
+            </p><div class="mediaobject"><img src="./images/storage-list.png"></div><p>
+            </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">Date de cr&eacute;ation du stockage</p></li><li class="listitem"><p lang="fr">Volume ou poids</p></li><li class="listitem"><p lang="fr">Nom de l'entrep&ocirc;t</p></li><li class="listitem"><p lang="fr">Code barre</p></li><li class="listitem"><p lang="fr">Couleur de l'entrep&ocirc;t</p></li><li class="listitem"><p lang="fr">Nom de l'entit&eacute;</p></li><li class="listitem"><p lang="fr">Marquer ce stockage pour destruction (ne supprime pas le stockage)</p></li><li class="listitem"><p lang="fr">Emprunter ce stockage</p></li></ol></div><p>
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="./images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p lang="fr">Emprunter un stockage: si vous prenez une bouteille sur une &eacute;tag&egrave;re, marquez l&agrave; comme "emprunt&eacute;e" pour informer les autres utilisateurs.</p></td></tr></table></div><p>
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="./images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p lang="fr">Marquer un produit pour destruction: les produits p&eacute;rim&eacute;s peuvent &ecirc;tre marqu&eacute;s en attendant leur destruction.</p></td></tr></table></div><p>
+        </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e493"></a>
+            
+            <span lang="fr" class="phrase">Cr&eacute;ation de fiche produit</span>
+        </h3></div></div></div><p>
+            </p><div class="mediaobject"><img src="./images/product-creation.png"></div><p>
+            </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">Num&eacute;ro CAS
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Le couple "num&eacute;ro CAS/sp&eacute;cificit&eacute;" doit &ecirc;tre unique.
+                                </p><p>
+                                    Vous pouvez saisir deux produits avec le m&ecirc;me num&eacute;ro CAS mais deux sp&eacute;cificit&eacute;s diff&eacute;rentes (exemple: ).</p></li><li class="listitem"><p>L'application affichera automatiquement les produits avec le m&ecirc;me num&eacute;ro CAS.</p></li><li class="listitem"><p>L'application v&eacute;rifiera automatiquement que le <a class="link" href="http://en.wikipedia.org/wiki/CAS_registry_number#Format" title="CAS format" target="_top">format</a> du num&eacute;ro CAS est correct.</p></li></ul></div><p lang="fr">
+                    </p></li><li class="listitem"><p lang="fr">
+                        Nom et synonymes du produit
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Vous pouvez entrer seulement un nom mais plusieurs synonymes.</p></li><li class="listitem"><p>Une liste d&eacute;roulante (A) affiche les entr&eacute;es existantes. Vous pouvez en s&eacute;lectionner une ou utiliser l'ic&ocirc;ne 
+                                <span class="inlinemediaobject"><img src="./images/hand1.png"></span>
+                                pour en ins&eacute;rer une nouvelle.
+                            </p></li><li class="listitem"><p lang="fr">Peuvent &ecirc;tre saisis avec la syntaxe
+                                        <span class="emphasis"><em>stereochimie@nom_de_produit</em></span>.</p><p lang="fr">exemple: <code class="code">(1S,2R,5S)-(+)-MENTHOL</code> peut &ecirc;tre saisi
+                                        <code class="code">(1S,2R,5S)-(+)@MENTHOL</code>.</p><p lang="fr">Avec cette m&eacute;thode les produits peuvent &ecirc;tre list&eacute;s par
+                                        ordre alphab&eacute;tique selon le nom du produit seulement. Dans notre exemple
+                                        <code class="code">(+)@MENTHOL</code> sera avec les produits "M" et non en d&eacute;but de
+                                        liste (les parenth&egrave;ses sont toujours en d&eacute;but de liste).</p><div class="mediaobject"><img src="./images/stereochemistry.png" alt="stereochemistry"><div class="caption"><p>Le @ magique en action.</p></div></div></li></ul></div><p lang="fr">
+                    </p></li><li class="listitem"><p lang="fr">Formule brute - doit respecter les r&egrave;gles suivantes: </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Les atomes doivent appartenir aux tableau de classification
+                                p&eacute;riodique des &eacute;l&eacute;ments chimiques.</p></li><li class="listitem"><p><span class="emphasis"><em>Les sels et compos&eacute;s hydrat&eacute;s</em></span> doivent &ecirc;tre saisis sous la
+                                forme <code class="code">AgClO4.xH2O</code> (saisir un <span class="emphasis"><em>point</em></span> et non une
+                                virgule comme s&eacute;parateur).</p></li><li class="listitem"><p>Utilisez une <span class="emphasis"><em>virgule</em></span> (et non un point) pour les nombres
+                                d&eacute;cimaux.</p></li><li class="listitem"><p>Les nombres pour les isotopes doivent &ecirc;tre pr&eacute;c&eacute;d&eacute;s du signe
+                                <span class="emphasis"><em><code class="code">^</code></em></span></p></li><li class="listitem"><p>Les atomes seront automatiquement tri&eacute;s: <span class="emphasis"><em>C</em></span>, <span class="emphasis"><em>H</em></span> et les autres
+                            atomes par ordre alphab&eacute;tique.</p></li><li class="listitem"><p>Certains compos&eacute;s n'ont pas de formule brute. Dans ce cas
+                            cocher la case "<code class="code">pas de formule brute</code>".</p></li></ul></div><p lang="fr">
+                    </p></li><li class="listitem"><p lang="fr">Acc&egrave;s restreint: vous pouvez restreindre l'acc&egrave;s &agrave; certains produits. Seules les personnes avec le privil&egrave;ge <code class="code">voir les fiches produit restreintes</code> pourront rechercher et voir ces produits.</p></li><li class="listitem"><p lang="fr">Vous pouvez s&eacute;lectionner plus d'une phrase de
+                        danger/pr&eacute;caution en maintenant la touche <code class="code">CTRL</code> enfonc&eacute;e et en
+                        s&eacute;lectionnant les phrase avec la souris. Une m&eacute;thode plus rapide consiste &agrave;
+                        utiliser le <span class="emphasis"><em>s&eacute;lecteur magique</em></span>.</p><p lang="fr">Vous pouvez copier/coller des phrases enti&egrave;res directement
+                        depuis le site d'un fournisseur (et cliquer sur le bouton "<code class="code">faire la
+                            magie!</code>"). Le s&eacute;lecteur est assez intelligent pour accepter des
+                        phrase de la forme (Acrylamide depuis le site Acros Organic): </p><pre class="programlisting">
+H340: 	May cause genetic defects
+H350: 	May cause cancer
+H361f: 	Suspected of damaging fertility
+H317: 	May cause an allergic skin reaction
+H302: 	Harmful if swallowed
+H319: 	Causes serious eye irritation
+H373: 	May cause damage to organs through prolonged or repeated exposure</pre><p lang="fr">Notez que les codes des phrases (H302, P301+P312) DOIVENT
+                        suivre la nomenclature officielle.</p></li></ol></div><p>
+        </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e572"></a>
+            
+            <span lang="fr" class="phrase">Cr&eacute;ation d'utilisateurs</span>
+        </h3></div></div></div><p>
+            </p><div class="mediaobject"><img src="./images/user-creation.png"></div><p>
+            </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p lang="fr">
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>est admin: l'utilisateur aura tous les privil&egrave;ges et appartiendra &agrave; toutes les entit&eacute;s</p></li></ul></div><p lang="fr">
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>est dans toutes les entit&eacute;s: l'utilisateur appartiendra &agrave; toutes les entit&eacute;s</p></li></ul></div><p lang="fr">
+                        </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Astuce]" src="./images/tip.png"></td><th align="left">Astuce</th></tr><tr><td align="left" valign="top"><p>
+                                Les agents de securit&eacute; peuvent avoir un profil o&ugrave; ils appartiennent &agrave; toutes les entit&eacute;s mais avec des privil&egrave;ges limit&eacute;s. Cel&agrave; leur permet d'avoir un aper&ccedil;u des stocks dans l'organisation mais sans pouvoir les modifier.
+                            </p></td></tr></table></div><p lang="fr">
+                    </p></li><li class="listitem"><p lang="fr">entit&eacute;(s): gardez la touche <code class="code">ctrl</code> enfonc&eacute;e pour s&eacute;lectionner plusieurs entit&eacute;s</p></li><li class="listitem"><p lang="fr">permissions:
+                        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+                                    <code class="code">S, R, U, C, D</code>: lister, voir, modifier, cr&eacute;er, supprimer
+                                </p></li><li class="listitem"><p>
+                                    Les permissions sont li&eacute;s: l'application va automatiquement s&eacute;lectionner les permissions li&eacute;s
+                                </p></li><li class="listitem"><p>
+                                    Des permissions sont positionn&eacute;s par d&eacute;faut: exemple: R fiche produit
+                                </p></li></ul></div><p lang="fr">
+                    </p></li></ol></div><p>
+        </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="d5e603"></a>
+            
+            <span lang="fr" class="phrase">D&eacute;pendances entre permissions</span>
+        </h3></div></div></div><p>
+            </p><div class="mediaobject"><img src="./images/permissions-dependencies.svg"></div><p>
+          
+        </p></div></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e610"></a>
+            
+            <span lang="fr" class="phrase">Pour conclure</span>
+        </h2></div></div></div><p lang="fr">Nous esp&eacute;rons que vous aimerez utiliser "Chimith&egrave;que". Si vous
+            rencontrez des difficult&eacute;s &agrave; installer ou utiliser cette application, si vous trouvez
+            des erreurs ou si vous avez des id&eacute;es pour l'am&eacute;liorer merci de nous contacter. Bien s&ucirc;r
+            nous ne pouvons pas d&eacute;velopper des fonctionnalit&eacute;s sp&eacute;cifiques mais celles qui peuvent
+            int&eacute;resser la communaut&eacute; seront prises en compte.</p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d5e614"></a>
+            
+            <span lang="fr" class="phrase">Quelques notes... Je ne sais pas o&ugrave; les mettre. :)</span>
+        </h2></div></div></div><p lang="fr">Pourquoi "Chimith&egrave;que" est d&eacute;velopp&eacute;e en Python? : Parce que c'est le meilleur langage ! ;) Non, Nous aurions pu choisir Java, Php ou n'importe quel autre language. J'utilise Python pour l'administration syst&egrave;me tous les jours et je voulais tester Python comme langage de d&eacute;veloppement Web.</p><p lang="fr">Pourquoi "Chimith&egrave;que" est d&eacute;velopp&eacute;e avec le framework Web2py ? : Car c'est le m... Oups ! J'ai &eacute;tudi&eacute; 4 frameworks (Pylon, Jango, Zope and Web2py). Ils sont tous de bons frameworks, mais &eacute;tant donn&eacute; mes propres connaissances Web2py &eacute;tait celui qui avait le temps d'apprentissage le plus court.</p><p lang="fr">Pourquoi Ma&icirc;tre Yoda est il vert ? : Et bien... Nous ne savons pas encore.</p></div></div></body></html>

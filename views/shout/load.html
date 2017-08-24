@@ -1,0 +1,43 @@
+{{include 'chimitheque_import.html'}}
+
+{{sender_save = -1}}
+
+{{for shout in shouts:}}
+
+{{if shout.sender != sender_save:}}
+<i>{{=db.shout.sender.represent(shout.sender)}}</i><br/>
+{{pass}}
+
+{{=shout.creation_datetime}} : 
+{{=shout.text}}
+
+{{if shout.sender != sender_save:}}
+{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ANSWER_MESSAGE),
+                 _alt=cc.get_string("ANSWER_MESSAGE")),
+                 _title=cc.get_string("ANSWER_MESSAGE"),
+                 _href=URL(a=application, 
+                           c=controller, 
+                           f='create', 
+                           args=shout.sender),
+                 cid='shoutbox',
+                           )}}	
+{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL),
+                 _alt=cc.get_string("FORGET_MESSAGE")),
+                 _title=cc.get_string("FORGET_MESSAGE"),
+                 _href=URL(a=application, 
+                           c=controller, 
+                           f='forget', 
+                           args=shout.sender),
+                 cid='shoutbox',
+                           )}}	
+
+
+<hr/>
+{{pass}}
+
+{{sender_save = shout.sender}}
+
+{{pass}}
+<script>
+exposeItem('shoutbox');
+</script>

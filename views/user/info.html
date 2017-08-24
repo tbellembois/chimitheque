@@ -1,0 +1,28 @@
+{{include 'chimitheque_import.html'}}
+
+<div class="user_quick_read">
+
+{{for field_name in ['first_name', 
+                     'last_name', 
+                     'email',
+                     'contact'
+                     ]:}}
+
+	<div id="{{=field_name}}" class="field">
+	
+		{{if field_name in form.custom.label.keys():}}
+		
+			<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+			
+			<div class="widget">
+				{{=form.custom.widget['%s' %field_name]}}
+			</div>
+			
+			<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+			
+		{{pass}}
+	
+	</div>
+{{pass}}
+
+</div>

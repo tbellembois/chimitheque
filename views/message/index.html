@@ -1,0 +1,114 @@
+{{extend 'layout.html'}}
+
+{{if auth.has_permission('create_message') or auth.has_permission('admin'):}}
+    {{=SPAN(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CREATE_MESSAGE), 
+            _alt=cc.get_string("CREATE_MESSAGE")),
+            _title=cc.get_string("CREATE_MESSAGE"),
+            _href=URL(a=application, 
+                      c=controller, 
+                      f='create.load', 
+                      vars=request.vars), 
+            cid='message_create'))}}	
+{{pass}}
+
+
+{{if auth.has_permission('create_message') or auth.has_permission('admin'):}}
+<div class="message_list">
+
+{{for depth, message in messages:}}
+
+    {{if depth == 0:}}
+        {{class_id = 'message_content_new'}}
+    {{else:}}
+        {{class_id = 'message_content'}}
+    {{pass}}
+  
+  	{{if message.pin:}}
+  		{{class_id = class_id + " pin"}}
+  	{{pass}}
+  
+    <div class="{{=class_id}}" id="message_depth_{{=depth}}">
+    
+     <div>
+        <span id="person">{{=message.person.email}}</span>
+        <span id="creation_datetime">{{=message.creation_datetime}}</span>
+        <br/>
+        <span id="topic">{{=message.topic}}</span>
+        <br/>
+        <div id="text">{{=XML(message.text)}}</div>
+    </div>
+
+	<div id="action">
+	
+	        {{if auth.has_permission('update_message') or auth.has_permission('admin'):}}
+	            {{if message.person.id == auth.user.id or auth.has_permission('admin'):}}
+	                
+	                {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_SMALL),
+	                              _alt=cc.get_string("UPDATE_MESSAGE")),
+	                       _title=cc.get_string("UPDATE_MESSAGE"),
+	                       _href=URL(a=application, 
+	                                 c=controller, 
+	                                 f='update.load', 
+	                                 args=message.id, 
+	                                 vars=request.vars), 
+	                       _id='message_action',
+	                       cid='message_update_%s' % message.id))}}	
+	                      
+	                      <div class="expose" id="message_update_{{=message.id}}"></div>
+	            {{pass}}
+	        {{pass}}
+	
+	    <!--
+	    we can not answer pin messages...
+	    -->
+	    {{if not message.pin and (auth.has_permission('create_message') or auth.has_permission('admin')):}}
+	        
+	        {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ANSWER_MESSAGE),
+	                     _alt=cc.get_string("ANSWER_MESSAGE")),
+	                 _href=URL(a=application, 
+	                           c=controller, 
+	                           f='answer.load', 
+	                           args=message.id, 
+	                           vars=request.vars), 
+	                 _id='message_action',
+	                 cid='message_create'))}}	
+	    {{pass}}
+	
+	    {{if auth.has_permission('create_message') or auth.has_permission('admin'):}}
+	        {{if message.person.id == auth.user.id or auth.has_permission('admin'):}}
+	            
+	                <span id="action">
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL), 
+                                 _alt=cc.get_string("DELETE_MESSAGE")), 
+                             _title=cc.get_string("DELETE_MESSAGE"), 
+                             _onclick="""
+                                      jQuery(function() {
+                                        displayDeleteButton("%s", 'message');
+                                      });
+                                      """ % message.id)}}
+                             
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                             _alt=cc.get_string("I_AM_SURE"),
+			                     	 _id='message_action_delete_%s' % message.id,
+			                     	 _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete', 
+                                           args=message.id, 
+                                           vars=request.vars)
+                                 )}}                     
+                    </span>
+	                        
+           	{{pass}}
+        {{pass}}
+        
+	</div>
+    </div>
+{{pass}}
+
+<br/>
+
+<div class="expose" id="message_create"></div>
+
+</div>
+{{pass}}

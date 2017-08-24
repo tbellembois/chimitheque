@@ -1,0 +1,62 @@
+/* 
+
+CHIMITHEQUE_MULTIPLE_widget
+
+*/
+.CHIMITHEQUE_MULTIPLE_widget div {
+    float: left;
+}
+.CHIMITHEQUE_MULTIPLE_widget_message {
+  background: red; 
+  border: 2px solid #d00;
+  border-radius: 4px;
+  color: white;
+  display: inline-block;
+  padding: 5px;
+  width: 298px;
+}
+.CHIMITHEQUE_MULTIPLE_widget div.search_input_form {
+  position: relative;
+}
+.CHIMITHEQUE_MULTIPLE_widget div.not_required,
+.CHIMITHEQUE_MULTIPLE_widget div.required {
+	/*width: 538px;*/
+}
+.CHIMITHEQUE_MULTIPLE_widget_selected {
+  clear: both;
+}
+.CHIMITHEQUE_MULTIPLE_widget img.CHIMITHEQUE_MULTIPLE_widget_addindb {
+    position: absolute;
+    left: 280px;
+    top: 7px;
+}
+.CHIMITHEQUE_MULTIPLE_widget div.search_input {
+    position: relative;
+}
+.CHIMITHEQUE_MULTIPLE_widget_suggestions {
+    position: absolute;
+    top: 30px;
+    background-color: white;
+    z-index: 1;
+}
+.CHIMITHEQUE_MULTIPLE_widget_suggestions div#suggestions_list {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+}
+.CHIMITHEQUE_MULTIPLE_widget_suggestions div.CHIMITHEQUE_MULTIPLE_widget_suggestion,
+.CHIMITHEQUE_MULTIPLE_widget_selected_list {
+    clear: both;
+    font-size: 10px;
+    line-height: 1.8em;
+    position: relative;
+    width: 100%;
+}
+.CHIMITHEQUE_MULTIPLE_widget_suggestions div.CHIMITHEQUE_MULTIPLE_widget_suggestion:HOVER {
+    background-color: yellow;
+}
+.CHIMITHEQUE_MULTIPLE_widget_suggestions div.CHIMITHEQUE_MULTIPLE_widget_suggestion img {
+    position: absolute;
+    right: 0px;
+}

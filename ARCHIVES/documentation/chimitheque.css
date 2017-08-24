@@ -1,0 +1,77 @@
+body {
+    margin: 100px;
+    color: #666;
+  font-family: "ProximaNovaLight","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+div.sect1 > div.titlepage {
+  background-image: url("images/test-tube.png");
+  background-repeat: no-repeat;
+  padding-left: 15px;
+}
+div.sect1 > div.section {
+  margin-left: 15px;
+}
+div.sect1 > div.section > div.section {
+  padding-left: 10px;
+}
+h1, h2 {
+    color: #FF6600;
+    margin-top: 1em;
+}
+h3, h4, h5, h6 {
+  color: #403438;
+  margin-top: 1em;
+}
+em {
+   font-style: italic;
+}
+code, .code {
+  background: none repeat scroll 0 0 #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 3px;
+  color: #d05;
+  font-size: 12px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+code.prompt {
+    font-weight: bold;
+}
+pre.screen code, code.email {
+  color: #666;
+  font-size: 12px;
+  border: none;
+  font-weight: 400;
+}
+li.listitem p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+pre {
+  -moz-tab-size: 4;
+  background: none repeat scroll 0 0 #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 3px;
+  color: #666;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 10px;
+}
+pre.programlisting {
+    border: 1px solid black;
+    padding: 5px;
+}
+.mediaobject {
+    margin: 10px;
+    text-align: center;
+}
+.mediaobject img {
+    border: 1px solid grey;
+    padding: 20px;
+}
+div.caption {
+    font-family: monospace;
+    text-align: center;
+}

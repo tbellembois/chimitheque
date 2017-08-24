@@ -1,0 +1,23 @@
+{{extend 'layout.html'}}
+
+<div id="storage_read">
+{{for field_name in ['product', 
+					 'store_location', 
+					 'volume_weight', 
+					 'unit', 
+					 'entry_datetime', 
+					 'exit_datetime', 
+					 'stock_max',
+					 'barecode',
+					 'comment', 
+					 'reference', 
+					 'batch_number',
+					 'supplier'
+					 ]:}}
+<div id="{{=field_name}}" class="field">
+<span class="label">{{=storage.custom.label['%s' %field_name]}}</span>
+<span class="widget">{{=storage.custom.widget['%s' %field_name]}}</span>
+</div>
+{{pass}}
+
+</div>

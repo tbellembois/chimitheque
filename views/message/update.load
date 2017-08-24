@@ -1,0 +1,7 @@
+{{=form}}
+<script>
+$("#message_update_{{=message_id}}").expose({zIndex: 1, 
+                                             color: null,
+                                             closeOnEsc: false,
+                                             closeOnClick: false});
+</script>

@@ -1,0 +1,577 @@
+#!/usr/bin/env bash
+# Copyright 2011 - Thomas Bellembois thomas.bellembois@ens-lyon.fr
+# Cecill licence, see LICENSE
+# $Id$
+
+#
+# basic variables - you should not change them
+#
+PWD=$(pwd)
+PARENT=$(dirname $PWD)
+WEB2PY_PATH=$(dirname $PARENT)
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PYTHON=$(which python)
+# with a VirtualEnv enter the full Python path.
+#PYTHON=~/.virtualenvs/web2py/bin/python
+
+# testing Python version
+pyver=$($PYTHON -c 'import sys; print(sys.version_info.major)')
+if [ $pyver != "2" ]; then
+	echo "Python 3 detected. Chimithèque works only with Python 2.7+."
+	echo "Please change your Python configuration and run the installer again."
+	exit 0
+fi
+
+VERSION_FILE=$(cat version)
+[[ $VERSION_FILE =~ (.+)-(.+) ]]
+SKEL_VERSION=${BASH_REMATCH[1]}
+SKEL_RELEASEDATE=${BASH_REMATCH[2]}
+
+NEW_VERSION=0.4
+NEW_RELEASEDATE=`date +%Y%m%d`
+
+WEB2PY_SOURCE=http://www.web2py.com/examples/static/web2py_src.zip
+CHIMITHEQUE_DOWNLOAD_SRC=https://sourcesup.renater.fr/chimitheque/download/
+
+#
+# options default
+#
+NO_STARTUP_TASK=false
+NO_CHECK_DEPENDENCIES=false
+FORCE_UPDATE=false
+
+#
+# options flags
+#
+INSTANCE_PRESENT=false
+
+#
+# usage info
+#
+show_help() {
+cat << EOF
+Usage: ${0##*/} [-h] [-c COMMAND] [-i INSTANCE] [-o OPTION]...
+
+Execute COMMAND on INSTANCE.
+
+    -h          display this help and exit
+    -c COMMAND  deploy: deploy the application with the chimitheque_{INSTANCE}.properties file parameters
+                migrate-to-03: migrate the database metadata files from version 0.2* to 0.3
+                update: check and update your Chimithèque installation - confirmation asked
+                clean-session: clean the database session table
+    -i INSTANCE you must create an chimitheque_{INSTANCE}.properties file.
+                Please look at the sample chimitheque_sample.properties file.
+    -o OPTION	no-startup-tasks: do not execute the chimitheque administration tasks - not recommended for a deployment
+                no-check-dependencies: do not check system requirements - not recommended for a deployment
+                force-update: with the "update" command, force the update process even if the last version is already installed
+
+examples:
+--------
+deploy your Chimithèque "prod" instance:
+./chimitheque -c deploy -i prod
+
+check if there is an update for your Chimithèque "prod" instance (and ask for update):
+./chimitheque -c update -i prod
+
+perform the 0.2 to 0.3 migration:
+./chimitheque -c migrate-to-03 -i prod -o no-check-dependencies
+
+EOF
+}
+
+#
+# parsing options
+#
+if [ -z $1 ]; then
+    show_help
+    exit 0
+fi
+while getopts "hc:i:o:" opt; do
+  case $opt in
+    h)
+            show_help
+            exit 0
+            ;;
+    c)
+      #echo "-c was triggered!, Parameter: $OPTARG" >&2
+      case $OPTARG in
+           'deploy' )
+           ;;
+           'migrate-to-03' )
+           ;;
+           'clean-session' )
+           ;;
+           'makedist' )
+           ;;
+           'update' )
+           ;;
+           'generate_config' )
+           ;;
+           *)
+                echo "Invalid command: $OPTARG" >&2
+                exit
+           ;;
+      esac
+
+      COMMAND=$OPTARG
+      ;;
+    i)
+      #echo "-i was triggered!, Parameter: $OPTARG" >&2
+      INSTANCE=$OPTARG
+      INSTANCE_PRESENT=true
+      ;;
+    o)
+      #echo "-o was triggered!, Parameter: $OPTARG" >&2
+      case $OPTARG in
+           'no-startup-tasks' )
+                NO_STARTUP_TASK=true
+           ;;
+           'no-check-dependencies' )
+                NO_CHECK_DEPENDENCIES=true
+           ;;
+           'force-update' )
+                FORCE_UPDATE=true
+           ;;
+           *)
+                echo "Invalid option: $OPTARG" >&2
+                exit
+           ;;
+      esac
+      ;;
+    \?)
+      echo "Invalid option: $opt" >&2
+      exit
+      ;;
+  esac
+done
+
+#echo $NO_CHECK_DEPENDENCIES
+#echo $INSTANCE_PRESENT
+#echo $COMMAND
+
+if [ -z $COMMAND ]; then
+    echo "Missing command ! (check -c parameter)"
+    exit 0
+fi
+
+#
+# checking instance option
+#
+if [ $COMMAND != "makedist" ] && ! $INSTANCE_PRESENT; then
+        echo "You must enter an instance name !"
+        exit
+fi
+
+#
+# checking system requirements
+#
+if ! $NO_CHECK_DEPENDENCIES; then
+
+	printf "\nChecking required system commands\n"
+	command -v rsync >/dev/null 2>&1 && echo "  ~> rsync installed" || { echo " /!\ rsync required but not installed. Aborting." >&2; exit 1;}
+	command -v tar >/dev/null 2>&1 && echo "  ~> tar installed" || { echo " /!\ tar required but not installed. Aborting." >&2; exit 1;}
+	command -v sed >/dev/null 2>&1 && echo "  ~> sed installed" || { echo " /!\ sed required but not installed. Aborting." >&2; exit 1;}
+	command -v python >/dev/null 2>&1  && echo "  ~> python installed" || { echo " /!\ python required but not installed. Aborting." >&2; exit 1;}
+	command -v unzip >/dev/null 2>&1 && echo "  ~> unzip installed" || { echo " /!\ unzip required but not installed. Aborting." >&2; exit 1;}
+	command -v wget >/dev/null 2>&1 && echo "  ~> wget installed" || { echo " /!\ wget required but not installed. Aborting." >&2; exit 1;}
+
+	if [ $COMMAND != "makedist" ]; then
+			printf "\nChecking required python packages\n"
+			$PYTHON -c 'import beaker' 2>/dev/null && echo "  ~> python beaker module installed" || { echo " /!\ python beaker module NOT installed. Aborting."; exit 1; }
+			$PYTHON -c 'import Levenshtein' 2>/dev/null && echo "  ~> python Levenshtein module installed" || { echo " /!\ python Levenshtein module NOT installed. Aborting."; exit 1; }
+			$PYTHON -c 'import funcsigs' 2>/dev/null && echo "  ~> python funcsigs module installed" || { echo " /!\ python funcsigs module NOT installed. Aborting."; exit 1; }
+	fi
+
+fi
+
+#
+# include properties file
+#
+if [ $COMMAND != "makedist" ]; then
+
+	if test ! -e ./chimitheque_"$INSTANCE".properties; then
+	        echo "You must create a chimitheque_$INSTANCE.properties file !"
+	        exit 0
+	fi
+
+    PROPERTIES_FILE="$PWD/chimitheque_$INSTANCE.properties"
+    source $PROPERTIES_FILE
+
+fi
+
+#
+# ask yes/no function
+#
+function ask {
+    while true; do
+
+        if [ "${2:-}" = "Y" ]; then
+            prompt="Y/n"
+            default=Y
+        elif [ "${2:-}" = "N" ]; then
+            prompt="y/N"
+            default=N
+        else
+            prompt="y/n"
+            default=
+        fi
+
+        # Ask the question
+        read -p "$1 [$prompt] " REPLY
+
+        # Default?
+        if [ -z "$REPLY" ]; then
+            REPLY=$default
+        fi
+
+        # Check if the reply is valid
+        case "$REPLY" in
+            Y*|y*) return 0 ;;
+            N*|n*) return 1 ;;
+        esac
+
+    done
+}
+
+#
+# is there a new application version?
+#
+function is_new_app_version {
+
+    version=$(PYTHONPATH=$WEB2PY_PATH $PYTHON -c 'import modules.chimitheque_commons as cc; print cc.is_new_app_version()')
+
+    if [ "$version" == "None" ]; then
+        return 0
+    else
+        last_chimitheque_version=$version
+        return 1
+    fi
+}
+
+#
+# get the lastest application version
+#
+function get_lastest_app_version {
+
+    version=$(PYTHONPATH=$WEB2PY_PATH $PYTHON -c 'import modules.chimitheque_commons as cc; print cc.get_lastest_app_version(return_string=True)')
+
+    if [ "$version" == "None" ]; then
+        return 0
+    else
+        last_chimitheque_version=$version
+        return 1
+    fi
+}
+
+#
+# clean the application session table
+#
+function clean_session {
+
+    $(PYTHONPATH=$WEB2PY_PATH $PYTHON -c 'import modules.chimitheque_commons as cc; cc.clean_session()')
+
+}
+
+#
+# generate the configuration files
+#
+function generate_configuration_files {
+
+		printf "\nGenerating configuration files\n"
+
+    printf "\nlog file\n"
+    echo " ~> copying the ./configuration_logging.conf file to ./logging.conf"
+    cp ./configuration_logging.conf ./logging.conf
+
+    echo " ~> patching the ./logging.conf file"
+    NEW_CHIMITHEQUE_LOG_PATH=$(echo $CHIMITHEQUE_LOG_PATH | sed 's/\//\\\//g')
+    sed "s/CHIMITHEQUE_LOG_PATH/$NEW_CHIMITHEQUE_LOG_PATH/g" ./logging.conf > $TMPFILE; cp $TMPFILE ./logging.conf
+
+    printf "\nmain configuration file\n"
+    echo " ~> copying the ./configuration_skel.cfg file to ./configuration.cfg"
+    cp ./configuration_skel.cfg ./configuration.cfg
+    echo " ~> patching the ./configuration.cfg file"
+    patch_configuration_file ./configuration.cfg
+
+}
+
+#
+# deploy the configuration files
+#
+function deploy_configuration_files {
+
+		printf "\nDeploying configuration files\n"
+
+    printf "\nlog file\n"
+    echo " ~> copying the ./logging.conf file to $CHIMITHEQUE_CONFIG_LOG_FILE_PATH"
+    cp -f ./logging.conf $CHIMITHEQUE_CONFIG_LOG_FILE_PATH
+
+    printf "\nmain configuration file\n"
+    echo " ~> copying the ./configuration.cfg file to $CHIMITHEQUE_CONFIG_MAIN_FILE_PATH"
+    cp -f ./configuration.cfg $CHIMITHEQUE_CONFIG_MAIN_FILE_PATH
+
+    printf "\nroute configuration file\n"
+    echo " ~> copying the ./routes.py file to $CHIMITHEQUE_PATH"
+    cp -f ./routes.py $CHIMITHEQUE_PATH
+
+}
+
+function patch_configuration_file {
+
+    CONFIG_FILE=$1
+    #echo "-patching SKEL_VERSION"
+    sed "s/SKEL_VERSION/$SKEL_VERSION/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_RELEASEDATE"
+    sed "s/SKEL_LANGUAGE/$SKEL_LANGUAGE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_RELEASEDATE"
+    sed "s/SKEL_RELEASEDATE/$SKEL_RELEASEDATE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_ORGANIZATION"
+    sed "s/SKEL_ORGANIZATION/$SKEL_ORGANIZATION/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_ORGANIZATION_URL"
+    NEW_ORGANIZATION_URL=$(echo $SKEL_ORGANIZATION_URL | sed 's/\//\\\//g')
+    sed "s/SKEL_ORGANIZATION_URL/$NEW_ORGANIZATION_URL/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LAB_URL"
+    NEW_LAB_URL=$(echo $SKEL_LAB_URL | sed 's/\//\\\//g')
+    sed "s/SKEL_LAB_URL/$NEW_LAB_URL/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_APPURL"
+    sed "s/SKEL_APPURL/$SKEL_APPSCHEME:\/\/$SKEL_APPURL\/$SKEL_APPPATH/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_CHIMITHEQUE_REPOSITORY"
+    NEW_CHIMITHEQUE_DOWNLOAD_SRC=$(echo $CHIMITHEQUE_DOWNLOAD_SRC | sed 's/\//\\\//g')
+    sed "s/SKEL_CHIMITHEQUE_REPOSITORY/$NEW_CHIMITHEQUE_DOWNLOAD_SRC/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_SESSIONTIME"
+    sed "s/SKEL_SESSIONTIME/$SKEL_SESSIONTIME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_DBCONNECTION"
+    NEW_SKEL_DBCONNECTION=$(echo $SKEL_DBCONNECTION | sed 's/\//\\\//g')
+    sed "s/SKEL_DBCONNECTION/$NEW_SKEL_DBCONNECTION/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_DB_FAKE_MIGRATE"
+	sed "s/SKEL_DB_FAKE_MIGRATE/$SKEL_DB_FAKE_MIGRATE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_ENABLE"
+    sed "s/SKEL_LDAP_ENABLE/$SKEL_LDAP_ENABLE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_HOSTNAME"
+    sed "s/SKEL_LDAP_HOSTNAME/$SKEL_LDAP_HOSTNAME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_USER_DN"
+    sed "s/SKEL_LDAP_USER_DN/$SKEL_LDAP_USER_DN/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_USER_PASSWORD"
+    sed "s/SKEL_LDAP_USER_PASSWORD/$SKEL_LDAP_USER_PASSWORD/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_BASE"
+    sed "s/SKEL_LDAP_BASE/$SKEL_LDAP_BASE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_SCOPE"
+    sed "s/SKEL_LDAP_SCOPE/$SKEL_LDAP_SCOPE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_ATTR_FIRSTNAME"
+    sed "s/SKEL_LDAP_ATTR_FIRSTNAME/$SKEL_LDAP_ATTR_FIRSTNAME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_ATTR_LASTNAME"
+    sed "s/SKEL_LDAP_ATTR_LASTNAME/$SKEL_LDAP_ATTR_LASTNAME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_ATTR_USERNAME"
+    sed "s/SKEL_LDAP_ATTR_USERNAME/$SKEL_LDAP_ATTR_USERNAME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_LDAP_ATTR_EMAIL"
+    sed "s/SKEL_LDAP_ATTR_EMAIL/$SKEL_LDAP_ATTR_EMAIL/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_CAS_ENABLE"
+    sed "s/SKEL_CAS_ENABLE/$SKEL_CAS_ENABLE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_CAS_PROVIDER"
+    NEW_CAS_PROVIDER=$(echo $SKEL_CAS_PROVIDER | sed 's/\//\\\//g')
+    sed "s/SKEL_CAS_PROVIDER/$NEW_CAS_PROVIDER/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_SMTP_HOSTNAME"
+    sed "s/SKEL_SMTP_HOSTNAME/$SKEL_SMTP_HOSTNAME/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_SMTP_SENDER"
+    sed "s/SKEL_SMTP_SENDER/$SKEL_SMTP_SENDER/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_SMTP_LOGIN"
+    sed "s/SKEL_SMTP_LOGIN/$SKEL_SMTP_LOGIN/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_SMTP_TLS"
+    sed "s/SKEL_SMTP_TLS/$SKEL_SMTP_TLS/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_ERROR_ENABLE"
+    sed "s/SKEL_ERROR_ENABLE/$SKEL_ERROR_ENABLE/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+    #echo "-patching SKEL_ERROR_RECIPIENT"
+    sed "s/SKEL_ERROR_RECIPIENT/$SKEL_ERROR_RECIPIENT/g" $CONFIG_FILE > $TMPFILE; cp -f $TMPFILE $CONFIG_FILE
+
+}
+
+# carry out specific functions when asked to by the system
+case "$COMMAND" in
+	migrate-to-03)
+	# file name = md5(database_uri)_[table_name]
+  echo "Migrating database metadata to version 0.3"
+	TABLES=('BORROW' 'CLASS_OF_COMPOUNDS' 'EMPIRICAL_FORMULA' 'ENTITY' 'HAZARD_CODE' 'HAZARD_STATEMENT' 'LINEAR_FORMULA');
+	TABLES=("${TABLES[@]}" 'MEMBERSHIP' 'MESSAGE' 'NAME' 'PERMISSION' 'PERSON' 'PHYSICAL_STATE' 'PRECAUTIONARY_STATEMENT');
+	TABLES=("${TABLES[@]}" 'PRODUCT' 'PRODUCT_history' 'RISK_PHRASE' 'SAFETY_PHRASE' 'SHOUT' 'SIGNAL_WORD' 'STOCK');
+	TABLES=("${TABLES[@]}" 'STOCK_STORE_LOCATION' 'STORAGE' 'STORAGE_history' 'STORE_LOCATION' 'SUPPLIER' 'SYMBOL' 'UNIT');
+
+  echo "Entering into $CHIMITHEQUE_PATH/applications/chimitheque/databases"
+	cd $CHIMITHEQUE_PATH/applications/chimitheque/databases
+
+	echo "Changing table file names to lowercase"
+	for table in "${TABLES[@]}"
+	do
+		echo "-processing $table"
+		table_file=`find . -name "*$table.table"`
+		echo "$table_file"
+
+		if [[ -z $table_file ]] ; then
+			echo "No file metadata found for table $table_file"
+		else
+			mv "$table_file" "$(echo $table_file | tr A-Z a-z)"
+		fi
+	done
+
+	echo "Changing references in table files"
+	for table in "${TABLES[@]}"
+	do
+		new_table="$(echo $table | tr A-Z a-z)"
+		sed -ibak "s/$table/$new_table/g" `find . -name "*.table"`
+	done
+
+  ;;
+  generate_config)
+
+  	generate_configuration_files
+
+  ;;
+  clean-session)
+
+    clean_session
+
+  ;;
+  update)
+    echo "Checking for a Chimithèque update..."
+
+    generate_configuration_files
+
+    if [ "$FORCE_UPDATE" = true ]; then
+        get_lastest_app_version
+    else
+        is_new_app_version
+    fi
+
+    if [ $? == 0 ]; then
+        echo "no update available, leaving."
+        exit 0
+    fi
+
+    if ask "version $last_chimitheque_version available, do you want to install it ? Y/N" N; then
+        echo "installing the new version..."
+    else
+        echo "leaving..."
+        exit 0
+    fi
+
+    cd $TMPDIR
+    rm -f $TMPDIR/chimitheque_src.tar.gz
+    rm -Rf $TMPDIR/web2py
+
+    wget $CHIMITHEQUE_DOWNLOAD_SRC/chimitheque_$last_chimitheque_version.tar.gz -O $TMPDIR/chimitheque_src.tar.gz
+
+    echo "-unpacking the package";
+    tar -zxf $TMPDIR/chimitheque_src.tar.gz
+
+    echo "-updating the $CHIMITHEQUE_SRC files";
+    rsync -az $TMPDIR/web2py/* $CHIMITHEQUE_SRC/
+
+    echo " "
+    echo "+-+"
+    echo "|/| Ensure that no additional parameters have been added in the "
+    echo "|/| \"chimitheque_sample.properties file\". "
+    echo "|/| You should now run: \"./chimitheque -c deploy -i $INSTANCE\" command."
+    echo "+-+"
+    echo " "
+  ;;
+  deploy)
+    echo "Deploying $NAME"
+
+    echo "Cleaning cache"
+    rm -Rf $CHIMITHEQUE_PATH/applications/chimitheque/cache/*
+    echo "Cleaning sessions"
+    rm -Rf $CHIMITHEQUE_PATH/applications/chimitheque/sessions/*
+    echo "Cleaning compiled code"
+    rm -Rf $CHIMITHEQUE_PATH/applications/chimitheque/compiled/*
+    echo "Cleaning socket file"
+    rm -Rf /tmp/fcgi_$NAME.sock
+
+    echo "-installing $NAME files to $CHIMITHEQUE_PATH"
+    rsync -avz --quiet --copy-links $CHIMITHEQUE_SRC/* $CHIMITHEQUE_PATH
+
+    generate_configuration_files
+
+    deploy_configuration_files
+
+    echo "Compiling $NAME"
+    cd $CHIMITHEQUE_PATH
+    $PYTHON -c "import gluon.compileapp; gluon.compileapp.compile_application('applications/chimitheque')"
+
+    echo "Copying WSGI handler file"
+    cp -f $CHIMITHEQUE_PATH/handlers/wsgihandler.py $CHIMITHEQUE_PATH/
+
+    echo "Setting up permissions"
+    chown -R $CHIMITHEQUE_USER:$CHIMITHEQUE_GROUP $CHIMITHEQUE_PATH
+    chmod -R 770 $CHIMITHEQUE_PATH
+
+    if ! $NO_STARTUP_TASK; then
+	    echo "Running startup tasks (can be a bit long)"
+	    $PYTHON $CHIMITHEQUE_PATH/web2py.py -a root --nogui --no-banner -v -S chimitheque -M -R $CHIMITHEQUE_PATH/applications/chimitheque/scripts/startup_tasks.py
+	fi
+  ;;
+  makedist)
+    #
+    # developper target only !
+    #
+    TMPDIR=/tmp
+
+    echo "Updating the version file"
+    echo "$NEW_VERSION-$NEW_RELEASEDATE" > ./version
+
+    echo "Building chimitheque package"
+    rm -Rf $TMPDIR/web2py_src_unpacked
+    if test ! -e $TMPDIR/web2py_src.zip; then
+	    echo "-retrieving web2py package"
+	    wget $WEB2PY_SOURCE -O $TMPDIR/web2py_src.zip
+    fi
+    echo "Extracting web2py package"
+    mkdir $TMPDIR/web2py_src_unpacked
+    unzip -qq $TMPDIR/web2py_src.zip -d $TMPDIR/web2py_src_unpacked
+    echo "Cleaning web2py package"
+    rm -Rf $TMPDIR/web2py_src_unpacked/web2py/applications/welcome
+    rm -Rf $TMPDIR/web2py_src_unpacked/web2py/applications/examples
+    # not anymore... could be usefull...
+    #rm -Rf $TMPDIR/web2py_src_unpacked/web2py/applications/admin
+    echo "Adding chimitheque"
+    mkdir $TMPDIR/web2py_src_unpacked/web2py/applications/chimitheque
+    rsync -av --quiet \
+	    --exclude=cache/* \
+	    --exclude=databases \
+	    --exclude=databases.ORI \
+	    --exclude=documents/* \
+	    --exclude=errors/* \
+	    --exclude=sessions/* \
+	    --exclude=uploads/* \
+	    --exclude=static/export/* \
+	    --exclude=chimitheque_prod.properties \
+	    --exclude=chimitheque_dev.properties \
+	    --exclude=chimitheque_demo.properties \
+	    --exclude=chimitheque_test.properties \
+	    --exclude=configuration.cfg \
+	    --exclude=*.pyc \
+	    --exclude=*.svn \
+	    --exclude=*.bak \
+	    --exclude=*~ \
+	    --exclude=*.swp \
+	    --exclude=*.swo \
+	    --exclude=*DEPRECATED \
+	    --exclude=*TRASH \
+	    --exclude=*OLD \
+	    --exclude=*TMP \
+	    --exclude=test* \
+	    ./* $TMPDIR/web2py_src_unpacked/web2py/applications/chimitheque/
+
+		echo "Creating the databases directory"
+		mkdir $TMPDIR/web2py_src_unpacked/web2py/applications/chimitheque/databases
+
+    echo "Building chimitheque full package $TMPDIR/chimitheque_"$NEW_VERSION"-"$NEW_RELEASEDATE".tar.gz"
+    tar cfz $TMPDIR/chimitheque_"$NEW_VERSION"-"$NEW_RELEASEDATE".tar.gz -C $TMPDIR/web2py_src_unpacked web2py
+
+    ;;
+  *)
+    show_help
+    exit 0
+    ;;
+esac
+
+exit 0

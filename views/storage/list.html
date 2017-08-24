@@ -1,0 +1,59 @@
+{{include 'chimitheque_import.html'}}
+
+{{current_product = request.args[0] if len(request.args) > 0 else 0}}
+
+<div id="storage_list_{{=current_product}}" >
+
+	{{if storages is not None:}}
+	
+		<div class='storage_list'>
+		{{if auth.has_permission('delete_sc') or auth.has_permission('delete_archive') or auth.has_permission('admin'):}}
+    
+	    	<div id="delete_sc_{{=current_product}}" class="delete_sc">
+	        	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL),
+	                     _alt=cc.get_string("DELETE_STORAGE_CARD")),
+	               _title=cc.get_string("DELETE_STORAGE_CARD"),
+	               _onclick="""
+	                             jQuery(function() {
+	                                displayDeleteButton('%s', 'storage');
+	                            });
+	                            """ % current_product)}} 
+	
+		        	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                     _alt=cc.get_string("I_AM_SURE"),
+		                     _id='storage_action_delete_%s' % current_product,
+		                     _style='display: none;'),
+		               _title=cc.get_string("I_AM_SURE"),
+		               _onclick="deleteCheckedStorages(%s);" % current_product)}}
+	        </div>
+	        <script>
+	        $(document).ready(function() {
+    			$('div#storage_list_{{=current_product}} div#delete_sc_{{=current_product}}').hide();
+    		});
+	        </script>
+		{{pass}}
+	
+        {{if len(storages) > 0:}}
+         		       {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CHECK_ALL),
+		                        _alt=cc.get_string("CHECK_ALL"),
+		               _title=cc.get_string("CHECK_ALL"),
+                       _onclick="""
+                       $('div[id=storage_list_%(product_id)s]  div[class=storage_item]  input[type=checkbox]').attr('checked', 'checked');
+                       $('div#storage_list_%(product_id)s div#delete_sc_%(product_id)s').show();
+                            """ % {'product_id': current_product})),
+                            _class='check_all')}}
+ 
+        {{pass}}
+		{{for storage in storages:}}
+				{{include 'storage/label.html'}}
+		{{pass}}<!-- for -->
+		</div>
+		
+		
+	{{pass}}
+ 
+    <div id="storage_archive_card_{{=current_product}}" class="storage_list"></div>
+
+</div>
+{{pass}}<!-- if len(product_storages_user_entity) != 0 -->
+{{pass}}<!-- auth.has_permission('read_sc')... -->

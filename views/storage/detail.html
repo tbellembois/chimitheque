@@ -1,0 +1,90 @@
+{{include 'chimitheque_import.html'}}
+
+{{disable_clone = request.vars['disable_clone'].lower() == 'true' if 'disable_clone' in request.vars else False}}
+
+{{if is_history:}}
+    {{button = '_history'}}
+    <div class="storage_card_history">
+        <div id="title">{{=cc.get_string("STORAGE_HISTORY")}} - {{=storage.product.name.label}} {{=storage.product.specificity}}</div>
+{{elif storage.archive:}}
+    {{button = '_archive'}}
+    <div class="storage_card_archive">
+        <div id="title">{{=cc.get_string("STORAGE_ARCHIVE")}} - {{=storage.product.name.label}} {{=storage.product.specificity}}</div>
+{{else:}}
+  {{button = ''}}
+  <div class="storage_card">
+  <h2>{{=cc.get_string("STORAGE_CARD")}} - {{=storage.product.name.label}} {{=storage.product.specificity}}</h2>
+{{pass}}
+
+<div id="action">
+{{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+              _alt=cc.get_string("CLOSE_WINDOW")), 
+          _title=cc.get_string("CLOSE_WINDOW")), 
+          _id='close_window',
+          _onclick='$("#storage_card%s_%s > *").remove();' %(button, storage.id))}}
+
+{{if not is_history and (auth.has_permission('create_sc') or auth.has_permission('admin')) and not disable_clone:}}
+    {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLONE_STORAGE), 
+                  _alt=cc.get_string("CLONE_STORAGE_CARD")), 
+            _title=cc.get_string("CLONE_STORAGE_CARD"), 
+            _href=URL(a=application, 
+                      c=controller, 
+                      f='clone', 
+                      args=storage.id),
+            cid='storage_card_create_%s' % storage.product.id))}}
+{{pass}}
+	
+{{if not storage.archive and not is_history and (auth.has_permission('update_sc') or auth.has_permission('admin')):}}
+    {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_STORAGE),
+                  _alt=cc.get_string("UPDATE_STORAGE_CARD")),
+            _title=cc.get_string("UPDATE_STORAGE_CARD"),
+            _href=URL(a=application, 
+                      c=controller, 
+                      f='update', 
+                      args=storage.id,
+                      vars=request.vars), 
+            cid='storage_card_create_%s' % storage.product.id))}}
+{{pass}}
+
+{{if not is_history and not storage.archive and storage.has_history():}}
+    {{=DIV(A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORAGE_HISTORY), 
+             _alt=cc.get_string("STORAGE_HISTORY")),
+         _title=cc.get_string("STORAGE_HISTORY"),
+         _href=URL(a=application, 
+                   c=controller, 
+                   f='list_history', 
+                   args=storage.id),
+                   cid='history_list_%s' % storage.id))}}
+    <div id="history_list_{{=storage.id}}" class="history"></div>
+{{pass}}
+</div>
+
+{{if storage.unit is None:}}
+    {{_label = cc.get_string("ITEM")}}
+{{else:}}
+    {{_label = storage.unit.label}}
+{{pass}}
+
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_PERSON_LABEL"), _class='label'), SPAN(storage.person.email, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_STORE_LOCATION_LABEL"), _class='label'), SPAN(storage.store_location.name, _class='value')), _class='field')}}
+
+{{if storage.volume_weight:}}
+    {{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_VOLUME_WEIGHT_LABEL"), _class='label'), SPAN(str(storage.volume_weight) + ' ' + _label, _class='value')), _class='field')}}
+{{else:}}
+    {{=DIV(DIV(SPAN(cc.get_string("NO_VOLUME_WEIGHT"), _class='label')), _class='field')}}
+{{pass}}
+
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_ENTRY_DATETIME_LABEL"), _class='label'), SPAN(storage.entry_datetime, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_EXIT_DATETIME_LABEL"), _class='label'), SPAN(storage.exit_datetime, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_EXPIRATION_DATETIME_LABEL"), _class='label'), SPAN(storage.expiration_datetime, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_OPENING_DATETIME_LABEL"), _class='label'), SPAN(storage.opening_datetime, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_TO_DESTROY_LABEL"), _class='label'), SPAN(storage.to_destroy, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_COMMENT_LABEL"), _class='label'), SPAN(storage.comment, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_BARECODE_LABEL"), _class='label'), SPAN(storage.barecode, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_REFERENCE_LABEL"), _class='label'), SPAN(storage.reference, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_BATCH_NUMBER_LABEL"), _class='label'), SPAN(storage.batch_number, _class='value')), _class='field')}}
+{{=DIV(DIV(SPAN(cc.get_string("DB_STORAGE_SUPPLIER_LABEL"), _class='label'), SPAN(storage.supplier.label if storage.supplier is not None else '', _class='value')), _class='field')}}
+
+</div>
+
+

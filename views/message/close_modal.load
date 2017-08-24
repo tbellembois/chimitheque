@@ -1,0 +1,18 @@
+{{include 'chimitheque_import.html'}}
+
+{{if action == "update":}}
+	{{del(request.vars['action'])}}
+	{{refresh_url = URL(a=application, c='message', f='index.html', args=request.args, vars=request.vars)}}
+	<script>
+	$('.expose-overlay').remove();
+    document.location.href="{{=refresh_url}}";
+	</script>
+{{elif action == "create":}}
+	{{del(request.vars['action'])}}
+	{{refresh_url = URL(a=application, c='message', f='index.html', args=request.args, vars=request.vars)}}
+	<script>
+	$('.expose-overlay').remove();
+    document.location.href="{{=refresh_url}}";
+	</script>
+{{pass}}
+

@@ -1,0 +1,11 @@
+<script>
+$( document ).ready(function() {
+	$.mask.close();
+	$.ajax({type: "GET",
+	               url: "/chimitheque/store_location/list_entity.html/{{=request.args[0]}}",
+	               async: false
+	}).done(function(data) {
+			$("#entity_store_location_list_{{=request.args[0]}}").html(data);
+	       });
+});
+</script>

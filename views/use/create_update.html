@@ -1,0 +1,14 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$(this).parent().parent().empty(); $.mask.close();")}}
+</div>
+
+{{=form}}
+
+<script>
+exposeItem('storage_borrow_{{=storage_id}}');
+</script>

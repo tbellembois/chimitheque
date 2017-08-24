@@ -1,0 +1,16 @@
+{{if 'last_name' in request.vars:}}
+	<script>
+	$( document ).ready(function() {
+		console.log('update');
+		$.mask.close();
+		$('a[class="person_name"][id="person_name_{{=request.args[0]}}"]').text("{{=request.vars.last_name}} {{=request.vars.first_name}}");
+	});
+	</script>
+{{else:}}
+	<script>
+	$( document ).ready(function() {
+		console.log('delete');
+		$('a[class="person_name"][id="person_name_{{=request.args[0]}}"]').closest('tr').remove();
+	});
+	</script>
+{{pass}}

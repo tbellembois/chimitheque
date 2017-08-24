@@ -1,0 +1,543 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$(this).parent().parent().empty(); $.mask.close();")}}
+</div>
+
+{{if settings['ldap_enable'] and request.function != 'update':}}
+	<div id="user_create_ldap">
+		{{=cc.get_string("PERSON_SEARCH_LDAP")}}
+		<input type="text" name="search_user">
+		<input type="button" id="search_user_button" value="search">
+		<div id="user_suggestions"></div>
+	</div>
+	
+	<script>
+	function setUserForm(firstname, lastname, username, email) {
+		$('[name=first_name]').val(firstname);
+		$('[name=last_name]').val(lastname);
+		$('[name=email]').val(email);
+	}
+	
+	jQuery(document).ready(function(){
+	    jQuery('#search_user_button').bind('click',function() {
+	          ajax('/{{=application}}/{{=controller}}/search_ldap', ['search_user'], 'user_suggestions');
+	    });
+	});
+	</script>
+{{pass}}
+
+
+<div id="user_create_required">
+	<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+</div>
+
+<div id="user_create">
+
+	{{=form.custom.begin}}
+
+	<input type="hidden" name="password" value="test"/>
+
+	{{if auth.has_permission('admin'):}}
+		<div id="is_admin" class="field">
+			<div class="label">{{=form.custom.label['is_admin']}}</div>
+			<div class="widget">{{=form.custom.widget['is_admin']}}</div>
+			<div class="comment">{{=form.custom.comment['is_admin']}}</div>
+		</div>
+	{{pass}}
+
+	{{if auth.has_membership('all_entity') or  auth.has_membership('admin_entity') or auth.has_permission('admin'):}}
+		<div id="is_all_entity" class="field">
+			<div class="label">{{=form.custom.label['is_all_entity']}}</div>
+			<div class="widget">{{=form.custom.widget['is_all_entity']}}</div>
+			<div class="comment">{{=form.custom.comment['is_all_entity']}}</div>
+		</div>
+	{{pass}}
+
+	{{if request.function=='create':}}
+		<div id="is_virtual" class="field">
+			<div class="label">{{=cc.get_string('PERSON_IS_VIRTUAL_LABEL')}}
+				<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span>
+			</div>
+			<div class="comment">{{=cc.get_string('PERSON_IS_VIRTUAL_COMMENT')}}</div>
+			<div class="widget">{{=INPUT(_type='checkbox', _name='is_virtual')}}</div>
+		</div>
+	{{pass}}
+
+	{{for field_name in ['first_name',
+	                     'last_name',
+	                     'email',
+	                     'creation_date',
+	                     'registration_key',
+	                     'custom_entity'
+	                     ]:}}
+	
+		<div id="{{=field_name}}" class="field">
+		
+			{{if field_name in form.custom.label.keys():}}
+			
+				<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+				
+				<div class="widget">
+					{{=form.custom.widget['%s' %field_name]}}
+				</div>
+				
+				<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+				
+			{{pass}}
+		
+		</div>
+	{{pass}}
+
+	<div id="custom_permission" class="field">
+	
+		<div class="label">{{=form.custom.label['custom_permission']}}</div>
+		
+		<div class="widget">
+			{{=form.custom.widget['custom_permission']}}
+		</div>
+	    <br/>
+		
+		<!-- all_user ENTITY-->
+	    <input type="hidden" name="custom_entity" value="{{=all_entities_id}}" disabled="disabled"/>
+		<input type="hidden" name="custom_permission" value="admin" disabled="disabled"/>
+	
+	</div>
+
+	<div id="submit" class="field">
+		{{=form.custom.submit}}
+	</div>
+
+	{{=form.custom.end}}
+	
+</div>
+
+<script>
+
+    var dependencies = {
+        "delete_pc": ["create_pc"],
+        "create_pc": ["update_pc"],
+
+        "delete_rpc": ["create_rpc", "delete_pc"],
+        "create_rpc": ["update_rpc", "create_pc"],
+        "update_rpc": ["read_rpc", "update_pc"],
+
+        "delete_sc": ["read_archive", "create_sc"],
+        "create_sc": ["update_sc"],
+        "update_sc": ["read_sc"],
+        "read_sc": ["select_sc", "read_sl"],
+        "select_sc": ["select_user"],
+
+        "delete_archive": ["read_archive"],
+        "read_archive": ["read_sc"],
+        
+        "delete_sl": ["create_sl"],
+        "create_sl": ["update_sl"],
+        "update_sl": ["read_sl"],
+
+        "delete_ent": ["create_ent", "delete_user"],
+        "create_ent": ["update_ent", "create_user"],
+
+        "delete_user": ["create_user"],
+        "create_user": ["update_user"],
+        "update_user": ["read_user"],
+        "read_user": ["select_user"],
+
+        "delete_coc": ["create_coc"],
+        "create_coc": ["update_coc"],
+        
+        "delete_sup": ["create_sup"],
+        "create_sup": ["update_sup"],
+
+        "delete_com": ["create_com"],
+        "create_com": ["update_com"],
+        "update_com": ["read_com"],
+        "read_com": ["select_com"],
+
+    };
+
+    function inArray(x, theArray) {
+        if ($.inArray(x, theArray) != -1) {
+            console.log(x + " is in array " + theArray);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function findDependant(x)
+    {
+        var _result = [];
+
+        console.log("x:" + x);
+
+        for(var k in dependencies){
+
+            if($.inArray(x, dependencies[k]) != -1) {
+                _result.push(k);
+            }
+        }
+
+        console.log("_findDependant_:_result:" + _result);
+        return _result
+
+    };
+
+    function findCircularDependant(x)
+    {
+        console.log("_findCircularDependant_:x:" + x);
+
+        var _result = [];
+
+        if (dependencies.hasOwnProperty(x)) {
+
+            for(var i = 0, count = dependencies[x].length ; i < count; i++){
+
+                if(inArray(x, dependencies[dependencies[x][i]])) {
+                    console.log("_findCircularDependant_:" + dependencies[x][i] + " is circular dependant with " + x);
+                    _result.push(dependencies[x][i]);
+                }
+            }
+
+        }
+
+        console.log("_findCircularDependant_:_result:" + _result);
+        return _result;
+    }
+    function isChecked(x)
+    {
+         if ($("input[name=custom_permission][value=" + x + "]").prop('checked')) {
+            return 1;
+         }
+         else {
+            return 0;
+         }
+    }
+
+    function findDependantChecked(x)
+    {
+        var _result = [];
+        var _dependant_items = findDependant(x);
+
+        console.log("_findDependantChecked_:_dependant_items:" + _dependant_items);
+
+        for(var i = 0, count = _dependant_items.length ; i < count; i++){
+
+            if(isChecked(_dependant_items[i])) {
+                console.log("_findDependantChecked_:item " + _dependant_items[i] + " is checked");
+                _result.push(_dependant_items[i]);
+            }
+            else {
+                console.log("_findDependantChecked_:item " + _dependant_items[i] + " is NOT checked");
+            }
+
+        }
+
+        return _result
+
+    };
+
+    function doLock(x, done)
+    {
+        console.log("_doLock_:" + x + " - done:" + done);
+        console.log("-->locking box:" + x);
+        
+        $("input[name=custom_permission][value=" + x + "][type=checkbox]").prop("disabled", "disabled");
+        
+        if($("input[name=custom_permission][value=" + x + "][type=hidden]").length == 0) {
+        	$("input[name=custom_permission][value=" + x + "]").after('<input type="hidden" name="custom_permission" value="' + x +'">');
+        }
+        console.log("-->locking box:" + x + ":done!");
+    };
+
+    function doUnlock(x)
+    {
+        console.log("_doUnlock_:" + x);
+        console.log("-->unlocking box:" + x);
+        $("input[name=custom_permission][value=" + x + "][type=checkbox]").removeAttr("disabled");
+        
+        //if($("input[name=custom_permission][value=" + x + "][type=hidden]").length == 0) {
+        	$("input[name=custom_permission][value=" + x + "]").next("input[type=hidden][name=custom_permission][value=" + x + "]").remove();
+        //}
+        
+        console.log("-->unlocking box:" + x + ":done!");
+    };
+
+    function doCheck(x, done)
+    {
+        console.log("_doCheck_:" + x + " - done:" + done);
+        if(typeof done == 'undefined') {
+        	var done = new Array();
+        }
+        
+        done.push(x);
+        
+        if (dependencies.hasOwnProperty(x)) {
+
+            //console.log("dependencies[" + x + "]:" + dependencies[x]);
+            //console.log("dependencies[x].length:" + dependencies[x].length);
+
+            for(var i = 0, count = dependencies[x].length ; i < count; i++){
+
+                //console.log("x/i:" + x + "/" + i);
+
+                if($.inArray(dependencies[x][i], done) == -1) {
+
+                    doLock(dependencies[x][i], done);
+                    doCheck(dependencies[x][i], done);
+
+                }
+            }
+        }
+		
+        console.log("_doCheck_:" + x + " - done[0]:" + done[0]);
+        if(done[0] != x) {
+        	$("input[name=custom_permission][value=" + x + "]").prop("checked", true);
+        	console.log("-->checking box:" + x);
+        }
+        
+        done = new Array();
+    };
+
+    function doUncheck(x)
+    {
+        console.log("_doUncheck_:" + x);
+
+        if (dependencies.hasOwnProperty(x)) {
+
+            for(var i = 0, count = dependencies[x].length ; i < count; i++) {
+
+                console.log("_doUncheck_:processing child " + dependencies[x][i]);
+                //console.log("_doUncheck_:child circular dependencies " + findCircularDependant(dependencies[x][i]));
+
+                if(findDependantChecked(dependencies[x][i]).length == 0) {
+
+                    doUnlock(dependencies[x][i]);
+
+                }
+            }
+        }
+        $("input[name=custom_permission][value=" + x + "]").removeAttr("checked");
+        console.log("-->unchecking box:" + x);
+    };
+
+</script>
+
+<script>
+jQuery(document).ready(function() {
+	
+	var items = new Array("pc", "rpc", "sc", "user", "sl", "ent", "coc", "sup", "archive", "message", "com");
+	
+	/* replacing NOAUTH options for better lisibility */
+	$('[label=NOAUTH]').replaceWith('<span>----</span');
+	
+	function resetPermission() {
+		$("input[name=custom_permission]").removeAttr("checked");
+		$("input[name=custom_permission]").removeAttr("disabled");
+		$("input[name=custom_permission][value=select_pc][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=read_pc][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=select_ent][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=read_ent][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=select_coc][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=read_coc][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=select_sup][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=read_sup][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=select_message][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=read_message][class=NM]").prop("checked", true);
+		$("input[name=custom_permission][value=select_pc][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=read_pc][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=select_ent][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=read_ent][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=select_coc][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=read_coc][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=select_sup][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=read_sup][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=update_archive][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=create_archive][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=select_message][class=NM]").attr("disabled", "disabled");
+		$("input[name=custom_permission][value=read_message][class=NM]").attr("disabled", "disabled");
+	}
+
+	function init() {		
+		/**
+		general items
+		**/
+		while (value = items.pop()) {
+
+			/* delete */
+			jQuery("input[name=custom_permission][value=delete_" + value + "]").bind('click',function() {
+				currentValue = $(this).attr("value").split("_")[1];
+				if ($("input[name=custom_permission][value=delete_" + currentValue + "]").prop("checked")) {
+					eval("doCheck(\"delete_" + currentValue + "\")");
+				}
+				else {
+					eval("doUncheck(\"delete_" + currentValue + "\")");
+				}
+		  	});	
+			/* create */
+			jQuery("input[name=custom_permission][value=create_" + value + "]").bind('click',function() {
+				currentValue = $(this).attr("value").split("_")[1];
+								
+				if ($("input[name=custom_permission][value=create_" + currentValue + "]").prop("checked")) {
+					eval("doCheck(\"create_" + currentValue + "\")");
+				}
+				else {
+					eval("doUncheck(\"create_" + currentValue + "\")");
+				}
+		  	});	
+			/* update */
+			jQuery("input[name=custom_permission][value=update_" + value + "]").bind('click',function() {
+				currentValue = $(this).attr("value").split("_")[1];
+				if ($("input[name=custom_permission][value=update_" + currentValue + "]").prop("checked")) {
+					eval("doCheck(\"update_" + currentValue + "\")");
+				}
+				else {
+					eval("doUncheck(\"update_" + currentValue + "\")");
+				}
+		  	});
+			/* read */
+			jQuery("input[name=custom_permission][value=read_" + value + "]").bind('click',function() {
+				currentValue = $(this).attr("value").split("_")[1];
+				if ($("input[name=custom_permission][value=read_" + currentValue + "]").prop("checked")) {
+					eval("doCheck(\"read_" + currentValue + "\")");
+				}
+				else {
+					eval("doUncheck(\"read_" + currentValue + "\")");
+				}
+		  	});
+		  	/* select */
+			jQuery("input[name=custom_permission][value=select_" + value + "]").bind('click',function() {
+				currentValue = $(this).attr("value").split("_")[1];
+				if ($("input[name=custom_permission][value=select_" + currentValue + "]").prop("checked")) {
+					eval("doCheck(\"select_" + currentValue + "\")");
+				}
+				else {
+					eval("doUncheck(\"select_" + currentValue + "\")");
+				}
+		  	});
+		}
+	}
+	
+	init();
+	if ($("input[name=is_all_entity]:checked").val()) {
+		all_entity();
+	}
+	if ($("input[name=is_admin]:checked").val()) {
+		admin();
+	}
+	
+	
+	function admin() {
+		var checked = $("input[name=is_admin]:checked").val();
+		console.log(checked);
+		
+		if (checked) {
+			console.log('admin checked');
+			$("div#custom_entity").hide();
+			$("div#custom_permission").hide();
+			$("div#quick_permission").hide();
+			$("div#is_all_entity").hide();
+			$("div#is_virtual").hide();
+			
+			$("input[type=hidden][name=custom_entity]").removeAttr("disabled");
+			$("input[type=hidden][name=custom_permission][value=admin]").removeAttr("disabled");
+		}
+		else {
+			console.log('admin not checked');
+			$("div#custom_entity").show();
+			$("div#custom_permission").show();
+			$("div#quick_permission").show();
+			$("div#is_all_entity").show();
+			$("div#is_virtual").show();
+			
+			$("input[name=is_all_entity]").removeAttr("checked");
+			$("input[type=hidden][name=custom_entity]").attr("disabled", "disabled");
+			$("input[type=hidden][name=custom_permission][value=admin]").attr("disabled", "disabled");
+		}		
+	}
+	function virtual() {
+		var checked = $("input[name=is_virtual]:checked").val();
+		if (checked) {
+			resetPermission();
+			
+			$("input[name=is_all_entity]").removeAttr("checked");
+			$("input[name=is_admin]").removeAttr("checked");
+			
+			admin();
+			all_entity();
+			
+			$("div#is_all_entity").hide();
+			$("div#is_admin").hide();
+			
+			var actions = new Array("select", "read", "update", "create", "delete");
+			while (action = actions.pop()) {
+				$("input[name=custom_permission][value=" + action + "_ent]").attr("disabled", "disabled");
+				$("input[name=custom_permission][value=" + action + "_user]").attr("disabled", "disabled");
+			}
+		}
+		else {
+			$("div#is_all_entity").show();
+			$("div#is_admin").show();
+			
+			var actions = new Array("select", "read", "update", "create", "delete");
+			while (action = actions.pop()) {
+				$("input[name=custom_permission][value=" + action + "_ent]").removeAttr("disabled");
+				$("input[name=custom_permission][value=" + action + "_user]").removeAttr("disabled");
+			}
+		}
+	}
+	function all_entity() {
+		var checked = $("input[name=is_all_entity]:checked").val();
+		if (checked) {
+			$("div#custom_entity").hide();
+			$("input[type=hidden][name=custom_entity]").removeAttr("disabled");
+		}
+		else {
+			$("div#custom_entity").show();
+			$("input[type=hidden][name=custom_entity]").attr("disabled", "disabled");
+		}		
+	}
+	function checkPermission(checkboxValueList) {
+		while(value = checkboxValueList.pop()) {
+			$("input[name=custom_permission][value=" + value + "]").prop("checked", true);
+		}
+	}
+	
+	/*
+    jQuery("a#reset_permission").bind('click',function() {
+		resetPermission();			
+  	});*/
+    jQuery("input[name=is_admin]").bind('click',function() {
+		admin();			
+  	});
+    jQuery("input[name=is_virtual]").bind('click',function() {
+		virtual();			
+  	});
+    jQuery("input[name=is_all_entity]").bind('click',function() {
+		all_entity();			
+  	});
+	
+	/*
+    jQuery("#generate_password").bind('click',function() {
+    	var pass = $.password(12, false);
+    	$("input[name=password]").attr("value", pass);
+    	$("div[id=password_display]").empty();
+    	$("div[id=password_display]").append(pass);
+    });
+    */
+
+    // call each checked box action
+    $("input[name=custom_permission]:checked,input[name=custom_permission][type=hidden]:not(:disabled)").each(function(i){    	
+    	currentAction = $(this).attr("value").split("_")[0];
+    	currentValue = $(this).attr("value").split("_")[1];
+		//alert("check_" + currentAction + "_" + currentValue);
+    	window["doCheck"]($(this).attr("value"));
+    });
+});
+</script>
+
+

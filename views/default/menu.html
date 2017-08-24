@@ -1,0 +1,37 @@
+<div id="menu_item">
+<ul>
+{{for menu_item in menu1:}}
+	<li id="{{=menu_item['id']}}" class="{{=menu_item['class']}}">
+		<a href="{{=menu_item['href']}}">{{=menu_item['title']}}</a>
+	</li>
+{{pass}}
+
+
+<!-- 
+</ul>
+</div>
+<div id="menu_item" class="menu_tools">
+<ul>
+-->
+{{if auth.has_permission('manage') or auth.has_permission('admin'):}}
+	<li class="menu_tools">{{=T('Tools')}}
+		<ul>
+		{{for menu_item in menu2:}}
+			<li id="{{=menu_item['id']}}" class="{{=menu_item['class']}}">
+				<a href="{{=menu_item['href']}}">{{=menu_item['title']}}</a>
+			</li>
+		{{pass}}
+		</ul>
+	</li>
+{{pass}}
+</ul>
+</div>
+<div id="menu_item">
+<ul>
+{{for menu_item in menu3:}}
+	<li id="{{=menu_item['id']}}" class="{{=menu_item['class']}}">
+		<a href="{{=menu_item['href']}}">{{=menu_item['title']}}</a>
+	</li>
+{{pass}}
+</ul>
+</div>

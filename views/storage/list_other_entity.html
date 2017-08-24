@@ -1,0 +1,40 @@
+{{include 'chimitheque_import.html'}}
+
+{{current_product = request.args[0]}}
+			
+<div id="in_other_entity_{{=current_product}}">
+
+<ul>
+    {{for entity in entities:}}
+
+        <li><div class="storage_item_other">
+            {{=cc.get_string("ENTITY")}}: {{=entity.name}} -
+            {{=cc.get_string("DB_ENTITY_MANAGER_LABEL")}}: 
+
+                {{if entity.manager is not None:}}
+	            {{for manager in entity.manager:}}
+
+	                {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_MANAGER),
+	                         _alt=cc.get_string("DETAILS")),
+	                     _title=cc.get_string("DETAILS"),
+	                     _href='/%s/%s/info/%s' %(application, 'user', manager.id),
+	                     cid='user_%s_%s' %(entity.id, manager.id))}}
+
+	            {{pass}}
+	            {{pass}}
+
+            </div>
+
+                {{if entity.manager is not None:}}
+	            {{for manager in entity.manager:}}
+
+	                {{=DIV(_id='user_%s_%s' %(entity.id, manager.id))}}
+
+	            {{pass}}
+	            {{pass}}
+        </li>
+
+    {{pass}}<!-- for -->
+</ul>
+
+</div>

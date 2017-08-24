@@ -1,0 +1,98 @@
+{{extend 'layout.html'}}
+
+<div id="supplier_list">
+
+{{=DIV(IMG(_src="%s/tip.png" %images_base_url),
+   _class="help",
+   _id="supplier")}}
+
+<div class="advice" id="supplier" style="display: none;">
+    <li>{{=cc.get_string("SC")}} = {{=cc.get_string("STORAGE_CARD")}}</li>
+    <li>{{=cc.get_string("SUPPLIER_DELETE_ADVICE")}}</li>
+</div>
+
+	{{=paginator}}
+
+        <div id="paginate_info"> 
+            {{=paginate_selector}}<br/>
+            {{=paginate_info}}
+        </div>
+
+{{if rows:}}
+<table>
+{{for row in rows:}}
+	<tr>
+	
+	<td>{{=row['label']}}</td>
+	<td><i>(<b>{{=row['nb_linked_storage']()}}</b> {{=cc.get_string("LINKED_STORAGE_CARD")}})</i></td>
+	{{if auth.has_permission('admin') or auth.has_permission('update_sup'):}}
+		<td>
+                    <span id="action">
+                        {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_SMALL), 
+                                 _alt=cc.get_string("UPDATE_SUPPLIER")), 
+                             _title=cc.get_string("UPDATE_SUPPLIER"), 
+                             _href=URL(request.application,
+                                       request.controller,
+                                       'update',
+                                       vars=request.vars,
+                                       args=row['id'])
+                             )}}
+                    </span>
+                </td>
+	{{pass}}
+
+	{{if auth.has_permission('admin') or auth.has_permission('delete_sup'):}}
+		<td>
+                    <span id="action">
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL), 
+                                 _alt=cc.get_string("DELETE_SUPPLIER")), 
+                             _title=cc.get_string("DELETE_SUPPLIER"), 
+                             _onclick="""
+                                      jQuery(function() {
+                                        displayDeleteButton("%s", 'supplier');
+                                      });
+                                      """ %row['id'])}}
+                             
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                             _alt=cc.get_string("I_AM_SURE"),
+			                     	 _id='supplier_action_delete_%s' % row['id'],
+			                     	 _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete', 
+                                           args=row['id'], 
+                                           vars=request.vars)
+                                 )}}                     
+                    </span>
+                </td>
+	{{pass}}
+	</tr>
+{{pass}}
+</table>
+{{else:}}
+    {{=cc.get_string("NO_SUPPLIER")}}
+{{pass}}
+
+{{if auth.has_permission('admin') or auth.has_permission('create_sup'):}}
+
+	{{=A(cc.get_string("CREATE_SUPPLIER"), 
+                   _id='create_supplier',
+			       _href=URL(a=application, 
+							 c=controller, 
+							 f='create'))}}
+
+{{pass}}
+
+</div>
+<script>
+$(document).ready(function() {
+
+    $('div[class=help][id=supplier]').mouseover(function() {
+        $('div.advice#supplier').show(); 
+    });
+    $('div[class=help][id=supplier]').mouseout(function() {
+        $('div.advice#supplier').hide(); 
+    });
+
+});
+</script>

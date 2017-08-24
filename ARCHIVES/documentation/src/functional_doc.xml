@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://docbook.org/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://docbook.org/xml/5.0/rng/docbook.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<section xmlns="http://docbook.org/ns/docbook" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+            <title>
+                <phrase xml:lang="en">User guide</phrase>
+                <phrase xml:lang="fr">Guide d'utilisation</phrase>
+            </title>
+            <section>
+                <title>
+                    <phrase xml:lang="en">Overall presentation</phrase>
+                    <phrase xml:lang="fr">Présentation générale</phrase>
+                </title>
+                <para>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="overall.png" format="png"/>
+                        </imageobject>
+                    </mediaobject>
+                    <orderedlist>
+                        <listitem>
+                            <para xml:lang="en">User profile management: change password and logout</para>
+                            <para xml:lang="fr">Gestion de profil utilisateur: changement de mot de passe et déconnexion</para>
+                        </listitem>
+                        <listitem>
+                            <para xml:lang="en">Connected users, system console, number of product cards in the application</para>
+                            <para xml:lang="fr">Utilisateurs connectés, console système, nombre de fiches produit de l'application</para>
+                        </listitem>
+                        <listitem>
+                            <para xml:lang="en">Advanced search</para>
+                            <para xml:lang="fr">Recherche avancée</para>
+                        </listitem>
+                        <listitem>
+                            <para xml:lang="en">Application language</para>
+                            <para xml:lang="fr">Langue de l'application</para>
+                        </listitem>
+                        <listitem>
+                            <para xml:lang="en">Main menu (items displayed according to privileges)</para>
+                            <para xml:lang="fr">Menu principal (éléments affichés en fonction des privilèges)</para>
+                        </listitem>
+                    </orderedlist>
+                </para>
+            </section>
+
+    <section>
+        <title>
+            <phrase xml:lang="en">Search results</phrase>
+            <phrase xml:lang="fr">Résultats de recherche</phrase>
+        </title>
+        <para>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="search-result.png" format="png"/>
+                </imageobject>
+            </mediaobject>
+            <orderedlist>
+                <listitem>
+                    <para xml:lang="en">Number of results per page</para>
+                    <para xml:lang="fr">Nombre de résultats par page</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Current page, number of results</para>
+                    <para xml:lang="fr">Page courante, nombre de résultats</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Current request</para>
+                    <para xml:lang="fr">Recherche actuelle</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Paginator</para>
+                    <para xml:lang="fr">Paginateur</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Results in the following form:
+                    <itemizedlist>
+                        <listitem><para>line number</para></listitem>
+                        <listitem>
+                            <para>
+                            <inlinemediaobject>
+                                <imageobject>
+                                    <imagedata fileref="entity.png" format="png"/>
+                                </imageobject>
+                            </inlinemediaobject>
+                        or
+                                <inlinemediaobject>
+                                    <imageobject>
+                                        <imagedata fileref="organization.png" format="png"/>
+                                    </imageobject>
+                                </inlinemediaobject>
+                                icon: product stored in one of my entities, product not stored in one of my entities but present in the organization
+                            </para>
+                            
+                        </listitem>
+                        <listitem><para>product name</para></listitem>
+                        <listitem><para>CMR flag, CMR category</para></listitem>
+                        <listitem><para>empirical formula</para></listitem>
+                    </itemizedlist>
+                    </para>
+                    
+                    <para xml:lang="fr">Résultats sous la forme:
+                        <itemizedlist>
+                            <listitem><para>numéro de ligne</para></listitem>
+                            <listitem>
+                                <para>
+                                    <inlinemediaobject>
+                                        <imageobject>
+                                            <imagedata fileref="entity.png" format="png"/>
+                                        </imageobject>
+                                    </inlinemediaobject>
+                                    or
+                                    <inlinemediaobject>
+                                        <imageobject>
+                                            <imagedata fileref="organization.png" format="png"/>
+                                        </imageobject>
+                                    </inlinemediaobject>
+                                    icône: produit stocké dans une de mes entités, produit non stocké dans une de mes entités mais présent dans l'organisation                                </para>
+                            </listitem>
+                            <listitem><para>nom du produit</para></listitem>
+                            <listitem><para>indication CMR, catégorie de CMR</para></listitem>
+                            <listitem><para>formule brute</para></listitem>
+                        </itemizedlist>
+                    </para>
+                    
+                    </listitem>
+                <listitem>
+                    <para xml:lang="en">HTML/CSV export</para>
+                    <para xml:lang="fr">export HTML/CSV</para>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+
+
+        <section>
+            <title>
+                <phrase xml:lang="en">Product details</phrase>
+                <phrase xml:lang="fr">Détails d'un produit</phrase>
+            </title>
+            <para>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="product-detail.png" format="png"/>
+                    </imageobject>
+                </mediaobject>
+                <orderedlist>
+                    <listitem>
+                        <para xml:lang="en">Product card</para>
+                        <para xml:lang="fr">Fiche produit</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Store the product in my entity</para>
+                        <para xml:lang="fr">Stocker le produit dans mon entité</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Display storage of this product in my entity</para>
+                        <para xml:lang="fr">Afficher les stocks de ce produit dans mon entité</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Display points of contact of other entities storing this product</para>
+                        <para xml:lang="fr">Afficher les points de contact des autres entité stockant ce produit</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Stocks</para>
+                        <para xml:lang="fr">Stocks</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Edit stock min and max (for information purpose only, do not send any alert)</para>
+                        <para xml:lang="fr">Editer les stocks min et max (pour information, ne génère aucune alerte)</para>
+                    </listitem>
+                    <listitem>
+                        <para xml:lang="en">Current stock: in the entity - &#x03a3;: including the sub entities</para>
+                        <para xml:lang="fr">Stock courant: dans l'entité - &#x03a3;: avec les sous entités</para>
+                    </listitem>
+                </orderedlist>
+            </para>
+        </section>
+
+    <section>
+        <title>
+            <phrase xml:lang="en">Storage</phrase>
+            <phrase xml:lang="fr">Stockages</phrase>
+        </title>
+        <para>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="storage-list.png" format="png"/>
+                </imageobject>
+            </mediaobject>
+            <orderedlist>
+                <listitem>
+                    <para xml:lang="en">Storage creation date</para>
+                    <para xml:lang="fr">Date de création du stockage</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Volume or weight</para>
+                    <para xml:lang="fr">Volume ou poids</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Store location name</para>
+                    <para xml:lang="fr">Nom de l'entrepôt</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Barecode</para>
+                    <para xml:lang="fr">Code barre</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Store location color</para>
+                    <para xml:lang="fr">Couleur de l'entrepôt</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Entity name</para>
+                    <para xml:lang="fr">Nom de l'entité</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Mark this storage for disposal (does not delete the storage)</para>
+                    <para xml:lang="fr">Marquer ce stockage pour destruction (ne supprime pas le stockage)</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Borrow this storage</para>
+                    <para xml:lang="fr">Emprunter ce stockage</para>
+                </listitem>
+            </orderedlist>
+            <note>
+                <para xml:lang="en">Borrow a storage: if you take a bottle on a shelve, mark it as "borrowed" to inform other users.</para>
+                <para xml:lang="fr">Emprunter un stockage: si vous prenez une bouteille sur une étagère, marquez là comme "empruntée" pour informer les autres utilisateurs.</para>
+            </note>
+            <note>
+                <para xml:lang="en">Mark a storage for disposal: expired products can be marked until they are disposed.</para>
+                <para xml:lang="fr">Marquer un produit pour destruction: les produits périmés peuvent être marqués en attendant leur destruction.</para>
+            </note>
+        </para>
+    </section>
+
+    <section>
+        <title>
+            <phrase xml:lang="en">Product card creation</phrase>
+            <phrase xml:lang="fr">Création de fiche produit</phrase>
+        </title>
+        <para>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="product-creation.png" format="png"/>
+                </imageobject>
+            </mediaobject>
+            <orderedlist>
+                <listitem>
+                    <para xml:lang="en">CAS number
+                        <itemizedlist>
+                            <listitem>
+                                <para>The couple "CAS number/specificity" must be unique.
+                                </para>
+                                <para>
+                                    You may enter two products with the same CAS number but with two differents specificities (example: DIETHYL ETHER C4H10O 99.5%, Extra Dry over Molecular Sieve, Stabilized AND DIETHYL ETHER C4H10O 99+%, pure ).</para>
+                            </listitem>
+                            <listitem>
+                                <para>The application will automatically display the products with the same CAS number.</para>
+                            </listitem>
+                            <listitem>
+                                <para>The application will automatically check that the CAS number <link xlink:href="http://en.wikipedia.org/wiki/CAS_registry_number#Format"
+                                    xlink:title="CAS format">format</link> is correct.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                    <para xml:lang="fr">Numéro CAS
+                        <itemizedlist>
+                            <listitem>
+                                <para>Le couple "numéro CAS/spécificité" doit être unique.
+                                </para>
+                                <para>
+                                    Vous pouvez saisir deux produits avec le même numéro CAS mais deux spécificités différentes (exemple: ).</para>
+                            </listitem>
+                            <listitem>
+                                <para>L'application affichera automatiquement les produits avec le même numéro CAS.</para>
+                            </listitem>
+                            <listitem>
+                                <para>L'application vérifiera automatiquement que le <link xlink:href="http://en.wikipedia.org/wiki/CAS_registry_number#Format"
+                                    xlink:title="CAS format">format</link> du numéro CAS est correct.</para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">
+                        Product name and synonyms
+                        <itemizedlist>
+                            <listitem><para>You can enter only one name but several synonyms.</para></listitem>
+                            <listitem><para>A drop down list (A) displays the existing entries. You can select one or use the 
+                                <inlinemediaobject>
+                                    <imageobject>
+                                        <imagedata fileref="hand1.png" format="png"/>
+                                    </imageobject>
+                                </inlinemediaobject>
+                                icon to insert a new one.
+                            </para>
+                            </listitem>
+                            <listitem>
+                                <para>Can be entered with the syntax
+                                    <emphasis>stereochemistry@product_name</emphasis>.</para>
+                                <para>example: <code>(1S,2R,5S)-(+)-MENTHOL</code> can be typed
+                                    <code>(1S,2R,5S)-(+)@MENTHOL</code>.</para>
+                                <para>With this method products can be listed in alphabetical
+                                    order with the product name only. In our example <code>(+)@MENTHOL</code>
+                                    will be with the "M" products and not at the top of the list (parenthesis
+                                    are always at the top).</para>
+                                <mediaobject>
+                                    <imageobject>
+                                        <imagedata fileref="stereochemistry.png" format="png"/>
+                                    </imageobject>
+                                    <textobject>
+                                        <phrase>stereochemistry</phrase>
+                                    </textobject>
+                                    <caption>
+                                        <para>The magical @ in action.</para>
+                                    </caption>
+                                </mediaobject>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                    <para xml:lang="fr">
+                        Nom et synonymes du produit
+                        <itemizedlist>
+                            <listitem><para>Vous pouvez entrer seulement un nom mais plusieurs synonymes.</para></listitem>
+                            <listitem><para>Une liste déroulante (A) affiche les entrées existantes. Vous pouvez en sélectionner une ou utiliser l'icône 
+                                <inlinemediaobject>
+                                    <imageobject>
+                                        <imagedata fileref="hand1.png" format="png"/>
+                                    </imageobject>
+                                </inlinemediaobject>
+                                pour en insérer une nouvelle.
+                            </para>
+                            </listitem>
+                            <listitem>
+                                    <para xml:lang="fr">Peuvent être saisis avec la syntaxe
+                                        <emphasis>stereochimie@nom_de_produit</emphasis>.</para>
+                                    <para xml:lang="fr">exemple: <code>(1S,2R,5S)-(+)-MENTHOL</code> peut être saisi
+                                        <code>(1S,2R,5S)-(+)@MENTHOL</code>.</para>
+                                    <para xml:lang="fr">Avec cette méthode les produits peuvent être listés par
+                                        ordre alphabétique selon le nom du produit seulement. Dans notre exemple
+                                        <code>(+)@MENTHOL</code> sera avec les produits "M" et non en début de
+                                        liste (les parenthèses sont toujours en début de liste).</para>
+                                    <mediaobject>
+                                        <imageobject>
+                                            <imagedata fileref="stereochemistry.png" format="png"/>
+                                        </imageobject>
+                                        <textobject>
+                                            <phrase>stereochemistry</phrase>
+                                        </textobject>
+                                        <caption>
+                                            <para>Le @ magique en action.</para>
+                                        </caption>
+                                    </mediaobject>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Empirical formula - must follow the following rules: <itemizedlist>
+                        <listitem>
+                            <para>The atoms must be in the periodic table of the chemical
+                                elements.</para>
+                        </listitem>
+                        <listitem>
+                            <para><emphasis>Salts and hydrous</emphasis> compounds must be typed like
+                                <code>AgClO4.xH2O</code> (put a <emphasis>dot</emphasis> and not a comma as a
+                                separator).</para>
+                        </listitem>
+                        <listitem>
+                            <para>Use a <emphasis>comma</emphasis> (and not a dot) for decimal numbers.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Numbers for isotopes must be precede by the sign
+                                <emphasis><code>^</code></emphasis></para>
+                        </listitem>
+                        <listitem>
+                        <para>Atoms will be automatically sorted: <emphasis>C</emphasis>, <emphasis>H</emphasis> and the other atoms
+                            in the alphabetical order.</para></listitem>
+                        <listitem>
+                        <para>Some compounds have no empirical formula. Is this case check
+                            the "<code>no empirical formula</code>" checkbox.</para>
+                        </listitem>
+                    </itemizedlist>
+                    </para>
+                    <para xml:lang="fr">Formule brute - doit respecter les règles suivantes: <itemizedlist>
+                        <listitem>
+                            <para>Les atomes doivent appartenir aux tableau de classification
+                                périodique des éléments chimiques.</para>
+                        </listitem>
+                        <listitem>
+                            <para><emphasis>Les sels et composés hydratés</emphasis> doivent être saisis sous la
+                                forme <code>AgClO4.xH2O</code> (saisir un <emphasis>point</emphasis> et non une
+                                virgule comme séparateur).</para>
+                        </listitem>
+                        <listitem>
+                            <para>Utilisez une <emphasis>virgule</emphasis> (et non un point) pour les nombres
+                                décimaux.</para>
+                        </listitem>
+                        <listitem>
+                            <para>Les nombres pour les isotopes doivent être précédés du signe
+                                <emphasis><code>^</code></emphasis></para>
+                        </listitem>
+                        <listitem>
+                        <para>Les atomes seront automatiquement triés: <emphasis>C</emphasis>, <emphasis>H</emphasis> et les autres
+                            atomes par ordre alphabétique.</para></listitem>
+                        <listitem>
+                        <para>Certains composés n'ont pas de formule brute. Dans ce cas
+                            cocher la case "<code>pas de formule brute</code>".</para>
+                        </listitem>
+                    </itemizedlist>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">Restricted access: you can restrict access to some products. Only people with the <code>view restricted product card</code> privilege will be able to search and see these products.</para>
+                    <para xml:lang="fr">Accès restreint: vous pouvez restreindre l'accès à certains produits. Seules les personnes avec le privilège <code>voir les fiches produit restreintes</code> pourront rechercher et voir ces produits.</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">You can select more than one risk/safety phrase holding the
+                        <code>CTRL</code> key while left clicking on phrases with the mouse. A
+                        quicker way is to use the <emphasis>magic selector</emphasis>.</para>
+                    <para xml:lang="fr">Vous pouvez sélectionner plus d'une phrase de
+                        danger/précaution en maintenant la touche <code>CTRL</code> enfoncée et en
+                        sélectionnant les phrase avec la souris. Une méthode plus rapide consiste à
+                        utiliser le <emphasis>sélecteur magique</emphasis>.</para>
+                    <para xml:lang="en">You can copy and paste full phrases directly from a supplier
+                        web site (and click on the "<code>do the magic!</code>" button). The
+                        selector is smart enough to accept text like (Acrylamid from the Acros
+                        Organic web site): </para>
+                    <para xml:lang="fr">Vous pouvez copier/coller des phrases entières directement
+                        depuis le site d'un fournisseur (et cliquer sur le bouton "<code>faire la
+                            magie!</code>"). Le sélecteur est assez intelligent pour accepter des
+                        phrase de la forme (Acrylamide depuis le site Acros Organic): </para>
+                    <programlisting>
+H340: 	May cause genetic defects
+H350: 	May cause cancer
+H361f: 	Suspected of damaging fertility
+H317: 	May cause an allergic skin reaction
+H302: 	Harmful if swallowed
+H319: 	Causes serious eye irritation
+H373: 	May cause damage to organs through prolonged or repeated exposure</programlisting>
+                    <para xml:lang="en">Note that phrases codes (H302, P301+P312) MUST follow the
+                        official nomenclature.</para>
+                    <para xml:lang="fr">Notez que les codes des phrases (H302, P301+P312) DOIVENT
+                        suivre la nomenclature officielle.</para>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>
+            <phrase xml:lang="en">User creation</phrase>
+            <phrase xml:lang="fr">Création d'utilisateurs</phrase>
+        </title>
+        <para>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="user-creation.png" format="png"/>
+                </imageobject>
+            </mediaobject>
+            <orderedlist>
+                <listitem>
+                    <para xml:lang="en">
+                        <itemizedlist>
+                            <listitem><para>is admin: the user will have full privileges and belongs to all of the entities</para></listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <listitem><para>is in all entities: the user will belongs to all of the entities</para></listitem>
+                        </itemizedlist>
+                        <tip>
+                            <para>
+                                Security agents may have a profile where the belongs to all of the entities but with limitated privileges. In this way they can have an overview of the stocks in the organization but can not modify them.
+                            </para>
+                        </tip>
+                    </para>
+                    <para xml:lang="fr">
+                        <itemizedlist>
+                            <listitem><para>est admin: l'utilisateur aura tous les privilèges et appartiendra à toutes les entités</para></listitem>
+                        </itemizedlist>
+                        <itemizedlist>
+                            <listitem><para>est dans toutes les entités: l'utilisateur appartiendra à toutes les entités</para></listitem>
+                        </itemizedlist>
+                        <tip>
+                            <para>
+                                Les agents de securité peuvent avoir un profil où ils appartiennent à toutes les entités mais avec des privilèges limités. Celà leur permet d'avoir un aperçu des stocks dans l'organisation mais sans pouvoir les modifier.
+                            </para>
+                        </tip>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">entity(ies): hold the <code>ctrl</code> key to select several entities</para>
+                    <para xml:lang="fr">entité(s): gardez la touche <code>ctrl</code> enfoncée pour sélectionner plusieurs entités</para>
+                </listitem>
+                <listitem>
+                    <para xml:lang="en">permissions:
+                        <itemizedlist>
+                            
+                            <listitem>
+                                <para>
+                                    <code>S, R, U, C, D</code>: select, read, update, create, delete
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    Permissions are linked: the application will automatically select linked permissions
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    Permissions are set by default: example: R product card
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    Permissions are set by default: example: R product card
+                                </para>
+                            </listitem>
+                            
+                        </itemizedlist>
+                    </para>
+                    
+                    <para xml:lang="fr">permissions:
+                        <itemizedlist>
+                            
+                            <listitem>
+                                <para>
+                                    <code>S, R, U, C, D</code>: lister, voir, modifier, créer, supprimer
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    Les permissions sont liés: l'application va automatiquement sélectionner les permissions liés
+                                </para>
+                            </listitem>
+                            <listitem>
+                                <para>
+                                    Des permissions sont positionnés par défaut: exemple: R fiche produit
+                                </para>
+                            </listitem>
+                            
+                        </itemizedlist>
+                    </para>
+                </listitem>
+               
+            </orderedlist>
+        </para>
+    </section>
+
+
+    <section>
+        <title>
+            <phrase xml:lang="en">Permissions dependencies</phrase>
+            <phrase xml:lang="fr">Dépendances entre permissions</phrase>
+        </title>
+        <para>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="permissions-dependencies.svg" format="svg"/>
+                </imageobject>
+            </mediaobject>
+          
+        </para>
+    </section>
+
+</section>
+

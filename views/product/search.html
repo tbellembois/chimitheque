@@ -1,0 +1,441 @@
+{{extend 'layout.html'}}
+
+{{view = request.vars['view'] if 'view' in request.vars else 'search'}}
+
+{{if (auth.has_permission('admin') or auth.has_permission('delete_archive')) and session.search_archive and (('display_by' not in request.vars) or (request.vars['display_by'] != 'storage')):}}
+
+<div class="advice">
+	<li>{{=cc.get_string("ARCHIVE_DELETE_ADVICE")}}</li>
+</div>
+<script>
+	setTimeout('$("div.advice").hide("slow")',5000);
+</script>
+
+{{pass}}
+
+<div id="request">{{=XML(label)}}</div>
+
+<div id="product_search_result">
+
+{{if len(did_you_mean) > 0:}}
+<div id='did_you_mean'>
+
+<h3>{{=cc.get_string("DID_YOU_MEAN")}} ?</h3>
+<div id='suggestion'>
+
+{{_display=1}}
+{{_dist_save=did_you_mean[0][1]}}
+
+{{for suggestion in did_you_mean[0:15]:}}
+    {{_dist=suggestion[1]}}
+    {{=A(suggestion[0],
+		 _class='display%s' %_display,
+                 _title='did_you_mean',
+                 _href="%s" %URL(a=application,
+                                 c=controller,
+                                 f='search',
+                                 vars={'name': suggestion[0], 'is_did_you_mean': 'true'}))}}
+    {{if _dist_save != _dist:}}
+		{{_display = _display+1 if _display <= 4 else 4}}
+    {{pass}}
+    {{_dist_save=_dist}}
+{{pass}}
+
+</div>
+</div>
+{{pass}}
+
+<div id="content">
+
+    {{if nb_entries != 0:}}
+        {{=paginator}}
+
+    {{pass}}
+
+ 	{{if storages is None and products is None:}}
+	 	<div id='no_result'>
+			{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_ELODIE), _title='elodie')}}
+			<span>
+				{{=cc.get_string("NO_PRODUCT_MATCH")}}
+			</span>
+		</div>
+	{{pass}}
+
+	{{if storages is not None:}}
+
+		{{if auth.has_permission('delete_sc') or auth.has_permission('delete_archive') or auth.has_permission('admin'):}}
+
+    		<div class='storage_list' id="storage_list_0">
+
+	    	<div class="delete_sc" id="delete_sc_0" style="display: none;">
+	        	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL),
+	                     _alt=cc.get_string("DELETE_STORAGE_CARD")),
+	               _title=cc.get_string("DELETE_STORAGE_CARD"),
+	               _onclick="""
+	                             jQuery(function() {
+	                                displayDeleteButton("0", 'storage');
+	                            });
+	                            """)}}
+
+		        	{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                     _alt=cc.get_string("I_AM_SURE"),
+		                     _id='storage_action_delete_0',
+		                     _style='display: none;'),
+		               _title=cc.get_string("I_AM_SURE"),
+		               _onclick="deleteCheckedStorages(0);")}}
+	        </div>
+	        <script>
+	        $(document).ready(function() {
+    			$('#delete_sc').hide();
+    		});
+	        </script>
+		{{pass}}
+
+		{{for storage in storages:}}
+				{{include 'storage/label.html'}}
+		{{pass}}<!-- for -->
+		</div>
+
+	{{pass}}
+	{{if products is not None:}}
+
+		<div class='product_list'>
+		<ul>
+		{{for product in products:}}
+			{{include 'product/label.html'}}
+		{{pass}}<!-- for -->
+		</ul>
+
+		{{if len(products)==1:}}
+			<script>
+			$( document ).ready(function() {
+				$link = $('a.product_name');
+				$link[0].click();
+			});
+			</script>
+		{{pass}}
+		</div>
+
+	{{pass}}
+
+        {{if nb_entries != 0:}}
+
+		    {{=paginator}}
+
+        <div id="paginate_info">
+            {{=paginate_selector}}<br/>{{=paginate_info}}
+        </div>
+
+           <div id="export_search">
+            {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_EXPORT_CSV),
+                     _alt=cc.get_string("EXPORT_IN_CSV")),
+                 _title=cc.get_string("EXPORT_IN_CSV"),
+                 _onclick="displayConsole()",
+                 _href="%s" %URL(a=application,
+                                 c=controller,
+                                 f='search',
+                                 vars={'export_csv': True, 'keep_last_search': True}))}}
+            {{=cc.get_string("EXPORT_IN_CSV_TIP")}}
+        </div>
+        {{pass}}
+
+    </div>
+
+</div>
+
+<div id="product_search">
+
+    <div id="content">
+
+    {{=form.custom.begin}}
+
+   		{{if (storages and len(storages)>0) or (products and len(products)>0):}}
+          	<div id="display_by">
+       			{{=cc.get_string('DISPLAY_BY')}}:&nbsp;
+                <!--
+				<select name="display_by" onchange="$('#product_search form').submit();">
+				    <option value="product">{{=cc.get_string('PRODUCT')}}</option>
+				    <option value="storage" {{='selected' if request.vars['display_by'] == 'storage' else ''}} >{{=cc.get_string('STORAGE')}}</option>
+				</select>
+                -->
+                <!--
+                 <input type="radio" name="display_by" value="product" {{='checked' if request.vars['display_by'] == 'product' else ''}} onchange="var inp = $('<input>').attr('type', 'hidden').attr('name', 'keep_last_search').val(true); $('#product_search form').append($(inp)); $('#product_search form').submit();">{{=cc.get_string('PRODUCT')}}
+                <input type="radio" name="display_by" value="storage" {{='checked' if request.vars['display_by'] == 'storage' else ''}} onchange="var inp = $('<input>').attr('type', 'hidden').attr('name', 'keep_last_search').val(true); $('#product_search form').append($(inp)); $('#product_search form').submit();">{{=cc.get_string('STORAGE')}}
+                -->
+                <input type="radio" name="display_by" value="product" {{='checked' if request.vars['display_by'] == 'product' else ''}} onchange="$('#product_search form').submit();">{{=cc.get_string('PRODUCT')}}
+                <input type="radio" name="display_by" value="storage" {{='checked' if request.vars['display_by'] == 'storage' else ''}} onchange="$('#product_search form').submit();">{{=cc.get_string('STORAGE')}}
+			</div>
+            {{if (storages and len(storages)>0):}} 
+            <div id="order_by">
+                {{=cc.get_string('ORDER_BY')}}:&nbsp;
+				<select name="order_by" onchange="$('#product_search form').submit();">
+				    <option value="storage" {{='selected' if request.vars['order_by'] == 'storage' else ''}} >{{=cc.get_string('STORAGE')}}</option>
+				    <option value="borrower" {{='selected' if request.vars['order_by'] == 'borrower' else ''}}>{{=cc.get_string('BORROWER')}}</option>
+				</select>
+            </div>
+            {{pass}}
+		{{pass}}
+
+    <input type="hidden" value="form_submitted" name="form_submitted"/>
+
+    <div id="search_title">
+    </div>
+
+    <div id="submit" class="field">
+    {{=form.custom.submit}}
+    </div>
+
+{{for field_name in [
+					'bookmark',
+                    'name',
+                    'cas_number',
+                    'empirical_formula',
+                    'barecode',
+                    ]:}}
+<div id="{{=field_name}}" class="field">
+
+{{if field_name == 'bookmark':}}
+	<div class="label">{{=cc.get_string("SEARCH_BOOKMARK")}}&nbsp;{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_BOOKMARK), _alt=cc.get_string("SEARCH_BOOKMARK"))}}</div>
+{{pass}}
+{{if field_name == 'cas_number':}}
+	<div class="label">{{=cc.get_string("SEARCH_CAS_NUMBER")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'name':}}
+	<div class="label">{{=cc.get_string("SEARCH_NAME")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'empirical_formula':}}
+	<div class="label">{{=cc.get_string("SEARCH_EMPIRICAL_FORMULA")}}</div>
+{{pass}}
+{{if field_name == 'barecode':}}<div class="label">{{=cc.get_string("SEARCH_STORAGE_BARECODE")}}</div>{{pass}}
+
+{{if field_name == 'cas_number':}}
+	<div class="comment">
+		{{=cc.get_string("SEARCH_COMMENT_CAS_NUMBER")}}<br/>
+	</div>
+{{pass}}
+{{if field_name == 'name':}}<div class="comment">{{=cc.get_string("SEARCH_COMMENT_NAME")}}</div>{{pass}}
+{{if field_name == 'barecode':}}<div class="comment"></div>{{pass}}
+
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+
+{{if field_name == 'cas_number':}}
+    <div id="cas_number_check"></div>
+{{pass}}
+
+</div>
+{{pass}}
+
+<div id="search_more_toogle"><a>{{=cc.get_string("ADVANCED_SEARCH")}}</a></div>
+<div id="search_more">
+{{_field_names = [
+          'entry_datetime',
+					'exit_datetime',
+					'archive',
+					'to_destroy',
+					'is_cmr',
+                    'is_radio',
+                    'product_datetime',
+                    'ce_number',
+                    'linear_formula',
+                    'exact_coc',
+                    'class_of_compounds',
+                    'physical_state',
+                    'symbol',
+                    'hazard_statement',
+		     		'precautionary_statement',
+		     		'hazard_code',
+		     		'risk_phrase',
+	             	'safety_phrase',
+		     		 ]}}
+
+{{if auth.has_permission('admin') or auth.has_permission('select_sc'):}}
+  {{_field_names.insert(0, 'entity')}}
+{{pass}}
+
+{{if auth.has_permission('admin') or auth.has_permission('read_sc'):}}
+  {{_field_names.insert(0, 'include_children_store_location')}}
+  {{_field_names.insert(0, 'store_location')}}
+{{pass}}
+
+{{for field_name in _field_names:}}
+<div id="{{=field_name}}" class="field">
+{{if field_name == 'archive':}}<div class="label">{{=cc.get_string("SEARCH_ARCHIVE")}} </div>{{pass}}
+{{if field_name == 'ce_number':}}
+	<div class="label">{{=cc.get_string("SEARCH_CE_NUMBER")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'product_datetime':}}<div class="label">{{=cc.get_string("SEARCH_PRODUCT_CREATION_AFTER")}} </div>{{pass}}
+{{if field_name == 'entry_datetime':}}<div class="label">{{=cc.get_string("SEARCH_STORAGE_ENTRY_AFTER")}} </div>{{pass}}
+{{if field_name == 'exit_datetime':}}<div class="label">{{=cc.get_string("SEARCH_STORAGE_EXIT_BEFORE")}} </div>{{pass}}
+{{if field_name == 'linear_formula':}}<div class="label">{{=cc.get_string("SEARCH_LINEAR_FORMULA")}} </div>{{pass}}
+{{if field_name == 'exact_coc':}}
+	<div class="label">{{=cc.get_string("SEARCH_EXACT_COC")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'class_of_compounds':}}<div class="label">{{=cc.get_string("SEARCH_COC")}}</div>{{pass}}
+
+{{if field_name == 'entity':}}<div class="label">{{=cc.get_string("SEARCH_IS_IN_ENTITY")}} </div>{{pass}}
+{{if field_name == 'store_location':}}<div class="label">{{=cc.get_string("SEARCH_IS_IN_STORE_LOCATION")}} </div>{{pass}}
+{{if field_name == 'include_children_store_location':}}
+	<div class="label">{{=cc.get_string("SEARCH_INCLUDE_CHILDREN_STORE_LOCATION")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'is_cmr':}}<div class="label">{{=cc.get_string("SEARCH_IS_A_CMR")}}&nbsp;{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CMR), _alt=cc.get_string("SEARCH_IS_A_CMR"))}}</div>{{pass}}
+{{if field_name == 'is_radio':}}<div class="label">{{=cc.get_string("SEARCH_IS_RADIO")}}&nbsp;{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_RADIO), _alt=cc.get_string("SEARCH_IS_RADIO"))}}</div>{{pass}}
+
+{{if field_name == 'to_destroy':}}<div class="label">{{=cc.get_string("DB_STORAGE_TO_DESTROY_LABEL")}}&nbsp;{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DESTROY_SMALL), _alt=cc.get_string("SEARCH_TO_DESTROY"))}}</div>{{pass}}
+{{if field_name == 'physical_state':}}<div class="label">{{=cc.get_string("DB_PRODUCT_PHYSICAL_STATE_LABEL")}}</div>{{pass}}
+{{if field_name == 'hazard_code':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_HAZARD_CODE_LABEL")}}
+	</div><hr/>
+{{pass}}
+{{if field_name == 'symbol':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_SYMBOL_LABEL")}}
+	</div><hr/>
+{{pass}}
+{{if field_name == 'risk_phrase':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_RISK_PHRASE_LABEL")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'safety_phrase':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_SAFETY_PHRASE_LABEL")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'hazard_statement':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_HAZARD_STATEMENT_LABEL")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+{{if field_name == 'precautionary_statement':}}
+	<div class="label">{{=cc.get_string("DB_PRODUCT_PRECAUTIONARY_STATEMENT_LABEL")}}
+	<span class="show-comment">{{=IMG(_src="%s/tip.png" %images_base_url)}}</span></div>
+{{pass}}
+
+{{if field_name == 'hazard_code':}}
+<table name="hazard_code" id="product_hazard_code">
+<tbody>
+<tr>
+<td>{{=IMG(_src="%s/picto_E.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_F.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_Fplus.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_O.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_T.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_Tplus.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_Xi.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_Xn.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_C.png" %images_base_url)}}</td>
+<td>{{=IMG(_src="%s/picto_N.png" %images_base_url)}}</td>
+</tr>
+</tbody>
+</table>
+{{pass}}
+
+{{if field_name == 'symbol':}}
+<table name="symbol" id="product_symbol">
+<tbody>
+<tr>
+<td>{{=IMG(_src="../static/images/picto_SGH01.png", _title="SG01")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH02.png", _title="SG02")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH03.png", _title="SG03")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH04.png", _title="SG04")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH05.png", _title="SG05")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH06.png", _title="SG06")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH07.png", _title="SG07")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH08.png", _title="SG08")}}</td>
+<td>{{=IMG(_src="../static/images/picto_SGH09.png", _title="SG09")}}</td>
+</tr>
+</tbody>
+</table>
+{{pass}}
+
+{{if field_name == 'include_children_store_location':}}<div class="comment">{{=cc.get_string("SEARCH_COMMENT_INCLUDE_CHILDREN_STORE_LOCATION")}}</div>{{pass}}
+{{if field_name == 'ce_number':}}<div class="comment">{{=cc.get_string("SEARCH_COMMENT_CE_NUMBER")}}</div>{{pass}}
+{{if field_name == 'entry_datetime':}}<div class="comment"></div>{{pass}}
+{{if field_name == 'exit_datetime':}}<div class="comment"></div>{{pass}}
+{{if field_name == 'hazard_code':}}<div class="comment"></div>{{pass}}
+{{if field_name == 'symbol':}}<div class="comment"></div>{{pass}}
+{{if field_name == 'risk_phrase':}}<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>{{pass}}
+{{if field_name == 'safety_phrase':}}<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>{{pass}}
+{{if field_name == 'hazard_statement':}}<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>{{pass}}
+{{if field_name == 'precautionary_statement':}}<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>{{pass}}
+{{if field_name == 'exact_coc':}}<div class="comment">{{=cc.get_string("SEARCH_COMMENT_EXACT_COC")}} </div>{{pass}}
+{{if field_name == 'linear_formula':}}<div class="comment"></div>{{pass}}
+
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+
+</div>
+{{pass}}
+</div>
+
+<input type="hidden" name="search_more_hidden" value="{{=request.vars['search_more_hidden'] if 'search_more_hidden' in request.vars else 'hidden'}}"/>
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+</div>
+
+{{=form.custom.end}}
+</div>
+</div>
+</div>
+<script>
+$(document).ready(function() {
+
+	$("input[name=cas_number],input[name=ce_number]").bind('keyup click',function() {
+		var thevalue = $.trim($(this).val());
+		$(this).attr("value", thevalue);
+	});
+	$('#legend_toggle').mouseover(function() {
+    	$('#legend').show();
+  	});
+ 	$('#legend_toggle').mouseout(function() {
+    	$('#legend').hide();
+  	});
+ 	$("select#result_per_page_selector").bind('change',function() {
+ 		  var selected = $('#result_per_page_selector option:selected').val();
+ 		  window.location.href = "{{=URL(r=request,args=request.args,vars=request.vars)}}&result_per_page=" + selected;
+ 	});
+    jQuery("input[name=cas_number]").bind('keypress click paste input',function() {
+        if ($(this).val().length > 1) {
+        	$(this).attr("value", $.trim($(this).val()));
+            ajax('/{{=application}}/{{=controller}}/ajax_check_cas', ['cas_number'], 'cas_number_check');
+        }
+    });
+
+	// hides the slickbox as soon as the DOM is ready
+  	if($('input[name=search_more_hidden]').val() == 'hidden') {
+            $('#search_more').hide();
+	}
+    // toggles the slickbox on clicking the noted link
+ 	$('#search_more_toogle').click(function() {
+    	    $('#search_more').toggle();
+    	    if($('#search_more').is(':hidden')) {
+                $('input[name=search_more_hidden]').val('hidden');
+
+                $('input[name=is_cmr]').attr('checked', false);
+                $('input[name=is_radio]').attr('checked', false);
+                $('input[name=ce_number]').val('');
+                $('input[name=linear_formula]').attr('checked', false);
+                $('select[name=entity] option').removeAttr('selected');
+                $('select[name=store_location] option').removeAttr('selected');
+                $('input[name=exact_coc]').attr('checked', false);
+                $('select[name=class_of_compounds] option').removeAttr('selected');
+                $('input[name=product_datetime]').val('');
+                $('input[name=entry_datetime]').val('');
+                $('input[name=exit_datetime]').val('');
+                $('input[name=to_destroy]').attr('checked', false);
+                $('input[name=physical_state]').attr('checked', false);
+                $('input[name=hazard_code]').attr('checked', false);
+                $('input[name=symbol]').attr('checked', false);
+                $('input[name=risk_phrase]').attr('checked', false);
+                $('input[name=safety_phrase]').attr('checked', false);
+                $('input[name=hazard_statement]').attr('checked', false);
+                $('input[name=precautionary_statement]').attr('checked', false);
+            }
+            else {
+                $('input[name=search_more_hidden]').val('shown')
+            }
+            return false;
+  	});
+});
+</script>

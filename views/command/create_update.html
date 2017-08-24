@@ -1,0 +1,85 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="command_create">
+
+<div id="command_product">
+{{if is_edit:}}
+    {{=cc.get_string("COMMAND_EDIT_FOR_PRODUCT")}}
+{{else:}}
+    {{=cc.get_string("COMMAND_ADD_FOR_PRODUCT")}}
+{{pass}}
+{{=A('(%s) / %s' % (product.cas_number, product.name.label), _href=URL(request.application,'product', 'search', vars={'product_id': product.id}))}}
+</div>
+
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+
+{{=form.custom.begin}}
+
+{{for field_name in ['status',
+                     'volume_weight', 
+                     'unit', 
+                     'nb_items', 
+                     'funds',
+                     'entity',
+                     'subteam',
+                     'store_location',
+                     'supplier',
+                     'retailer',
+                     'unit_price',
+                     'reference',
+                     'product_reference',
+                     'comment']:}}
+
+        {{if field_name=='supplier' and (auth.has_permission('create_sup') or auth.has_permission('admin')):}}
+            <div class="field">
+                <div class="label">&nbsp;</div>
+                <div id="quick_add_vendor">
+                    <input id="quick_add_vendor" name="quick_add_vendor" value=""></input>
+                    <button type="button" id="quick_add_vendor_button" name="quick_add_vendor_button">
+                        {{=cc.get_string("ADD_SUPPLIER_TO_LIST")}}
+                    </button>
+                </div>
+                <div class="comment">&nbsp;</div>
+            </div>
+        {{pass}}
+        {{if field_name!='status' or is_edit:}}
+        <div id="{{=field_name}}" class="field">
+	   
+            <div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+            <div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+            <div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+        </div>
+        {{pass}}
+    {{pass}}
+{{pass}}<!-- for -->
+
+<div id="submit" class="field">
+    {{=form.custom.submit}}
+</div>
+	
+{{=form.custom.end}}
+</div><!-- id="command_create" -->
+
+<script>
+jQuery(document).ready(function(){
+ 
+  jQuery("button[name=quick_add_vendor_button]").bind('click',function() {
+    	var text = $("input[name=quick_add_vendor]").val();
+    	var ret = $.ajax({
+    		   type: "POST",
+    		   url: "/{{=application}}/storage/ajax_add_vendor",
+    		   data: {text:text},
+    		   dataType: "text",
+    		   async: false
+    		 }).responseText;
+    	var errorCode_id = ret.split(";");
+    	var errorCode = errorCode_id[0]
+    	var id = errorCode_id[1]
+    	if (errorCode == '1') {
+    		alert(id);
+    	}else {
+    		$("select#command_supplier").prepend("<option value=\"" + id + "\">" + text + "</option>");
+    	}
+  	});
+ });
+</script>

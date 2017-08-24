@@ -1,0 +1,16 @@
+{{_vars=''}}
+{{if 'load_storage_list' in request.vars:}}
+	{{_vars = _vars + 'load_storage_list=true'}}
+{{pass}}
+
+<script>
+$( document ).ready(function() {
+	$.mask.close();
+	$.ajax({type: "GET",
+	               url: "/chimitheque/product/details/{{=product.id}}?{{=_vars}}",
+	               async: false
+	}).done(function(data) {
+	       	$("#product_detail_{{=product.id}}").html(data);
+	       });
+});
+</script>

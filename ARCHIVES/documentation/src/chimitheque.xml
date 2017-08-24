@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.oasis-open.org/docbook/xml/5.0/rng/docbook.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+$Id: chimitheque.xml 148 2014-06-11 13:16:53Z tbellemb $
+-->
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude"
+    version="5.0">
+    <info>
+        <title>
+            <inlinemediaobject>
+                <imageobject>
+                    <imagedata fileref="logo.png" format="png"/>
+                </imageobject>
+            </inlinemediaobject>
+        </title>
+        <keywordset xml:lang="en">
+            <keyword>chemical product</keyword>
+            <keyword>chemistry</keyword>
+            <keyword>database</keyword>
+            <keyword>open source</keyword>
+            <keyword>free</keyword>
+            <keyword>security</keyword>
+        </keywordset>
+        <keywordset xml:lang="fr">
+            <keyword>produit chimique</keyword>
+            <keyword>chimie</keyword>
+            <keyword>base de données</keyword>
+            <keyword>open source</keyword>
+            <keyword>gratuit</keyword>
+            <keyword>libre</keyword>
+            <keyword>sécurité</keyword>
+        </keywordset>
+        <author>
+            <orgname>ENS-Lyon</orgname>
+            <!--
+            <address>
+                <city>City</city>
+                <street>Street</street>
+                <postcode>000000</postcode>
+                <country>Country</country>
+            </address>
+            -->
+            <email xml:lang="en">elodie [dot] goy [at] ens-lyon.fr</email>
+            <email xml:lang="fr">elodie [point] goy [arobase] ens-lyon.fr</email>
+        </author>
+    </info>
+    <sect1>
+        <title>Introduction</title>
+        <para xml:lang="en">Welcome on the "Chimithèque" project Web site, a chemical products management
+            application developed by the <link xlink:href="http://www.ens-lyon.fr"
+                xlink:title="ENS-Lyon">ENS-Lyon</link>.</para>
+        <para xml:lang="fr">Bienvenu sur le site du projet "Chimithèque", une application de gestion de
+            produits chimiques développée par l'<link xlink:href="http://www.ens-lyon.fr"
+                xlink:title="ENS-Lyon">ENS-Lyon</link>.</para>
+
+        <para xml:lang="en">This documentation is written in <link
+                xlink:href="http://www.docbook.org/" xlink:title="ENS-Lyon">Docbook</link> in French
+            and English. We have used Open Source applications and operating systems such as <link
+                xlink:href="http://www.debian.org/" xlink:title="ENS-Lyon">Debian</link>, <link
+                xlink:href="http://linuxmint.com/" xlink:title="ENS-Lyon">Linux Mint</link>, <link
+                xlink:href="http://inkscape.org/" xlink:title="ENS-Lyon">Inkscape</link> and <link
+                xlink:href="http://www.videolan.org/vlc//" xlink:title="ENS-Lyon">VLC</link> for fun ! :)</para>
+
+        <para xml:lang="fr">Cette documentation est écrite en <link
+                xlink:href="http://www.docbook.org/" xlink:title="ENS-Lyon">Docbook</link> en
+            Français et Anglais. Nous avons utilisé des applications et systèmes Open Source comme
+                <link xlink:href="http://www.debian.org/" xlink:title="ENS-Lyon">Debian</link>,
+                <link xlink:href="http://linuxmint.com/" xlink:title="ENS-Lyon">Linux Mint</link>,
+                <link xlink:href="http://inkscape.org/" xlink:title="ENS-Lyon">Inkscape</link> et
+                <link xlink:href="http://www.videolan.org/vlc//" xlink:title="ENS-Lyon">VLC</link>
+            pour le fun ! :)</para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">Why Chimithèque</phrase>
+            <phrase xml:lang="fr">Pourquoi Chimithèque</phrase>
+        </title>
+        <para xml:lang="en">We needed a global method to manage chemical products of the different
+            departments and laboratories of the ENS to:<itemizedlist>
+                <listitem>
+                    <para>improve the security with a precise global listing of the chemicals
+                        products stored in the entire school</para>
+                </listitem>
+                <listitem>
+                    <para>reduce waste by encouraging chemical products managers to search in
+                        Chimithèque if a product can be borrowed from another department before
+                        ordering a new one</para>
+                </listitem>
+            </itemizedlist></para>
+        <para xml:lang="fr">Nous avions besoin d'une méthode globale pour gérer les produits
+            chimiques des différents départements et laboratoires de l'ENS pour:<itemizedlist>
+                <listitem>
+                    <para>améliorer la sécurité avec un inventaire précis et global des produits
+                        chimiques stockés dans toutes l'école</para>
+                </listitem>
+                <listitem>
+                    <para>réduire le gaspillage en encourageant les gestionnaires de produits à
+                        rechercher dans Chimithèque si un produit peut être emprunter à un autre
+                        département avant d'en commander un nouveau</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">Concepts</phrase>
+            <phrase xml:lang="fr">Concepts</phrase>
+        </title>
+        <para xml:lang="en">"Chimithèque" uses the following notions: <itemizedlist
+                spacing="compact">
+                <listitem>
+                    <para>organization (typically the school, the université)</para>
+                </listitem>
+                <listitem>
+                    <para>entity (a department, a laboratory...): the organization has one or
+                        several entities</para>
+                </listitem>
+                <listitem>
+                    <para>store location (a fridge, a shelve...): an entity has one or several store
+                        locations</para>
+                </listitem>
+                <listitem>
+                    <para>user (a teacher, a student...): a user belongs to one or more entities and
+                        has rights in the application</para>
+                </listitem>
+                <listitem>
+                    <para>product card: id card of the product (contains the CAS number, names,
+                        chemical formulas, risk phrases...), the product card is entered one and
+                        only one time in the application by a user with the required rights. Product
+                        cards are visible by every user. They can be modified but modifications are
+                        saved.</para>
+                </listitem>
+                <listitem>
+                    <para>storage card: association between a product card an a store location. To
+                        store a product in one of his entities, a user must enter a storage card
+                        containing informations such has the volume or weight to store, the store
+                        location, the number of items and of course the product name. Like product
+                        cards, storage cards can be modified and changes are saved.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">"Chimithèque" utilise les notions suivantes: <itemizedlist
+                spacing="compact">
+                <listitem>
+                    <para>organisation (typiquement l'école, l'université)</para>
+                </listitem>
+                <listitem>
+                    <para>entité (un département, un laboratoire...): l'organisation a une ou
+                        plusieurs entités</para>
+                </listitem>
+                <listitem>
+                    <para>entrepôt (un réfrigérateur, une étagère...): une entité a un ou plusieurs
+                        entrepôts</para>
+                </listitem>
+                <listitem>
+                    <para>utilisateur (un enseignant, un étudiant...): un utilisateur appartient a
+                        une ou plusieurs entités et possède des droits dans l'application</para>
+                </listitem>
+                <listitem>
+                    <para>fiche produit: carte d'identité du produit (contient le numéro CAS, les
+                        noms, formules chimiques, phrases de risque...), la fiche produit est saisie
+                        une et une seule fois dans l'application par un utilisateur possédant les
+                        droits requis. Les fiches produits sont visibles par tous les utilisateurs.
+                        Elles peuvent être modifiées mais les modifications sont conservées.</para>
+                </listitem>
+                <listitem>
+                    <para>fiche stockage: association entre une fiche produit et un entrepôt. Pour
+                        stocker un produit dans une de ses entités, un utilisateur doit saisir une
+                        fiche stockage contenant des informations comme le volume ou le poids à
+                        stocker, l'entrepôt, le nombre d'éléments et bien sur le nom du produit.
+                        Comme les fiches produit, les fiches stockage peuvent être modifiées et les
+                        modifications sont conservées.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">What Chimithèque is</phrase>
+            <phrase xml:lang="fr">Ce que Chimithèque est</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>an application to access the safety informations of your chemical
+                        products</para>
+                </listitem>
+                <listitem>
+                    <para>an application to manage the stocks of your chemical products</para>
+                </listitem>
+                <listitem>
+                    <para>an application to search chemical products with different criteria</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>une application pour accéder aux informations de sécurité de vos produits
+                        chimiques</para>
+                </listitem>
+                <listitem>
+                    <para>une application pour gérer les stocks the vos produits chimiques</para>
+                </listitem>
+                <listitem>
+                    <para>une application pour rechercher des produits chimiques avec différents
+                        critères</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">What Chimithèque is not</phrase>
+            <phrase xml:lang="fr">Ce que Chimithèque n'est pas</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>a database of all existing chemical products in the world: the application
+                        comes with X product cards (for X look at the main site) and these cards can be shared thank to an
+                        import/export functionality</para>
+                </listitem>
+                <listitem>
+                    <para>an application immediately pluggable to devices such as bar-code scanners
+                        or applications</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>une base de données de tous les produits chimiques existants dans le
+                        monde: l'application est fournie avec X fiches produit (pour X voir sur la page principale) et ces
+                        fiches peuvent être échangées grâce à une fonctionnalité
+                        d'import/export</para>
+                </listitem>
+                <listitem>
+                    <para>une application immédiatement connectable a des appareils comme de
+                        scanners à code barre ou d'autres applications</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect1>
+    <!--<sect1>
+        <title>
+            <phrase xml:lang="en">Functionalities</phrase>
+            <phrase xml:lang="fr">Fonctionnalités</phrase>
+        </title>
+        <para xml:lang="en"> product cards: <itemizedlist spacing="compact">
+                <listitem>
+                    <para>fields: CAS number, CE number, name, synonym(s), empirical/linear
+                        formulas, specificity (ex: anhydrous), physical state, class(es) of
+                        compounds, risk phrase(s), pictogram(s)...</para>
+                </listitem>
+                <listitem>
+                    <para>restricted access flag: to hide cards to users that do not have the "view
+                        restricted products" right</para>
+                </listitem>
+                <listitem>
+                    <para>automatic detection of CMR's (with the selected risk/safety
+                        phrases)</para>
+                </listitem>
+                <listitem>
+                    <para>simple or advanced search form</para>
+                </listitem>
+                <listitem>
+                    <para>history of each modification</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr"> fiches produit: <itemizedlist spacing="compact">
+                <listitem>
+                    <para>champs: numéro CAS, numéro CE, nom, synonyme(s), formules
+                        brute/semi-développée, spécificité (ex: anhydre), état physique, famille(s)
+                        chimique, phrase(s) de risque, pictogramme(s)...</para>
+                </listitem>
+                <listitem>
+                    <para>drapeau d'accès restreint: pour cacher les fiches produits aux
+                        utilisateurs sans le droit "voir les produits restreints"</para>
+                </listitem>
+                <listitem>
+                    <para>détection automatique des CMR (avec les phrases de risque/sécurité
+                        sélectionnées)</para>
+                </listitem>
+                <listitem>
+                    <para>formulaire de recherche simple ou avancé</para>
+                </listitem>
+                <listitem>
+                    <para>historique de toutes les modifications</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="en"> storage cards: <itemizedlist spacing="compact">
+                <listitem>
+                    <para>fields: store location, volume or weight, unit, number of items,
+                        reference, batch number, supplier...</para>
+                </listitem>
+                <listitem>
+                    <para>automatic compute of the current stock in an entity: ex: (1*0.9l) (5*0.2l)
+                        (1*0.3l)</para>
+                </listitem>
+                <listitem>
+                    <para>history of each modification</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr"> fiches stockage: <itemizedlist spacing="compact">
+                <listitem>
+                    <para>champs: entrepôt, volume ou poids, unité, nombre d'éléments, référence,
+                        numéro de lot, fournisseur...</para>
+                </listitem>
+                <listitem>
+                    <para>calcul automatique du stock courant dans une entité: ex: (1*0.9l) (5*0.2l)
+                        (1*0.3l)</para>
+                </listitem>
+                <listitem>
+                    <para>historique de toutes les modifications</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="en"> permissions - 4 rights: view, update, create, delete <itemizedlist
+                spacing="compact">
+                <listitem>
+                    <para>product cards</para>
+                </listitem>
+                <listitem>
+                    <para>restricted product cards</para>
+                </listitem>
+                <listitem>
+                    <para>storage cards</para>
+                </listitem>
+                <listitem>
+                    <para>users</para>
+                </listitem>
+                <listitem>
+                    <para>store locations</para>
+                </listitem>
+                <listitem>
+                    <para>entities</para>
+                </listitem>
+                <listitem>
+                    <para>class of compounds</para>
+                </listitem>
+                <listitem>
+                    <para>suppliers</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para xml:lang="fr"> permissions - 4 droits: voir, modifier, créer, supprimer <itemizedlist
+                spacing="compact">
+                <listitem>
+                    <para>fiches produit</para>
+                </listitem>
+                <listitem>
+                    <para>fiches produit restreintes</para>
+                </listitem>
+                <listitem>
+                    <para>fiches stockage</para>
+                </listitem>
+                <listitem>
+                    <para>utilisateurs</para>
+                </listitem>
+                <listitem>
+                    <para>entrepôts</para>
+                </listitem>
+                <listitem>
+                    <para>entités</para>
+                </listitem>
+                <listitem>
+                    <para>familles chimiques</para>
+                </listitem>
+                <listitem>
+                    <para>fournisseurs</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </sect1>-->
+    <sect1>
+        <title>
+            <phrase xml:lang="en">Technical aspects</phrase>
+            <phrase xml:lang="fr">Aspects techniques</phrase>
+        </title>
+        <para xml:lang="en"> "Chimithèque" is developed in <emphasis>Python</emphasis> with the
+                <link xlink:href="http://www.web2py.com" xlink:title="web2py">web2py</link>
+            framework. It runs on Linux but should be installable under Windows (not covered by this documentation). A
+                <emphasis>PostGreSQL/MySQL/SQLite</emphasis> database (other databases possible but not tested) and an <emphasis>SMTP</emphasis> server are
+            needed. The application is available in English and in French but can be translated
+            into any other language.</para>
+        <para xml:lang="fr"> "Chimithèque" est développée en <emphasis>Python</emphasis> avec le
+            framework <link xlink:href="http://www.web2py.com" xlink:title="web2py">web2py</link>.
+            Il s'installe sous Linux mais devrait être installable sous Windows (non couvert par cette documentation). Une base de données
+            <emphasis>PostGreSQL/MySQL/SQLite</emphasis> (d'autres bases de données sont possibles mais n'ont pas été testées) et un serveur <emphasis>SMTP</emphasis> sont requis.
+            L'application est disponible en anglais et en français mais peut être traduite dans
+            n'importe qu'elle autre langue.</para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">Known limitations</phrase>
+            <phrase xml:lang="fr">Limites connues</phrase>
+        </title>
+        <para xml:lang="en">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>it is currently impossible to create hierarchical entities. This feature
+                        would require to rethink the permissions policy.</para>
+                </listitem>
+            </itemizedlist></para>
+        <para xml:lang="fr">
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>il est actuellement impossible de créer des entités hiérarchiques. Cette
+                        fonctionnalité nécessiterait de repenser la politique de permissions.</para>
+                </listitem>
+            </itemizedlist></para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase>Documentation</phrase>
+        </title>
+        <para></para>
+        <xi:include href="technical_doc.xml"></xi:include>
+        <xi:include href="functional_doc.xml"></xi:include>
+        <!--
+        <sect2>
+            <title>Docbook cheat sheet</title>
+            <para>
+                <note>
+                    <para>a note</para>
+                </note>
+                <caution>
+                    <para>a caution</para>
+                </caution>
+                <tip>
+                    <para>a tip</para>
+                </tip>
+                <warning>
+                    <para>a warning</para>
+                </warning>
+            </para>
+        </sect2>
+       -->
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">To conclude</phrase>
+            <phrase xml:lang="fr">Pour conclure</phrase>
+        </title>
+        <para xml:lang="en">We hope you will enjoy using "Chimithèque". If you have difficulties
+            installing or using this application, if you find bugs or if you have ideas to improve
+            it please contact us. Of course we can not develop features for specific use but
+            features that might interest the community will be considered.</para>
+        <para xml:lang="fr">Nous espérons que vous aimerez utiliser "Chimithèque". Si vous
+            rencontrez des difficultés à installer ou utiliser cette application, si vous trouvez
+            des erreurs ou si vous avez des idées pour l'améliorer merci de nous contacter. Bien sûr
+            nous ne pouvons pas développer des fonctionnalités spécifiques mais celles qui peuvent
+            intéresser la communauté seront prises en compte.</para>
+    </sect1>
+    <sect1>
+        <title>
+            <phrase xml:lang="en">Some notes... I do not know where to put them. :)</phrase>
+            <phrase xml:lang="fr">Quelques notes... Je ne sais pas où les mettre. :)</phrase>
+        </title>
+        <para xml:lang="en">Why is "Chimithèque" developed in Python? : Because it is the best language ever ! ;) No, we could have choosen Java, Php or whatever language. I use Python everyday for system administration and I wanted to test Python as a Web development language.</para>
+        <para xml:lang="fr">Pourquoi "Chimithèque" est développée en Python? : Parce que c'est le meilleur langage ! ;) Non, Nous aurions pu choisir Java, Php ou n'importe quel autre language. J'utilise Python pour l'administration système tous les jours et je voulais tester Python comme langage de développement Web.</para>
+        <para xml:lang="en">Why is "Chimithèque" developed with the Web2py framework ? : Because it is the b... Oups ! I have studied 4 frameworks (Pylon, Jango, Zope and Web2py). They are all good frameworks, but given my own skills Web2py had the fastest learning curve to me.</para>
+        <para xml:lang="fr">Pourquoi "Chimithèque" est développée avec le framework Web2py ? : Car c'est le m... Oups ! J'ai étudié 4 frameworks (Pylon, Jango, Zope and Web2py). Ils sont tous de bons frameworks, mais étant donné mes propres connaissances Web2py était celui qui avait le temps d'apprentissage le plus court.</para>
+        <para xml:lang="en">Why is Master Yoda green ? : Well... We do not know yet.</para>
+        <para xml:lang="fr">Pourquoi Maître Yoda est il vert ? : Et bien... Nous ne savons pas encore.</para>
+    </sect1>
+</article>

@@ -1,0 +1,74 @@
+{{include 'chimitheque_import.html'}}
+
+{{entity_id=request.args[0]}}
+
+<div class="store_location_list" id="entity_store_location_list_{{=entity_id}}">
+
+{{if store_locations:}}
+
+{{for store_location in store_locations:}}
+	<div id="store_location_{{=store_location.id}}" class="expose"></div>
+{{pass}}
+
+<table>
+{{for store_location in store_locations:}}
+	<tr>
+	
+	<td><div style="background-color: {{=store_location.color}}; border: 1px solid grey;">&nbsp;</div></td>
+	{{_class = 'can_not_store' if not store_location.can_store else 'can_store'}}
+	<td><span class="{{=_class}}">{{=store_location.full_path}}</span></td>
+	<td><i>(<b>{{=store_location.compute_nb_storage_card()}}</b> {{=cc.get_string("SC")}})</i></td>
+	<td><i>(<b>{{=store_location.compute_nb_archived_storage_card()}}</b> {{=cc.get_string("ARCHIVED_SC")}})</i></td>
+	
+        {{if auth.has_permission('admin') or auth.has_permission('update_sl'):}}
+		<td>
+                <span id="action">
+                    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE_SMALL),
+                             _alt=cc.get_string("UPDATE_STORE_LOCATION")), 
+                         _title=cc.get_string("UPDATE_STORE_LOCATION"), 
+                         _href='/%s/%s/update/%s' %(application, controller, store_location.id),
+                         cid='store_location_%s' %store_location.id)}}
+                </span>
+                
+         
+         </td>
+                
+	{{pass}}
+	
+	{{if (auth.has_permission('admin') or auth.has_permission('delete_sl')) and store_location.compute_nb_children() == 0:}}
+		{{if store_location.compute_nb_storage_card() == 0 and store_location.compute_nb_archived_storage_card() == 0:}}
+		    <td>
+                    <span id="action">
+                         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_DELETE_SMALL), 
+                                 _alt=cc.get_string("DELETE_STORE_LOCATION")), 
+                             _title=cc.get_string("DELETE_STORE_LOCATION"), 
+                             _onclick="""
+                                      jQuery(function() {
+                                        displayDeleteButton("%s", 'sl');
+                                      });
+                                      """ %store_location.id)}}
+                                                   
+                          {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CONFIRM_SMALL),
+		                             _alt=cc.get_string("I_AM_SURE"),
+			                     	 _id='sl_action_delete_%s' % store_location.id,
+			                     	 _style='display: none;'), 
+                                 _href=URL(a=application, 
+                                           c=controller, 
+                                           f='delete', 
+                                           args=store_location.id, 
+                                           vars=request.vars),
+                                 cid='store_location_%s' %store_location.id
+                                 )}} 
+                    </span>
+                    </td>
+		{{pass}}
+	{{pass}}
+	</tr>
+{{pass}}
+</table>
+
+{{else:}}
+    {{=cc.get_string("NO_STORE_LOCATION")}}
+{{pass}}
+
+</div>

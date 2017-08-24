@@ -1,0 +1,17 @@
+{{=form.custom.begin}}
+
+{{for field_name in ['text', 'receiver']:}}
+
+{{=form.custom.label['%s' %field_name]}}
+{{=form.custom.widget['%s' %field_name]}}<br/>
+
+{{pass}}
+
+<hr/>
+
+{{=form.custom.submit}}
+{{=form.custom.end}}
+
+<script>
+exposeItem('shoutbox');
+</script>

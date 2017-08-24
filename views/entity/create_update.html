@@ -1,0 +1,31 @@
+{{include 'chimitheque_import.html'}}
+
+<div id="close_window">
+    {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_CLOSE_WINDOW), 
+	     _alt=cc.get_string("CLOSE_WINDOW")),
+	     _title=cc.get_string("CLOSE_WINDOW"),
+	     _onclick="$(this).parent().parent().empty(); $.mask.close();")}}
+</div>
+
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+
+<div id="entity_create">
+{{=form.custom.begin}}
+
+{{for field_name in ['role', 'manager']:}}
+<div id="{{=field_name}}" class="field">
+
+<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+ 
+</div>
+{{pass}}
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+</div>
+
+{{=form.custom.end}}
+</div>

@@ -1,0 +1,13 @@
+{{include 'chimitheque_import.html'}}
+
+{{for row in rows_product_history:}}
+    {{=A(cc.get_string("MODIFIED_AT") + ' %s' %(row.product_history.modification_datetime),
+            _href=URL(a=application, 
+                      c=controller, 
+                      f='card', 
+                      args=row.product_history.id,
+                      vars={'is_history': True}), 
+            cid='product_card_%s' %row.product_history.id)}}<br/>
+            
+            <div id="product_card_{{=row.product_history.id}}"/>
+{{pass}}

@@ -1,0 +1,24 @@
+{{include 'chimitheque_import.html'}}
+
+<ul>
+{{for storage in storages:}}
+
+    <li>-{{=A(cc.get_string("MODIFIED_AT") + ' %s [ %s %s - %s ]' %(storage.modification_datetime,
+                                                   storage.volume_weight,
+                                                   storage.unit.label if storage.unit is not None else '',
+                                                   storage.store_location.name
+						  ),
+	 _href=URL(a=application, 
+               c=controller,
+               f='detail',
+		   args=storage.id,
+		   vars={'history': True}),
+		   cid='storage_card_history_%s' % storage.id)}}
+    </li>
+
+    <div id="storage_card_history_{{=storage.id}}"/>
+		
+    {{pass}}
+</ul>
+
+

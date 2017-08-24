@@ -1,0 +1,49 @@
+{{extend 'layout.html'}}
+
+<div class="advice">
+<li>{{=cc.get_string("ENTITY_DELETE_ADVICE")}}
+</li>
+<li>{{=cc.get_string("STORE_LOCATION_DELETE_ADVICE")}}
+</li>
+<li>{{=cc.get_string("PERSON_DELETE_ADVICE")}}
+</li>
+</div>
+
+
+{{if auth.has_permission('admin') or auth.has_permission('create_user'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_PERSON"), _onclick="window.location.href='/%s/user/create'" %(application))}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_ent'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_ENTITY"), _onclick="window.location.href='/%s/entity/create'" %(application))}}
+{{pass}}
+{{if auth.has_permission('admin') or auth.has_permission('create_sl'):}}
+    {{=INPUT(_type='button', _value=cc.get_string("CREATE_STORE_LOCATION"), _onclick="window.location.href='/%s/store_location/create'" %(application))}}
+{{pass}}
+
+{{=INPUT(_type='button', _value=cc.get_string("SWITCH_VIEW_BY_USER"), _onclick="window.location.href='/%s/user/list'" %(application))}}
+
+<div id="USER_list">
+
+    {{=paginate_selector}}&nbsp;&nbsp;&nbsp;&nbsp;{{=paginate_info}}<br/>
+	{{=paginator}}
+
+<table>
+{{for entity in entities:}}
+
+<tr>
+<td id='title'>
+    	{{=SPAN(A('%s' % entity.role if entity.role != 'all_entity' else cc.get_string("USER_ALL_ENTITY"),
+				    _href=URL(a=application, 
+				              c='entity', 
+				              f='list_action.load', 
+				              args=[entity.id]), 
+			      cid='list_action_%s' %(entity.id)))}}
+</td>
+<td>
+		<div id="list_action_{{=entity.id}}"></div>
+</td>
+</tr>
+{{pass}}
+</table>
+
+</div>

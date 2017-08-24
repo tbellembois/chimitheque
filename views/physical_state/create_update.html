@@ -1,0 +1,22 @@
+<span class='required'>&nbsp;</span> {{=cc.get_string("REQUIRED_FIELDS")}}
+
+<div id="physical_state_create">
+{{=form.custom.begin}}
+
+{{for field_name in ['label']:}}
+<div id="{{=field_name}}" class="field">
+
+<div class="label">{{=form.custom.label['%s' %field_name]}}</div>
+<div class="widget">{{=form.custom.widget['%s' %field_name]}}</div>
+<div class="comment">{{=form.custom.comment['%s' %field_name]}}</div>
+
+</div>
+{{pass}}
+
+<div id="submit" class="field">
+{{=form.custom.submit}}
+<INPUT TYPE="button" onClick="window.location='/{{=application}}/{{=controller}}/list'" value="{{=cc.get_string("CANCEL")}}"/>
+{{=form.custom.end}}
+</div>
+
+</div>

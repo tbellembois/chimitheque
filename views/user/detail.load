@@ -1,0 +1,4 @@
+{{include 'chimitheque_import.html'}}
+{{=form}}
+SC={{=person.compute_nb_storage_card()}}
+ASC={{=person.compute_nb_archived_storage_card()}}
