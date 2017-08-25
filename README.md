@@ -20,7 +20,7 @@ The documentation has not yet been converted into Markdown. Please look at the 2
     $ /etc/init.d/apache2 stop
     $ cd /tmp
     $ wget https://github.com/tbellembois/gobkm/releases/download/{version}/chimitheque-AMD64
-    $ tar -zxvf tar zxvf chimitheque-AMD64.tar.gz
+    $ tar -zxvf chimitheque-AMD64.tar.gz
     $ cd web2py
     $ rsync -avz ./* /usr/local/src/chimitheque_src/
     $ cd /usr/local/src/chimitheque_src/applications/chimitheque/

@@ -3,3 +3,6 @@ errors
 private
 sessions
 uploads
+chimitheque_prod.properties
+configuration.cfg
+logging.conf

@@ -978,8 +978,8 @@ def startup_update_product_class_of_compounds():
 
     mylogger.debug(message='startup_update_product_class_of_compounds()')
 
-    current.db(current.db.product.class_of_compounds==None).update(class_of_compounds=='||')
-    current.db(current.db.product_history.class_of_compounds==None).update(class_of_compounds=='||')
+    current.db(current.db.product.class_of_compounds==None).update(class_of_compounds='')
+    current.db(current.db.product_history.class_of_compounds==None).update(class_of_compounds='')
 
     current.db.commit()
 

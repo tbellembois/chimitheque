@@ -54,6 +54,7 @@ extern "C" {
 
 
 // LinearToEmpiricalFormula returns the empirical formula from the linear formula f.
+// Method exported to Python.
 // example: [(CH3)2SiH]2NH
 //          (CH3)2C[C6H2(Br)2OH]2
 

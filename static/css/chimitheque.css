@@ -238,8 +238,10 @@ div#no_result {
     margin-bottom: 10px;
 }
 
-div#store_location select {
+div#store_location select,
+div#entity select {
   width: 450px;
+  resize: both;
 }
 
 /* 
@@ -468,6 +470,7 @@ div.check_all {
 }
 .storage_item div#link, .storage_item_archive div#link {
     width: 100%;
+    font-size: 1.2em;
 }
 .storage_item div#entity_name, .storage_item_archive div#entity_name {
 }
@@ -513,6 +516,16 @@ div.check_all {
     width: 482px;
     font-size: 0.9em;
     padding-left: 5px;
+}
+.storage_item div#product-name {
+    position: absolute;
+    right: 15px;
+    width: 250px;
+    height: 15px;
+    font-size: 0.8em;
+    font-style: italic;
+    color: grey;
+    overflow: hidden;
 }
 
 /*
