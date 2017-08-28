@@ -900,19 +900,23 @@ def startup_update_user_permissions():
     if is_user_permission_updated:
         return True
 
-    mylogger.debug(message='update_user_permissions()')
+    mylogger.info(message='update_user_permissions()')
 
     for _PERSON in current.db(current.db.person).select():
-        mylogger.debug(message='_PERSON:%s' % _PERSON)
+        mylogger.info(message='_PERSON:%s' % _PERSON)
 
         # setting dependent permissions
+        mylogger.debug(message='step1')
         for _permission in settings['permission_dependencies'].keys():
+            mylogger.debug(message='_permission:%s' % _permission)
             if current.auth.has_permission(_permission, user_id=_PERSON.id):
                 mylogger.debug(message='user %s has permission %s' % (_PERSON.email, _permission))
                 _update_user_permission(_permission, user_id=_PERSON.id)
 
         # setting default permissions
+        mylogger.debug(message='step2')
         for _permission in settings['disabled_permissions'].keys():
+            mylogger.debug(message='_permission:%s' % _permission)
             if settings['disabled_permissions'][_permission] and not current.auth.has_permission(_permission, user_id=_PERSON.id):
                 mylogger.debug(message='adding default permission %s for user %s' % (_permission, _PERSON.id))
                 _user_group = current.auth.user_group(user_id=_PERSON.id)
@@ -1080,26 +1084,26 @@ def startup_populate_database():
     #
     # populate database if needed
     #
-    #is_db_empty = current.cache.ram('is_db_empty', lambda: current.db(current.db.empirical_formula.id >= 0).count() == 0, time_expire = None)
-    #if not is_db_empty:
+    # is_db_empty = current.cache.ram('is_db_empty', lambda: current.db(current.db.empirical_formula.id >= 0).count() == 0, time_expire = None)
+    # if not is_db_empty:
     #    return True
-
-    mylogger.debug(message='startup_populate_database()')
+    mylogger.info(message='startup_populate_database()')
     try:
         for table in current.db.tables:
             current.db.executesql("SELECT nextval('%s_id_seq')" %table);
     except Exception as ex:
         mylogger.debug(message='exception:%s' %type(ex))
+        mylogger.info(message='SELECT nextval request not supported, not a problem.')
         pass
 
+    mylogger.info(message='-populating cpe')
     if current.db(current.db.cpe.id > 0).count() == 0:
-        mylogger.debug(message='-populating cpe')
         current.db.cpe.insert(label=u'extraction arm'.encode('utf8'))
         current.db.cpe.insert(label=u'chemical fume hood'.encode('utf8'))
         current.db.cpe.insert(label=u'laboratorie fume hood'.encode('utf8'))
 
+    mylogger.info(message='-populating ppe')
     if current.db(current.db.ppe.id > 0).count() == 0:
-        mylogger.debug(message='-populating ppe')
         current.db.ppe.insert(label=u'lab coat'.encode('utf8'))
         current.db.ppe.insert(label=u'latex gloves'.encode('utf8'))
         current.db.ppe.insert(label=u'nitrile gloves'.encode('utf8'))
@@ -1107,37 +1111,36 @@ def startup_populate_database():
         current.db.ppe.insert(label=u'safety glasses'.encode('utf8'))
         current.db.ppe.insert(label=u'gaz mask'.encode('utf8'))
 
+    mylogger.info(message='-populating class_of_compounds')
     if current.db(current.db.class_of_compounds.id > 0).count() == 0:
-        mylogger.debug(message='-populating class_of_compounds')
         _id_sample_family = current.db.class_of_compounds.insert(label=u'sample_family'.encode('utf8'))
 
+    mylogger.info(message='-populating entity')
     if current.db(current.db.entity.id > 0).count() == 0:
-        mylogger.debug(message='-populating entity')
         _id_root_entity = current.db.entity.insert(role='root_entity', description='root_entity', manager=None)
         _id_user_1_entity = current.db.entity.insert(role='user_1', description='Group uniquely assigned to user 1', manager=None)
         _id_all_entity_entity = current.db.entity.insert(role='all_entity', description='', manager=None)
         _id_sample_entity_entity = current.db.entity.insert(role='sample_entity', description='', manager=None)
 
+    mylogger.info(message='-populating store_location')
     if current.db(current.db.store_location.id > 0).count() == 0:
-        mylogger.debug(message='-populating store_location')
         current.db.store_location.insert(label=u'sample_store_location_A'.encode('utf8'), entity=_id_sample_entity_entity)
         current.db.store_location.insert(label=u'sample_store_location_B', entity=_id_sample_entity_entity)
 
+    mylogger.info(message='-populating person')
     if current.db(current.db.person.id > 0).count() == 0:
-        mylogger.debug(message='-populating person')
         _id_admin = current.db.person.insert(first_name='Admin', last_name='Admin', email='admin@admin.fr', password='0a80ce158486ab2a3ea52112023afd37d8dae11f27f01f4f66902e9bcfcd2bb7273fd28f34aa4e5eae8f1d2bc9c86ae7ed42d4f6f2d0ca570ddde46e55983a5d', creation_date='2010-12-21', archive='F', registration_key='', reset_password_key='', registration_id='')
 
-    if current.db(current.db.membership.id > 0).count() == 0:
-        mylogger.debug(message='-populating membership')
-        current.db.membership.insert(user_id=_id_admin, group_id=_id_user_1_entity)
-        current.db.membership.insert(user_id=_id_admin, group_id=_id_all_entity_entity)
+        if current.db(current.db.membership.id > 0, current.db.membership.id < 100).count() == 0:
+            current.db.membership.insert(user_id=_id_admin, group_id=_id_user_1_entity)
+            current.db.membership.insert(user_id=_id_admin, group_id=_id_all_entity_entity)
 
+    mylogger.info(message='-populating permission')
     if current.db(current.db.permission.id > 0).count() == 0:
-        mylogger.debug(message='-populating permission')
         current.db.permission.insert(group_id=_id_user_1_entity, name='admin', table_name='', record_id=0)
 
+    mylogger.info(message='-populating hazard_code')
     if current.db(current.db.hazard_code.id > 0).count() == 0:
-        mylogger.debug(message='-populating hazard_code')
         current.db.hazard_code.insert( label=u'E'.encode('utf8'))
         current.db.hazard_code.insert( label=u'F'.encode('utf8'))
         current.db.hazard_code.insert( label=u'F+'.encode('utf8'))
@@ -1149,8 +1152,8 @@ def startup_populate_database():
         current.db.hazard_code.insert( label=u'C'.encode('utf8'))
         current.db.hazard_code.insert( label=u'N'.encode('utf8'))
 
+    mylogger.info(message='-populating hazard_statement')
     if current.db(current.db.hazard_statement.id > 0).count() == 0:
-        mylogger.debug(message='-populating hazard_statement')
         current.db.hazard_statement.insert( label=u'.Unstable explosives.'.encode('utf8'), reference='H200');
         current.db.hazard_statement.insert( label=u'.Explosive; mass explosion hazard.'.encode('utf8'), reference='H201');
         current.db.hazard_statement.insert( label=u'.Explosive'.encode('utf8'), reference='H202');
@@ -1250,14 +1253,14 @@ def startup_populate_database():
         current.db.hazard_statement.insert( label=u'.Safety data sheet available on request'.encode('utf8'), reference='EUH210');
         current.db.hazard_statement.insert( label=u'.To avoid risks to human health and the environment'.encode('utf8'), reference='EUH401');
 
+    mylogger.info(message='-populating physical_state')
     if current.db(current.db.physical_state.id > 0).count() == 0:
-        mylogger.debug(message='-populating physical_state')
         current.db.physical_state.insert( label=u'gaz'.encode('utf8'))
         current.db.physical_state.insert( label=u'liquid'.encode('utf8'))
         current.db.physical_state.insert( label=u'solid'.encode('utf8'))
 
+    mylogger.info(message='-populating precautionary_statement')
     if current.db(current.db.precautionary_statement.id > 0).count() == 0:
-        mylogger.debug(message='-populating precautionary_statement')
         current.db.precautionary_statement.insert( label=u'.If medical advice is needed'.encode('utf8'), reference='P101');
         current.db.precautionary_statement.insert( label=u'.Keep out of reach of children.'.encode('utf8'), reference='P102');
         current.db.precautionary_statement.insert( label=u'.Read label before use.'.encode('utf8'), reference='P103');
@@ -1396,8 +1399,8 @@ def startup_populate_database():
         current.db.precautionary_statement.insert( label=u'.Store at temperatures not exceeding...°C/...°F. Keep cool.'.encode('utf8'), reference='P411+P235');
         current.db.precautionary_statement.insert( label=u'.Dispose of contents/container to...'.encode('utf8'), reference='P501');
 
+    mylogger.info(message='-populating risk_phrase')
     if current.db(current.db.risk_phrase.id > 0).count() == 0:
-        mylogger.debug(message='-populating risk_phrase')
         current.db.risk_phrase.insert( label=u'.Explosive when dry'.encode('utf8'), reference='1');
         current.db.risk_phrase.insert( label=u'.Risk of explosion by shock, friction, fire or other source of ignition'.encode('utf8'), reference='2');
         current.db.risk_phrase.insert( label=u'.Extreme risk of explosion by shock, friction, fire or other sources of ignition'.encode('utf8'), reference='3');
@@ -1522,8 +1525,8 @@ def startup_populate_database():
         current.db.risk_phrase.insert( label=u'.Harmful: possible risk of irreversible effects in contact with skin and if swallowed'.encode('utf8'), reference='68/21/22');
         current.db.risk_phrase.insert( label=u'.Harmful: possible risk of irreversible effects through inhalation, in contact with skin and if swallowed'.encode('utf8'), reference='68/20/21/22');
 
+    mylogger.info(message='-populating safety_phrase')
     if current.db(current.db.safety_phrase.id > 0).count() == 0:
-        mylogger.debug(message='-populating safety_phrase')
         current.db.safety_phrase.insert( label=u'.Keep locked up'.encode('utf8'), reference='1');
         current.db.safety_phrase.insert( label=u'.Keep out of the reach of children'.encode('utf8'), reference='2');
         current.db.safety_phrase.insert( label=u'.Keep in a cool place'.encode('utf8'), reference='3');
@@ -1599,17 +1602,17 @@ def startup_populate_database():
         current.db.safety_phrase.insert( label=u'.Wear suitable gloves and eye/face protection'.encode('utf8'), reference='37/39');
         current.db.safety_phrase.insert( label=u'.Keep only in the original container at temperature not exceeding ... °C (to be specified by the manufacturer)'.encode('utf8'), reference='47/49');
 
+    mylogger.info(message='-populating signal_word'.encode('utf8'))
     if current.db(current.db.signal_word.id > 0).count() == 0:
-        mylogger.debug(message='-populating signal_word'.encode('utf8'))
         current.db.signal_word.insert( label=u'warning'.encode('utf8'))
         current.db.signal_word.insert( label=u'danger'.encode('utf8'))
 
+    mylogger.info(message='-populating supplier'.encode('utf8'))
     if current.db(current.db.supplier.id > 0).count() == 0:
-        mylogger.debug(message='-populating supplier'.encode('utf8'))
         current.db.supplier.insert( label=u'sample_supplier'.encode('utf8'))
 
+    mylogger.info(message='-populating symbol')
     if current.db(current.db.symbol.id > 0).count() == 0:
-        mylogger.debug(message='-populating symbol')
         current.db.symbol.insert( label=u'SGH01'.encode('utf8'));
         current.db.symbol.insert( label=u'SGH02'.encode('utf8'));
         current.db.symbol.insert( label=u'SGH03'.encode('utf8'));
@@ -1620,8 +1623,8 @@ def startup_populate_database():
         current.db.symbol.insert( label=u'SGH08'.encode('utf8'));
         current.db.symbol.insert( label=u'SGH09'.encode('utf8'));
 
+    mylogger.info(message='-populating unit')
     if current.db(current.db.unit.id > 0).count() == 0:
-        mylogger.debug(message='-populating unit')
         _id_l_unit = current.db.unit.insert( label=u'l', reference=None, multiplier_for_reference=1);
         current.db.unit.insert( label=u'ml'.encode('utf8'), reference=_id_l_unit, multiplier_for_reference=0.001);
         current.db.unit.insert( label=u'µl'.encode('utf8'), reference=_id_l_unit, multiplier_for_reference=1.0000000000000001e-05);
@@ -1639,8 +1642,8 @@ def startup_populate_database():
         current.db(current.db.unit.id==_id_g_unit).select().first().update_record(reference=_id_g_unit)
         current.db(current.db.unit.id==_id_m_unit).select().first().update_record(reference=_id_m_unit)
 
+    mylogger.info(message='-populating command status')
     if current.db(current.db.command_status.id > 0).count() == 0:
-        mylogger.debug(message='-populating command status')
         current.db.command_status.insert( label=u'New'.encode('utf8'), state=0, rank=1);
         current.db.command_status.insert( label=u'Accepted'.encode('utf8'), state=0, rank=2);
         current.db.command_status.insert( label=u'Ordered'.encode('utf8'), state=0, rank=3);
