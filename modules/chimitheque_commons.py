@@ -609,21 +609,6 @@ def get_pin_message():
     return messages
 
 
-def get_store_location_parents(store_location_id):
-    """
-    Return the parents of the given store location id
-    """
-    mylogger.debug(message='get_store_location_parents')
-    _sl = current.db(current.db.store_location.id == store_location_id).select().first()
-    mylogger.debug(message='_sl:%s' % _sl)
-    _parent = _sl.parent
-    mylogger.debug(message='_parent:%s' % _parent)
-    if _parent is None:
-        return [_sl]
-    else:
-        return [_sl] + get_store_location_parents(_parent.id)
-
-
 def get_store_location_label_full_path(r):
 
     mylogger.debug(message='r:%s' % str(r))
