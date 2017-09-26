@@ -41,8 +41,6 @@ images_base_url = settings['application_url'] + '/static/images' if 'application
 
 IMAGE_LOGO = 'logo.png'
 IMAGE_LOGO_UNIV = 'logo_univ.png'
-UNIV_URL = 'http://www.univ-bpclermont.fr'
-LAB_URL = 'http://iccf.univ-bpclermont.fr'
 IMAGE_ICEWEASEL = 'iceweasel.png'
 IMAGE_FLAG_FR = 'flag_fr.gif'
 IMAGE_FLAG_EN = 'flag_en.gif'
