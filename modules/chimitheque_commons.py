@@ -13,7 +13,8 @@ import socket
 import os
 
 # Go integration
-import ctypes
+#import ctypes
+import gopy
 
 from chimitheque_logger import chimitheque_logger
 from gluon.dal import Row
@@ -26,12 +27,14 @@ import chimitheque_strings as cs
 mylogger = chimitheque_logger()
 
 # Go integration
-dir_path = os.path.dirname(os.path.realpath(__file__))
-lib = ctypes.cdll.LoadLibrary(os.path.join(dir_path, 'gochimithequeutils.so'))
-mylogger.info(message='Loaded the Go library') 
-l2ef = lib.LinearToEmpiricalFormula
-l2ef.restype = ctypes.c_char_p
-l2ef.argtypes = [ctypes.c_char_p]
+#dir_path = os.path.dirname(os.path.realpath(__file__))
+#lib = ctypes.cdll.LoadLibrary(os.path.join(dir_path, 'gochimithequeutils.so'))
+#mylogger.info(message='Loaded the Go library') 
+#l2ef = lib.LinearToEmpiricalFormula
+#l2ef.restype = ctypes.c_char_p
+#l2ef.argtypes = [ctypes.c_char_p]
+#ch_utils = gopy.load("github.com/tbellembois/gochimithequeutils/chimitheque", lang="cffi")
+import chimitheque as ch_utils
 
 MIN_INT = 0
 MAX_INT = 100000000
@@ -160,25 +163,6 @@ def get_string(the_string):
     except KeyError:
         return current.T(_str, lazy=False)
 
-def create_barecode(product_id):
-    """Return the generated barecode from a product
-    """
-    mylogger.debug(message='create_barecode')
-    product_cas_number = current.db(current.db.product.id == product_id).select(current.db.product.cas_number).first().cas_number
-
-    mylogger.debug(message='product_id:%s' % product_id)
-    mylogger.debug(message='product_cas_number:%s' % product_cas_number)
-
-    last_storage_id = current.db(current.db.storage).count()
-    mylogger.debug(message='last_storage_id:%s' % last_storage_id)
-
-    today = datetime.date.today()
-    today = today.strftime('%Y%m%d')
-
-    barecode = '%s_%s_%s.1' % (product_cas_number, today, last_storage_id)
-    mylogger.debug(message='barecode:%s' % barecode)
-
-    return barecode
 
 def is_cas_number(value):
     """Check if value is a CAS number.
@@ -216,61 +200,11 @@ def is_cas_number(value):
         return (value, get_string("CAS_NUMBER_WRONG_FORMAT_ERROR"))
 
 
-def get_lastest_app_version(return_string=False):
-    """Get the lastest application version.
-
-    return_string -- if True returns a string version_number-version_date
-                     else returns a tuple ('version_number', 'version_date').
-    """
-    url = settings['chimitheque_repository'] + '?format=txt'
-    try:
-        chimitheque_repository_response = urllib2.urlopen(url, timeout=4)
-    except ssl.SSLError:
-        return None
-    except urllib2.HTTPError:
-        return None
-    except socket.timeout:
-        return None
-    except urllib2.URLError:
-        return None
-
-    packages = chimitheque_repository_response.read()
-    package_list = packages.split('|')
-
-    mylogger.debug(message='packages:%s' % packages)
-
-    date_list = []
-    for package in package_list:
-        date_search = re.search('_(.*)-([0-9]{8})', package)
-        if date_search is not None:
-            date_list.append((date_search.group(1), date_search.group(2)))
-
-    last_date = max(date_list) if len(date_list) > 0 else None
-
-    if return_string:
-        return '%s-%s' % (last_date[0], last_date[1])
-    else:
-        return last_date
-
-
-def is_new_app_version():
-    """Check if there is an available Chimithèque update.
-    """
-    lastest_version_date = get_lastest_app_version()
-    current_version_date=settings['release_date']
-
-    mylogger.debug(message='lastest_version_date:%s' % str(lastest_version_date))
-
-    if lastest_version_date is None:
-        return False
-    elif lastest_version_date[1] > current_version_date:
-        return "%s-%s" % (lastest_version_date[0], lastest_version_date[1])
-
-
 def clean_session():
     current.db(current.db.web2py_session_chimitheque).delete()
 
-
+def clear_menu_cache():
+    current.cache.ram.clear(regex='menu_.*')
 
 def has_list_dups(l):
     """Check if the list l has duplicate entries.
@@ -293,7 +227,8 @@ def count_list_dups(l):
 def linear_to_empirical_formula(formula):
     """Convert the given formula into the empirical formula
     """
-    return l2ef(ctypes.c_char_p(formula))
+    #return l2ef(ctypes.c_char_p(formula))
+    return ch_utils.LinearToEmpiricalFormula(formula)
 
 
 def is_empirical_formula(formula):
@@ -575,120 +510,6 @@ def get_store_location_submenu(store_location_id):
                         )
     return _ret
 
-
-def get_child_message(message_id, depth):
-
-    child_messages = current.db(current.db.message.parent==message_id).select(orderby=current.db.message.id)
-
-    return [ [depth + 1, child_message.id, get_child_message(child_message.id, depth + 1)] for child_message in child_messages ]
-
-
-def get_message_hierarchy():
-
-    root_messages_pin = current.db((current.db.message.parent==None) & 
-                               (current.db.message.pin==True) & 
-                               (current.db.message.expiration_datetime >= datetime.datetime.now())).select(orderby=current.db.message.creation_datetime)
-    root_messages_not_pin = current.db((current.db.message.parent==None) & 
-                               (current.db.message.pin==False) &
-                               (current.db.message.expiration_datetime >= datetime.datetime.now())).select(orderby=current.db.message.creation_datetime)
-
-    message_pin_id_hierarchy = flatten([[0, message.id, get_child_message(message.id, 0)] for message in root_messages_pin ])
-    message_not_pin_id_hierarchy = flatten([[0, message.id, get_child_message(message.id, 0)] for message in root_messages_not_pin ])
-
-    message_hierarchy = []
-    for depth, message_id in chunks(message_pin_id_hierarchy + message_not_pin_id_hierarchy, 2):
-        message_hierarchy.append((depth, current.db(current.db.message.id==message_id).select().first()))
-
-    return message_hierarchy
-
-
-def get_pin_message():
-
-    messages = current.db((current.db.message.pin==True) & (current.db.message.expiration_datetime >= datetime.datetime.now())).select(orderby=current.db.message.id)
-
-    return messages
-
-
-def get_store_location_label_full_path(r):
-
-    mylogger.debug(message='r:%s' % str(r))
-
-    if r is not None:
-        mylogger.debug(message='r.parent:%s' % str(r.parent))
-        
-        if r.parent is None:
-            mylogger.debug(message='r.label:%s' % str(r.label))
-            return r.label
-        else:
-            return ' / '.join(_parent.label for _parent in reversed(get_store_location_parents(r.parent))) + ' / %s' % r.label
-    else:
-        mylogger.debug(message='get_store_location_label_full_path has returned None')
-        return None
-
-
-def clear_menu_cache():
-    current.cache.ram.clear(regex='menu_.*')
-
-
-def compute_stock_total(product, store_location):
-    """Return the stock total of the given product in the store location
-    and its sub store locations.
-    
-    A product can be stored several times in different units.
-    
-    product -- a PRODUCT instance
-    return: a dictionary { unit: volume_weight } with
-            unit -- the reference unit id
-            volume_weight -- the volume or weight
-    """
-    _stock = {}
-    _stock_current = compute_stock_current(product, store_location)
-    
-    for _child in store_location.retrieve_children():
-        _child_stock_current = compute_stock_current(product, _child)
-    
-        for _reference in _child_stock_current.keys():
-            if _reference in _stock.keys():
-                _stock[_reference] = _stock[_reference]  + _child_stock_current[_reference]
-            else:
-                _stock[_reference] = _child_stock_current[_reference]
-    
-    # adding the stock_current
-    for _reference in _stock_current.keys():
-        if _reference in _stock.keys():
-            _stock[_reference] = _stock[_reference]  + _stock_current[_reference]
-        else:
-            _stock[_reference] = _stock_current[_reference]
-    
-    return _stock
-
-def compute_stock_current(product, store_location):
-    """Return the stock of the product in the given store location.
-    
-    A product can be stored several times in different units.
-    
-    store_location -- a STORE_LOCATION instance
-    return: a dictionary { unit: volume_weight } with
-            unit -- the reference unit id
-            volume_weight -- the volume or weight
-    """
-    _stock = {}
-    
-    for _storage in STORAGE_MAPPER().find(store_location_id=store_location.id, product_id=product.id):
-    
-        mylogger.debug(message='_storage:%s' % _storage)
-    
-        # using the number 99 (random choice) as a dictionary key if the storage has no unit
-        _reference = _storage.unit.reference.id if _storage.unit is not None else 99
-        _multiplier = _storage.unit.multiplier_for_reference if _storage.unit is not None else 1
-        _volume_weight = _storage.volume_weight if _storage.volume_weight is not None else 1
-    
-        if _reference in _stock.keys():
-            _stock[_reference] = _stock[_reference] + (_volume_weight * _multiplier)
-        else:
-            _stock[_reference] = _volume_weight * _multiplier
-    
-    return _stock
 
 #
 # startup tasks

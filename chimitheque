@@ -71,9 +71,6 @@ examples:
 deploy your Chimithèque "prod" instance:
 ./chimitheque -c deploy -i prod
 
-check if there is an update for your Chimithèque "prod" instance (and ask for update):
-./chimitheque -c update -i prod
-
 perform the 0.2 to 0.3 migration:
 ./chimitheque -c migrate-to-03 -i prod -o no-check-dependencies
 
@@ -103,8 +100,6 @@ while getopts "hc:i:o:" opt; do
            'clean-session' )
            ;;
            'makedist' )
-           ;;
-           'update' )
            ;;
            'generate_config' )
            ;;
@@ -232,36 +227,6 @@ function ask {
         esac
 
     done
-}
-
-#
-# is there a new application version?
-#
-function is_new_app_version {
-
-    version=$(PYTHONPATH=$WEB2PY_PATH $PYTHON -c 'import modules.chimitheque_commons as cc; print cc.is_new_app_version()')
-
-    if [ "$version" == "None" ]; then
-        return 0
-    else
-        last_chimitheque_version=$version
-        return 1
-    fi
-}
-
-#
-# get the lastest application version
-#
-function get_lastest_app_version {
-
-    version=$(PYTHONPATH=$WEB2PY_PATH $PYTHON -c 'import modules.chimitheque_commons as cc; print cc.get_lastest_app_version(return_string=True)')
-
-    if [ "$version" == "None" ]; then
-        return 0
-    else
-        last_chimitheque_version=$version
-        return 1
-    fi
 }
 
 #
@@ -430,49 +395,6 @@ case "$COMMAND" in
 
     clean_session
 
-  ;;
-  update)
-    echo "Checking for a Chimithèque update..."
-
-    generate_configuration_files
-
-    if [ "$FORCE_UPDATE" = true ]; then
-        get_lastest_app_version
-    else
-        is_new_app_version
-    fi
-
-    if [ $? == 0 ]; then
-        echo "no update available, leaving."
-        exit 0
-    fi
-
-    if ask "version $last_chimitheque_version available, do you want to install it ? Y/N" N; then
-        echo "installing the new version..."
-    else
-        echo "leaving..."
-        exit 0
-    fi
-
-    cd $TMPDIR
-    rm -f $TMPDIR/chimitheque_src.tar.gz
-    rm -Rf $TMPDIR/web2py
-
-    wget $CHIMITHEQUE_DOWNLOAD_SRC/chimitheque_$last_chimitheque_version.tar.gz -O $TMPDIR/chimitheque_src.tar.gz
-
-    echo "-unpacking the package";
-    tar -zxf $TMPDIR/chimitheque_src.tar.gz
-
-    echo "-updating the $CHIMITHEQUE_SRC files";
-    rsync -az $TMPDIR/web2py/* $CHIMITHEQUE_SRC/
-
-    echo " "
-    echo "+-+"
-    echo "|/| Ensure that no additional parameters have been added in the "
-    echo "|/| \"chimitheque_sample.properties file\". "
-    echo "|/| You should now run: \"./chimitheque -c deploy -i $INSTANCE\" command."
-    echo "+-+"
-    echo " "
   ;;
   deploy)
     echo "Deploying $NAME"

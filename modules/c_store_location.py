@@ -100,6 +100,23 @@ class STORE_LOCATION:
     #
     # methods
     #
+    @staticmethod
+    def label_full_path(r):
+   
+       mylogger.debug(message='r:%s' % str(r))
+   
+       if r is not None:
+           mylogger.debug(message='r.parent:%s' % str(r.parent))
+           
+           if r.parent is None:
+               mylogger.debug(message='r.label:%s' % str(r.label))
+               return r.label
+           else:
+               return ' / '.join(_parent.label for _parent in reversed(retrieve_parents(r.parent))) + ' / %s' % r.label
+       else:
+           mylogger.debug(message='get_store_location_label_full_path has returned None')
+           return None
+
     def compute_and_set_full_path(self):
         """Compute and set the full_path property of the store location."""
         my_logger.debug(message='compute_and_set_full_path')
@@ -156,3 +173,66 @@ class STORE_LOCATION:
     def has_storage(self, product_id=None, archive=False):
         """Return True if the store location has storages."""
         return self.__has_storage(product_id=product_id, archive=archive) if self.__has_storage is not None else False
+
+    @staticmethod
+    def compute_stock_total(product, store_location):
+        """Return the stock total of the given product in the store location
+        and its sub store locations.
+        
+        A product can be stored several times in different units.
+        
+        product -- a PRODUCT instance
+        return: a dictionary { unit: volume_weight } with
+                unit -- the reference unit id
+                volume_weight -- the volume or weight
+        """
+        _stock = {}
+        _stock_current = compute_stock_current(product, store_location)
+        
+        for _child in store_location.retrieve_children():
+            _child_stock_current = compute_stock_current(product, _child)
+        
+            for _reference in _child_stock_current.keys():
+                if _reference in _stock.keys():
+                    _stock[_reference] = _stock[_reference]  + _child_stock_current[_reference]
+                else:
+                    _stock[_reference] = _child_stock_current[_reference]
+        
+        # adding the stock_current
+        for _reference in _stock_current.keys():
+            if _reference in _stock.keys():
+                _stock[_reference] = _stock[_reference]  + _stock_current[_reference]
+            else:
+                _stock[_reference] = _stock_current[_reference]
+        
+        return _stock
+
+    @staticmethod
+    def compute_stock_current(product, store_location):
+        """Return the stock of the product in the given store location.
+        
+        A product can be stored several times in different units.
+        
+        store_location -- a STORE_LOCATION instance
+        return: a dictionary { unit: volume_weight } with
+                unit -- the reference unit id
+                volume_weight -- the volume or weight
+        """
+        _stock = {}
+        
+        for _storage in STORAGE_MAPPER().find(store_location_id=store_location.id, product_id=product.id):
+        
+            mylogger.debug(message='_storage:%s' % _storage)
+        
+            # using the number 99 (random choice) as a dictionary key if the storage has no unit
+            _reference = _storage.unit.reference.id if _storage.unit is not None else 99
+            _multiplier = _storage.unit.multiplier_for_reference if _storage.unit is not None else 1
+            _volume_weight = _storage.volume_weight if _storage.volume_weight is not None else 1
+        
+            if _reference in _stock.keys():
+                _stock[_reference] = _stock[_reference] + (_volume_weight * _multiplier)
+            else:
+                _stock[_reference] = _volume_weight * _multiplier
+        
+        return _stock
+

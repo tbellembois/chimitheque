@@ -68,7 +68,7 @@ def generate_barecode(form):
 
     my_logger.debug(message='generate_barecode')
     product_id = form.element('[name=product]').attributes['_value']
-    form.vars.barecode = cc.create_barecode(product_id)
+    form.vars.barecode = STORAGE_MAPPER.create_barecode(product_id)
 
 
 def duplicate_storage(form):
@@ -341,7 +341,7 @@ def create():
     my_logger.debug(message='request.vars:%s' % request.vars)
     product_id = request.args(0)
     db.storage.product.default = product_id
-    db.storage.barecode.default = cc.create_barecode(product_id)
+    db.storage.barecode.default = STORAGE_MAPPER.create_barecode(product_id)
 
     # creating the form
     db.storage.product.widget.attributes['_disabled'] = 'disabled'

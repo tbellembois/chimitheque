@@ -71,7 +71,7 @@ class STOCK_STORE_LOCATION(object):
     @volume_weight_total.setter
     def volume_weight_total(self, value):
         self.__volume_weight_total = value
-
+ 
     def update_stock_actual(self, storage):
         assert (((storage.unit is None) and (self.unit_reference is None)) or \
                 (storage.unit.reference == self.unit_reference)), "STOCK store location update with a different reference unit!"

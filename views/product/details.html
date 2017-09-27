@@ -1,4 +1,5 @@
 {{include 'chimitheque_import.html'}}
+{{from c_store_location import STORE_LOCATION}}
 
 {{load_storage_list = 'load_storage_list' in request.vars}}
 
@@ -37,14 +38,14 @@
 	                                {{=_splitted_full_path[-1]}}
 	                                </td>
 	                                <td><div style="width: 100px;">
-	                                        {{_s = cc.compute_stock_current(product, _store_location)}}
+	                                        {{_s = STORE_LOCATION.compute_stock_current(product, _store_location)}}
 	                                        {{for _reference_id in _s.keys():}}
 	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
 	                                        {{pass}}
 	                                    </div>
 	                                    <div>
 	                                        <b>&#8721;:</b>&nbsp;
-	                                        {{_s = cc.compute_stock_total(product, _store_location)}}
+	                                        {{_s = STORE_LOCATION.compute_stock_total(product, _store_location)}}
 	                                        {{for _reference_id in _s.keys():}}
 	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
 	                                        {{pass}}

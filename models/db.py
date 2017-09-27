@@ -657,7 +657,7 @@ db.define_table('store_location',
                       comment=cc.get_string("DB_STORE_LOCATION_COLOR_COMMENT"),
                       default='#FFFFFF'),
                 Field('label_full_path',
-                      compute=lambda r: cc.get_store_location_label_full_path(r)),
+                      compute=lambda r: STORE_LOCATION.label_full_path(r)),
                 format=lambda r: r.label_full_path)
 
 subset = db((db.store_location.label == request.vars.label) &

@@ -164,7 +164,7 @@ def update():
 
         # Integration
         if new_status.state == 1:
-            barecode = cc.create_barecode(command.product.id)
+            barecode = STORAGE_MAPPER.create_barecode(command.product.id)
             barecode_begin = barecode[0:-1]
             barecode_number = int(barecode[-1:])
 

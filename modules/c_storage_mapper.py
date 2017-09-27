@@ -189,3 +189,25 @@ class STORAGE_MAPPER(object):
                           to_destroy=storage.to_destroy)
 
         current.db.commit()
+
+    @staticmethod
+    def create_barecode(product_id):
+        """Return the generated barecode from a product
+        """
+        mylogger.debug(message='create_barecode')
+        product_cas_number = current.db(current.db.product.id == product_id).select(current.db.product.cas_number).first().cas_number
+
+        mylogger.debug(message='product_id:%s' % product_id)
+        mylogger.debug(message='product_cas_number:%s' % product_cas_number)
+
+        last_storage_id = current.db(current.db.storage).count()
+        mylogger.debug(message='last_storage_id:%s' % last_storage_id)
+
+        today = datetime.date.today()
+        today = today.strftime('%Y%m%d')
+
+        barecode = '%s_%s_%s.1' % (product_cas_number, today, last_storage_id)
+        mylogger.debug(message='barecode:%s' % barecode)
+
+        return barecode
+

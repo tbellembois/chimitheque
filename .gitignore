@@ -4,5 +4,6 @@ private
 sessions
 uploads
 chimitheque_prod.properties
+chimitheque_dev.properties
 configuration.cfg
 logging.conf

@@ -23,6 +23,7 @@
 from datetime import datetime
 
 from chimitheque_ide_autocomplete import *
+from c_message_mapper import MESSAGE_MAPPER
 import chimitheque_commons as cc
 
 
@@ -101,7 +102,7 @@ def delete():
 
 @auth.requires_login()
 def index():
-    messages = cc.get_message_hierarchy()
+    messages = MESSAGE_MAPPER.get_message_hierarchy()
     return dict(messages=messages)
 
 
