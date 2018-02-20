@@ -77,22 +77,6 @@
 
 <body>
   <!-- Navbar ================================================== -->
-  {{if auth.user:}}
-  	
-    {{if not settings['disable_version_check']:}}
-    
-    {{_is_new_app_version = cache.ram('is_new_app_version', lambda: cc.is_new_app_version(), time_expire=3600)}}
-	
-	{{if _is_new_app_version:}}
-  		{{_version=_is_new_app_version}}
-  		<div id="new_version">{{=XML(cc.get_string('NEW_VERSION_AVAILABLE').format(version=_version, 
-  																			       download_url=settings['chimitheque_repository']))}}</div>
-  	{{pass}}
-
-    {{pass}}
-	
-  {{pass}}
-
   <div class="navbar navbar-inverse navbar-static-top">
     <div class="flash">{{=response.flash or ''}}</div>
     <div class="navbar-inner">

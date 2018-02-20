@@ -236,3 +236,5 @@ class STORE_LOCATION_MAPPER:
                                                                              color=store_location.color)
         # not sure that it is necessary...
         current.db.commit()
+
+

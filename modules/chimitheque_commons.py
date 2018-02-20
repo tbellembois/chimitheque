@@ -428,6 +428,23 @@ def pretty_link(link):
     return '%s...' % _pretty_link.group(1) if _pretty_link is not None else link
 
 
+def label_full_path(r):
+
+   my_logger.debug(message='r:%s' % str(r))
+
+   if r is not None:
+       my_logger.debug(message='r.parent:%s' % str(r.parent))
+       
+       if r.parent is None:
+           my_logger.debug(message='r.label:%s' % str(r.label))
+           return r.label
+       else:
+           return ' / '.join(_parent.label for _parent in reversed(retrieve_parents(r.parent))) + ' / %s' % r.label
+   else:
+       my_logger.debug(message='get_store_location_label_full_path has returned None')
+       return None
+
+
 def get_admins():
     """
     Returns users with the 'admin' permission

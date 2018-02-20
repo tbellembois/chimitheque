@@ -46,8 +46,6 @@ mylogger.debug(message='db_fake_migrate:%s' % settings['db_fake_migrate'])
 # database definition
 #
 db = DAL("%s" % settings['db_connection'],
-         migrate=True,
-         fake_migrate_all=settings['db_fake_migrate'],
          pool_size=10)
 
 #
@@ -657,7 +655,7 @@ db.define_table('store_location',
                       comment=cc.get_string("DB_STORE_LOCATION_COLOR_COMMENT"),
                       default='#FFFFFF'),
                 Field('label_full_path',
-                      compute=lambda r: STORE_LOCATION.label_full_path(r)),
+                      compute=lambda r: cc.label_full_path(r)),
                 format=lambda r: r.label_full_path)
 
 subset = db((db.store_location.label == request.vars.label) &

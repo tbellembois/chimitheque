@@ -442,7 +442,7 @@ div.check_all {
     top: -25px;
 }
 .storage_item {
-    width: 720px;
+    width: 810px;
     clear: both;
     float: left;
     margin-bottom: 2px;
@@ -498,7 +498,7 @@ div.check_all {
 }
 .storage_item div.action,
 .storage_item_archive div.action {
-    float: right;
+    float: left;
 }
 .storage_item div.date,
 .storage_item_archive div.date {
@@ -519,15 +519,17 @@ div.check_all {
 }
 .storage_item div#product-name {
     position: absolute;
-    right: 15px;
-    width: 250px;
+    right: 0px;
+    width: 200px;
     height: 15px;
     font-size: 0.8em;
     font-style: italic;
     color: grey;
     overflow: hidden;
 }
-
+img.storage_destroy {
+    margin-left: 80px;
+}
 /*
 
 product / user / storage card

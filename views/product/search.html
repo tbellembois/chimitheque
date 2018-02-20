@@ -191,6 +191,7 @@
                     'cas_number',
                     'empirical_formula',
                     'barecode',
+                    'comment',
                     ]:}}
 <div id="{{=field_name}}" class="field">
 
@@ -209,6 +210,8 @@
 	<div class="label">{{=cc.get_string("SEARCH_EMPIRICAL_FORMULA")}}</div>
 {{pass}}
 {{if field_name == 'barecode':}}<div class="label">{{=cc.get_string("SEARCH_STORAGE_BARECODE")}}</div>{{pass}}
+{{if field_name == 'comment':}}<div class="label">{{=cc.get_string("SEARCH_STORAGE_COMMENT")}}</div>{{pass}}
+
 
 {{if field_name == 'cas_number':}}
 	<div class="comment">

@@ -102,7 +102,7 @@ class PRODUCT_MAPPER(object):
                        is_radio=product_row['is_radio'],
                        cmr_cat=product_row['cmr_cat'],
 
-                       is_in_entity_of=lambda user_id: self.is_in_entity_of(product_id=product_row['id'], user_id=user_id),
+                       is_in_entity_of=lambda user_id, archive: self.is_in_entity_of(product_id=product_row['id'], user_id=user_id, archive=archive),
                        is_in_entity_except_of=lambda user_id: self.is_in_entity_except_of(product_id=product_row['id'], user_id=user_id),
                        has_storage_archived=lambda product_id, user_id: self.has_storage_archived(product_id=product_row['id'], user_id=user_id),
                        has_bookmark=lambda user_id: self.has_bookmark(product_id=product_row['id'], user_id=user_id),
@@ -177,7 +177,7 @@ class PRODUCT_MAPPER(object):
 
         return _has_storage_archives
 
-    def is_in_entity_of(self, product_id, user_id):
+    def is_in_entity_of(self, product_id, user_id, archive=False):
         """Return True if the product is stored in one of the entities of the given user.
 
         product_id -- the product id
@@ -186,7 +186,7 @@ class PRODUCT_MAPPER(object):
         if current.auth.has_membership(user_id=user_id, role='all_entity'):
             _product_entities_count = current.db((current.db.product.id == product_id) &
                                                  (current.db.storage.product == current.db.product.id) &
-                                                 (current.db.storage.archive == False)).count()
+                                                 (current.db.storage.archive == archive)).count()
         else:
             _product_entities_count = current.db((current.db.product.id == product_id) &
                                                  (current.db.storage.product == current.db.product.id) &

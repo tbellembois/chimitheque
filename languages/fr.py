@@ -539,6 +539,7 @@
 'back': 'retour',
 'barecode': 'code-barre',
 'barecode like': 'le code-barre contient',
+'comment like': 'le commentaire contient',
 'batch number': 'numéro de lot',
 'before status': 'état précedent',
 'Before status': 'État précédent',

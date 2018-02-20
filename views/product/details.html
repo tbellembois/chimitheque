@@ -1,5 +1,6 @@
 {{include 'chimitheque_import.html'}}
 {{from c_store_location import STORE_LOCATION}}
+{{from c_storage_mapper import STORAGE_MAPPER}}
 
 {{load_storage_list = 'load_storage_list' in request.vars}}
 
@@ -38,14 +39,14 @@
 	                                {{=_splitted_full_path[-1]}}
 	                                </td>
 	                                <td><div style="width: 100px;">
-	                                        {{_s = STORE_LOCATION.compute_stock_current(product, _store_location)}}
+	                                        {{_s = STORAGE_MAPPER().compute_stock_current(product, _store_location)}}
 	                                        {{for _reference_id in _s.keys():}}
 	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
 	                                        {{pass}}
 	                                    </div>
 	                                    <div>
 	                                        <b>&#8721;:</b>&nbsp;
-	                                        {{_s = STORE_LOCATION.compute_stock_total(product, _store_location)}}
+	                                        {{_s = STORAGE_MAPPER().compute_stock_total(product, _store_location)}}
 	                                        {{for _reference_id in _s.keys():}}
 	                                            {{=_s[_reference_id]}}&nbsp;{{=UNIT_MAPPER().find(unit_id=_reference_id).label if _reference_id != 99 else cc.get_string('ITEM')}}
 	                                        {{pass}}
@@ -151,7 +152,7 @@
 	    </div>
 	{{pass}}
 
- 	{{if (auth.has_permission('read_sc') or auth.has_permission('admin')) and product.is_in_entity_of(auth.user.id):}}
+    {{if (auth.has_permission('read_sc') or auth.has_permission('admin')) and product.is_in_entity_of(auth.user.id, archive=True):}}
 	    <div id="storage_detail_image">
 		{{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_STORAGE),
 				 _onclick="showStorageArchiveButton(%s)" % product.id,
@@ -214,9 +215,6 @@
 
 	{{if product.is_in_entity_of(auth.user.id):}}
 
-		<div id="storage_list_product_{{=product.id}}" class="storage_list">
-		</div>
-
 		<!-- we do NOT use the web2py LOAD function because we want to wait for the document to be fully loaded -->
 		{{if load_storage_list:}}
 		    <script>
@@ -232,6 +230,9 @@
 		{{pass}}
 
 	{{pass}}<!-- is_in_user_entity -->
+    
+    <div id="storage_list_product_{{=product.id}}" class="storage_list"></div>
+    
     {{pass}}<!-- auth.has_permission('read_sc')..}} -->
 
 </div>

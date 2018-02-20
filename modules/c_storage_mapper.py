@@ -12,6 +12,7 @@ from c_store_location_mapper import STORE_LOCATION_MAPPER
 from c_supplier_mapper import SUPPLIER_MAPPER
 from c_unit_mapper import UNIT_MAPPER
 from types import ListType
+import datetime
 
 my_logger = chimitheque_logger()
 
@@ -194,20 +195,83 @@ class STORAGE_MAPPER(object):
     def create_barecode(product_id):
         """Return the generated barecode from a product
         """
-        mylogger.debug(message='create_barecode')
+        my_logger.debug(message='create_barecode')
         product_cas_number = current.db(current.db.product.id == product_id).select(current.db.product.cas_number).first().cas_number
 
-        mylogger.debug(message='product_id:%s' % product_id)
-        mylogger.debug(message='product_cas_number:%s' % product_cas_number)
+        my_logger.debug(message='product_id:%s' % product_id)
+        my_logger.debug(message='product_cas_number:%s' % product_cas_number)
 
         last_storage_id = current.db(current.db.storage).count()
-        mylogger.debug(message='last_storage_id:%s' % last_storage_id)
+        my_logger.debug(message='last_storage_id:%s' % last_storage_id)
 
         today = datetime.date.today()
         today = today.strftime('%Y%m%d')
 
         barecode = '%s_%s_%s.1' % (product_cas_number, today, last_storage_id)
-        mylogger.debug(message='barecode:%s' % barecode)
+        my_logger.debug(message='barecode:%s' % barecode)
 
         return barecode
+
+    @staticmethod
+    def compute_stock_total(product, store_location):
+        """Return the stock total of the given product in the store location
+        and its sub store locations.
+        
+        A product can be stored several times in different units.
+        
+        product -- a PRODUCT instance
+        return: a dictionary { unit: volume_weight } with
+                unit -- the reference unit id
+                volume_weight -- the volume or weight
+        """
+        _stock = {}
+        _stock_current = STORAGE_MAPPER().compute_stock_current(product, store_location)
+        
+        for _child in store_location.retrieve_children():
+            _child_stock_current = STORAGE_MAPPER().compute_stock_current(product, _child)
+        
+            for _reference in _child_stock_current.keys():
+                if _reference in _stock.keys():
+                    _stock[_reference] = _stock[_reference]  + _child_stock_current[_reference]
+                else:
+                    _stock[_reference] = _child_stock_current[_reference]
+        
+        # adding the stock_current
+        for _reference in _stock_current.keys():
+            if _reference in _stock.keys():
+                _stock[_reference] = _stock[_reference]  + _stock_current[_reference]
+            else:
+                _stock[_reference] = _stock_current[_reference]
+        
+        return _stock
+
+
+    @staticmethod
+    def compute_stock_current(product, store_location):
+        """Return the stock of the product in the given store location.
+        
+        A product can be stored several times in different units.
+        
+        store_location -- a STORE_LOCATION instance
+        return: a dictionary { unit: volume_weight } with
+                unit -- the reference unit id
+                volume_weight -- the volume or weight
+        """
+        _stock = {}
+        
+        for _storage in STORAGE_MAPPER().find(store_location_id=store_location.id, product_id=product.id):
+        
+            my_logger.debug(message='_storage:%s' % _storage)
+        
+            # using the number 99 (random choice) as a dictionary key if the storage has no unit
+            _reference = _storage.unit.reference.id if _storage.unit is not None else 99
+            _multiplier = _storage.unit.multiplier_for_reference if _storage.unit is not None else 1
+            _volume_weight = _storage.volume_weight if _storage.volume_weight is not None else 1
+        
+            if _reference in _stock.keys():
+                _stock[_reference] = _stock[_reference] + (_volume_weight * _multiplier)
+            else:
+                _stock[_reference] = _volume_weight * _multiplier
+        
+        return _stock
 

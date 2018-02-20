@@ -127,3 +127,4 @@ class STOCK_STORE_LOCATION_MAPPER(object):
                                                                                            product=stock_store_location.product.id)
 
         current.db.commit()
+

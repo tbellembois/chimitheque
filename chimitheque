@@ -28,7 +28,7 @@ VERSION_FILE=$(cat version)
 SKEL_VERSION=${BASH_REMATCH[1]}
 SKEL_RELEASEDATE=${BASH_REMATCH[2]}
 
-NEW_VERSION=0.4
+NEW_VERSION=0.5
 NEW_RELEASEDATE=`date +%Y%m%d`
 
 WEB2PY_SOURCE=http://www.web2py.com/examples/static/web2py_src.zip

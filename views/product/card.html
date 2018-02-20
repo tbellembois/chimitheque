@@ -16,7 +16,6 @@
      _onclick='$("#product_card_%s > *").remove();' % product.id)}}
 </div>
 
-
 {{if not is_history and (auth.has_permission('update_pc') or auth.has_permission('admin')):}}
 	<div>
         {{=A(IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_UPDATE),
@@ -149,12 +148,14 @@ _permitted and \
 <div id="class_of_compounds" class="field">
 	<div class="label">{{=cc.get_string('DB_PRODUCT_CLASS_OF_COMPOUNDS_LABEL')}}</div>
 	<div class="widget">
-	{{if _broken_reference_list is not None and 'class_of_compounds' in _broken_reference_list:}}
+    {{if _broken_reference_list is not None and 'class_of_compounds' in _broken_reference_list:}}
 		{{=IMG(_src='%s/%s' %(images_base_url, cc.IMAGE_WARNING),
 	   		   _alt=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'),
 	   		   _title=cc.get_string('PRODUCT_CARD_BROKEN_REFERENCE'))}}
 	{{else:}}
-		{{=', '.join([_coc.label for _coc in product.class_of_compounds if _coc is not None])}}
+        {{if product.class_of_compounds is not None:}}
+            {{=', '.join([_coc.label for _coc in product.class_of_compounds if product.class_of_compounds is not None])}}
+        {{pass}}
 	{{pass}}
 	</div>
 </div>

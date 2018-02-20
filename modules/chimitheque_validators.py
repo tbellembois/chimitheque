@@ -4,7 +4,6 @@
 # $Id: chimitheque_validators.py 206 2015-04-17 09:30:32Z tbellemb $
 from c_entity_mapper import ENTITY_MAPPER
 from c_store_location_mapper import STORE_LOCATION_MAPPER
-from chimitheque_ide_autocomplete import *
 from chimitheque_logger import chimitheque_logger
 from chimitheque_permission import Permission
 from gluon import current

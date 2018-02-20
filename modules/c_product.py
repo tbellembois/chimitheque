@@ -322,12 +322,13 @@ class PRODUCT(object):
     #
     # methods
     #
-    def is_in_entity_of(self, user_id):
+    def is_in_entity_of(self, user_id, archive=False):
         """Return True if the product is stored in one of the entities of the given user.
 
         user_id -- the user id
+        archive -- check for archive or not
         """
-        return self.__is_in_entity_of(user_id)
+        return self.__is_in_entity_of(user_id, archive)
 
     def is_in_entity_except_of(self, user_id):
         """Return True if the product is stored but not in one of the entities of the given user.

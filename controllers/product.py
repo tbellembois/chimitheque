@@ -1156,6 +1156,8 @@ def search():
             request.vars['exit_datetime'] = session.search_exit_datetime
         if session.search_barecode:
             request.vars['barecode'] = session.search_barecode
+        if session.search_comment:
+            request.vars['comment'] = session.search_comment
         if session.search_name:
             request.vars['name'] = session.search_name
         if session.search_empirical_formula:
@@ -1215,6 +1217,7 @@ def search():
                 'search_entry_datetime',
                 'search_exit_datetime',
                 'search_barecode',
+                'search_comment',
                 'search_name',
                 'search_empirical_formula',
                 'search_linear_formula',
@@ -1395,6 +1398,11 @@ def search():
             query_list.append(db.storage.barecode.like('%%%s%%' % request.vars['barecode'].strip()))
             join_storage = True
             label += ' %s %s<br/>' % (cc.get_string("DB_STORAGE_BARECODE_LABEL"), request.vars['barecode'])
+        if 'comment' in request.vars and request.vars['comment'] != '':
+            session.search_comment = request.vars['comment']
+            query_list.append(db.storage.comment.like('%%%s%%' % request.vars['comment'].strip()))
+            join_storage = True
+            label += ' %s %s<br/>' % (cc.get_string("DB_STORAGE_COMMENT_LABEL"), request.vars['comment'])
         if 'name' in request.vars and request.vars['name'] != '':
             # lazy search - we replace "-" by "_" - we could do it better...
             session.search_name = request.vars['name']
@@ -1685,6 +1693,7 @@ def search():
                             'storage.volume_weight',
                             'storage.unit',
                             'storage.barecode',
+                            'storage.comment',
                             'storage.batch_number',
                             'storage.supplier',
                             'storage.creation_datetime',
@@ -1828,6 +1837,9 @@ def search():
                            Field('barecode',
                                  'string',
                                  default=request.vars['barecode']),
+                           Field('comment',
+                                 'string',
+                                 default=request.vars['comment']),
                            db.product.empirical_formula,
                            db.product.linear_formula,
                            Field('to_destroy',
