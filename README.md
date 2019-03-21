@@ -1,3 +1,6 @@
+Please look at the new version here:
+<https://github.com/tbellembois/gochimitheque>
+
 # Chimithèque
 
 Chimithèque is an open source chemical product management application initially developped by the ENS-Lyon (France).
