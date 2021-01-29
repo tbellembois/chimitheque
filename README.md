@@ -1,4 +1,11 @@
-Please look at the new version here:
+# ATTENTION THIS IS THE CHIMITHEQUE V1 PAGE - THIS VERSION IS NOT MAINTAINED
+
+# ATTENTION CECI EST LA PAGE DE CHIMITHEQUE V1 - CETTE VERSION N'EST PLUS MAINTENUE
+
+# Please look at the new version here:
+<https://github.com/tbellembois/gochimitheque>
+
+# Merci de consulter la nouvelle version ici:
 <https://github.com/tbellembois/gochimitheque>
 
 # Chimithèque
