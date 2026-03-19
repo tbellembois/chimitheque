@@ -8,18 +8,20 @@ Open source chemical product, biological reagent and lab consumables management 
 
 ## Related projects
 
-![logo](./media/rust_logo.svg){:style="width: 50px"}
+<p align="center">
+    <img src="./media/rust_logo.svg" width="50px" />
+</p>
 
-![chimitheque_utils](https://github.com/tbellembois/chimitheque_utils) ![rust](https://github.com/tbellembois/chimitheque_utils/actions/workflows/rust.yml/badge.svg) chemical utilities to manipulate CAS/EC numbers and formulas.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_utils](https://github.com/tbellembois/chimitheque_utils): chemical utilities to manipulate CAS/EC numbers and formulas. ![rust](https://github.com/tbellembois/chimitheque_utils/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_types](https://github.com/tbellembois/chimitheque_types) ![rust](https://github.com/tbellembois/chimitheque_types/actions/workflows/rust.yml/badge.svg) types used and shared in the project.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_types](https://github.com/tbellembois/chimitheque_types): types used and shared in the project. ![rust](https://github.com/tbellembois/chimitheque_types/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_traits](https://github.com/tbellembois/chimitheque_traits) ![rust](https://github.com/tbellembois/chimitheque_traits/actions/workflows/rust.yml/badge.svg) traits used and shared in the project.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_traits](https://github.com/tbellembois/chimitheque_traits): traits used and shared in the project. ![rust](https://github.com/tbellembois/chimitheque_traits/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_db](https://github.com/tbellembois/chimitheque_db) ![rust](https://github.com/tbellembois/chimitheque_db/actions/workflows/rust.yml/badge.svg) sqlite database interface.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_db](https://github.com/tbellembois/chimitheque_db): sqlite database interface. ![rust](https://github.com/tbellembois/chimitheque_db/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_back](https://github.com/tbellembois/chimitheque_back) ![rust](https://github.com/tbellembois/chimitheque_back/actions/workflows/rust.yml/badge.svg) full REST application API.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_back](https://github.com/tbellembois/chimitheque_back): full REST application API. ![rust](https://github.com/tbellembois/chimitheque_back/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_people_keycloak_exporter](https://github.com/tbellembois/chimitheque_people_keycloak_exporter) ![rust](https://github.com/tbellembois/chimitheque_people_keycloak_exporter/actions/workflows/rust.yml/badge.svg) exports chimitheque v2.0.8 users into a JSON compatible [Keycloak](https://www.keycloak.org/) format.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_people_keycloak_exporter](https://github.com/tbellembois/chimitheque_people_keycloak_exporter): exports chimitheque v2.0.8 users into a JSON compatible [Keycloak](https://www.keycloak.org/) format. ![rust](https://github.com/tbellembois/chimitheque_people_keycloak_exporter/actions/workflows/rust.yml/badge.svg)
 
-![chimitheque_pubchem](https://github.com/tbellembois/chimitheque_pubchem) ![rust](https://github.com/tbellembois/chimitheque_pubchem/actions/workflows/rust.yml/badge.svg) [PubChem](https://pubchem.ncbi.nlm.nih.gov/) search and import library.
+![](https://icons.getbootstrap.com/assets/icons/arrow-right.svg) [chimitheque_pubchem](https://github.com/tbellembois/chimitheque_pubchem): [PubChem](https://pubchem.ncbi.nlm.nih.gov/) search and import library. ![rust](https://github.com/tbellembois/chimitheque_pubchem/actions/workflows/rust.yml/badge.svg)
