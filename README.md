@@ -6,27 +6,27 @@
 
 Open source chemical product, biological reagent and lab consumables management application.
 
-# Team
+## Team
 
 - project leader: Delphine Pitrat - ENS-Lyon (delphine[dot]pitrat[at]ens-lyon[dot]fr)
 - developper: Thomas Bellembois (thomas[dot]bellembois[at]proton[dot]me)
 - ENS Lyon Chemical lab: specifications, tests
 
-## contributors
+## Contributors
 
-Elodie Goy (ENS Lyon, former project leader)
-Serges Torres (ENS Lyon, first study and specifications)
-Julien Devemy (UCA, specifications and tests)
-Sandrine Breteau (ENS Lyon, specifications and tests)
-Anouk Bedino (ENS Lyon, specifications and tests)
-Benjamin Gillet (ENS Lyon, specifications and tests)
-Gilles Chatelain (ENS Lyon, specifications and tests)
-Odile Coulombel (ENS Lyon, specifications)
-Loïs Taulelle (ENS Lyon, license)
-Laure-Lise Chapellet (ENS Lyon, specifications and tests)
-Antoine Gallavardin (IRSTEA, tests)
+- Elodie Goy (ENS Lyon, former project leader)
+- Serges Torres (ENS Lyon, first study and specifications)
+- Sandrine Breteau (ENS Lyon, specifications and tests)
+- Anouk Bedino (ENS Lyon, specifications and tests)
+- Benjamin Gillet (ENS Lyon, specifications and tests)
+- Gilles Chatelain (ENS Lyon, specifications and tests)
+- Odile Coulombel (ENS Lyon, specifications)
+- Loïs Taulelle (ENS Lyon, license)
+- Laure-Lise Chapellet (ENS Lyon, specifications and tests)
+- Antoine Gallavardin (IRSTEA, tests)
+- Julien Devemy (UCA, specifications and tests)
 
-## Related projects
+## Project components
 
 <p align="center">
     <img src="./media/rust_logo.svg" width="50px" />
